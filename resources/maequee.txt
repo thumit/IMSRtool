@@ -1,0 +1,35 @@
+"Thank you for your trust in Prism! We really appreciate any of your feedbacks to make Prism more intelligent"
+Fact --- "Each time you get stuck you realize you need to learn more, but when you learn more you again get stuck" - Anonymous.
+Fact --- Months that begin on a Sunday will always have a Friday the 13th. "Fact & Hints" feature was released in July 2018.
+Fact --- Prism has its name given by Eric Henderson, a regional planning analyst at US Forest Service Region I.
+Fact --- The original name of Prism was SpectrumLite. When you start Prism, the interface shows a spectrum of light.
+Fact --- Prism could remember the databases it reads to process faster the next times.
+Fact --- Java 10+ has some G1 Gabbage Collector features which Prism utilizes to perform better.
+Fact --- Prism could models unlimited types of stand-replacing disturbances. Eric uses one of them as a trick to represent a 40-year delay of forest regeneration after clear-cuts.
+Fact --- A realistic and full-scaled model could have billions of variables. Prism has techniques to cut it down to a few millions.
+Fact --- When the "light bulb" turns blue, Prism would show a new Hint or Fact every 30 seconds. Reasonable?
+Fact --- Prism is a highly automated system. When the database is ready, a few clicks could complete building a simple model.
+Fact --- Some outputs will be available only if the associated inputs exist. 
+Fact --- Prism has around 30k lines of code written by a solo developer. Prism prefers having as many LOC deleted as possible.
+Fact --- Prism is a forestry tool which could be used to measure basal area. You are using Prism for a different objective, aren't you?
+Hint --- For almost any window consisted of check boxes, clicking on the window's title could check/uncheck all the boxes.
+Hint --- Model description (readme) could be saved without deleting model outputs. Try "right click" on it.
+Hint --- "Alt+D" could quickly open/close "Database Management".
+Hint --- "Ctrl+2" could show/hide Prism logo at bottom right conner of Prism interface.
+Hint --- "Ctrl+3" could show/hide tool-tips across the entire Prism interface.
+Hint --- Prism could take good selfie. Try "Ctrl+1".
+Hint --- If your computer has low memory, press "Collect Memory" button before "Start Solving" models.
+Hint --- After solving a model, the first thing you should do is to check whether the two queries (1.0 & 1.2) in "SQL MODE" of output_05 would return zero.
+Hint --- Right click is allowed on "Flow Arrangement" area of "Flow Constraints" window. Some functions there are useful.
+Hint --- Right click on any chart to see some options (e.g. save image). There are some charts in output 04, 06, 07.
+Hint --- There are some "eye" icons in Prism. Working with the eyes opened might be more efficient.
+Hint --- Prism supports editing/solving multiple models. Wanna try? Hold "Ctrl" & click to select several models, then "Start Editing" or "Start Solving".
+Hint --- Changes made on tables are applied immediately. Changes made on other components (i.e. check boxes) are applied by cliking the "Modify" button.
+Hint --- Prism would turn off "Hints & Facts" feature in some cases to speed up processing other important tasks.
+Hint --- Prism starts with a little transparent interface. Would you like to change it? press "Ctrl+4".
+Hint --- Font and appearance (Look & Feel) across the entire Prism interface could be changed only when all the internal windows are closed.
+Hint --- Clicking on a pie chart would start/stop spinning it. There are some pie charts in output_04 & output_07. Give it a try!
+Hint --- Switching between "SQL MODE" & "NOSQL MODE" will not stop current processes in both MODEs. In "NOSQL MODE", try to "calculate" a few hundred queries, and "switch" multiple times.
+Hint --- Holding "Ctrl" or "Shift" while doing mouse clicks would help select multiple items (e.g. table rows, model runs, IDs in Flow Constraints)
+Hint --- Turn the light bulb OFF then ON would show a new hint or fact immediately.
+Hint --- Click on the background could turn ON/OFF the spectrum light. When you open project or database, Prism turns it OFF to help you stay focused.
