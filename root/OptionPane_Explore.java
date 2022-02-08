@@ -66,7 +66,7 @@ public class OptionPane_Explore extends JOptionPane {
 
 class ScrollPane_OriginalFile extends JScrollPane {
 	public ScrollPane_OriginalFile(File file) {	
-		// Print to text area-----------------------------------------------------------------------------------------		
+		// Print to text area------------------	
 		TextAreaReadMe textarea = new TextAreaReadMe("icon_tree.png", 75, 75);
 		textarea.setEditable(false);
 		BufferedReader buff = null;
@@ -103,7 +103,7 @@ class ScrollPane_OriginalFile extends JScrollPane {
 		    }
 		});
 		
-		// Add the Panel to this Big ScrollPane------------------------------------------------------------------------------
+		// Add the Panel to this Big ScrollPane
 		setBorder(BorderFactory.createEmptyBorder());
 		setViewportView(explore_scrollpane);			
 	}
@@ -111,12 +111,10 @@ class ScrollPane_OriginalFile extends JScrollPane {
 
 class ScrollPane_TrimmFile extends JScrollPane {
 	public ScrollPane_TrimmFile(File file) {	
-		// Print to text area-----------------------------------------------------------------------------------------		
+		// Print to text area--------------------	
 		TextAreaReadMe textarea = new TextAreaReadMe("icon_tree.png", 75, 75);
 		textarea.setEditable(false);
-		
-		
-		
+
 		try {
 			// All lines to be in array
 //			List<String> lines_list = Files.readAllLines(Paths.get(file.getAbsolutePath()), StandardCharsets.UTF_8);		// Not sure why this UTF_8 fail
@@ -131,28 +129,7 @@ class ScrollPane_TrimmFile extends JScrollPane {
 			e.printStackTrace();
 			System.err.println(e.getClass().getName() + ": " + e.getMessage());
 		}
-		
-		
-		
-//		BufferedReader buff = null;
-//		try {
-//			buff = new BufferedReader(new FileReader(file));
-//			String str;
-//			while ((str = buff.readLine()) != null) {
-//				textarea.append("\n" + str);
-//			}
-//			textarea.setCaretPosition(0);
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//			System.err.println(e.getClass().getName() + ": " + e.getMessage());
-//		} finally {
-//			try {
-//				buff.close();
-//			} catch (Exception ex) {
-//				ex.printStackTrace();
-//				System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
-//			}
-//		}
+		textarea.setCaretPosition(0);
 		
 		TitleScrollPane explore_scrollpane = new TitleScrollPane("", "CENTER", textarea);
 		addHierarchyListener(new HierarchyListener() {	//	These codes make the license_scrollpane resizable --> the Big ScrollPane resizable --> JOptionPane resizable
@@ -168,7 +145,7 @@ class ScrollPane_TrimmFile extends JScrollPane {
 		    }
 		});
 		
-		// Add the Panel to this Big ScrollPane------------------------------------------------------------------------------
+		// Add the Panel to this Big ScrollPane
 		setBorder(BorderFactory.createEmptyBorder());
 		setViewportView(explore_scrollpane);			
 	}
@@ -223,7 +200,6 @@ class ScrollPane_FinalFile extends JScrollPane {
 			}
 			String[] merge_lines = Arrays.copyOfRange(lines, 0, mergeCount + 1);
 			String mstr = String.join(" ", merge_lines).toLowerCase().trim();
-			textarea.append(mstr + "\n");
 			
 			date = file.getName().substring(0, 8);
 			SubstringBetween sb = new SubstringBetween();
@@ -601,7 +577,7 @@ class ScrollPane_FinalFile extends JScrollPane {
 		    }
 		});
 		
-		// Add the Panel to this Big ScrollPane------------------------------------------------------------------------------
+		// Add the Panel to this Big ScrollPane
 		setBorder(BorderFactory.createEmptyBorder());
 		setViewportView(explore_scrollpane);			
 	}
@@ -720,41 +696,6 @@ class ScrollPane_FinalFile extends JScrollPane {
 				textarea.append(current_area.get(current_area.size() - 1) + "\n");
 			}
 			count = count + 1;
-			
-//			if (lines[count].startsWith("Acres Chge Total Chge Crw Eng Heli")) {
-//				int total_fires = 0;		// including the lines "Large Fires Being Managed With a Strategy Other Than Full Suppression"
-//				do {
-//					total_fires = total_fires + 1;
-//				} while (!lines[count + 1 + total_fires].isEmpty());	// while next line is not empty --> add one fire to total
-//
-//				for (int j = 0; j < total_fires; j++) {		// loop all lines that have fires
-//					if (!lines[count + 1 + j].startsWith("Large Fires Being Managed With a Strategy Other Than Full Suppression")) {
-//						String[] line_split = lines[count + 1 + j].split(" ");
-//						int unit_id = 0;	// find the second column of the table
-//						for (int id = 0; id < line_split.length; id++) {
-//							if (line_split[id].contains("-")) {
-//								unit_id = id;
-//							}
-//						}
-//						
-//						String this_fire = line_split[0];
-//						// this is the incident name, join by space
-//						for (int id = 1; id < unit_id; id++) {
-//							this_fire = String.join(" ", this_fire, line_split[id]);
-//						}
-//						// this is information in the whole line of this fire
-//						for (int id = unit_id; id < line_split.length; id++) {
-//							this_fire = String.join("\t", this_fire, line_split[id]);
-//						}
-//
-//						current_area.add(this_fire);
-//						textarea.append(current_area.get(current_area.size() - 1) + "\n");
-//					}
-//				}
-//				count = count + total_fires;
-//			} else {
-//				count = count + 1;
-//			}
 		} while (count < lines.length);
 	}
 }
