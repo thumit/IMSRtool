@@ -233,7 +233,7 @@ class ScrollPane_FinalFile extends JScrollPane {
 		
 		SubstringBetween sb = new SubstringBetween();
 		String temp = sb.substringBetween(mstr, "national preparedness level", "national fire activity"); 
-		national_prepareness_level = (temp.substring(temp.indexOf(" ") + 1)).trim();	// remove all characters (such as :) before the first space and then trim
+		if (temp != null) national_prepareness_level = (temp.substring(temp.indexOf(" ") + 1)).trim();	// remove all characters (such as :) before the first space and then trim
 		temp = sb.substringBetween(mstr, "initial attack activity", "new large incidents"); 
 		if (temp == null) temp = sb.substringBetween(mstr, "initial activity", "new large incidents"); 
 		temp = (temp.substring(temp.indexOf(" ") + 1)).trim();	// remove all characters (such as :) before the first space and then trim
@@ -248,28 +248,45 @@ class ScrollPane_FinalFile extends JScrollPane {
 				initial_attack_activity = "Heavy";
 			}
 		} else {
-			initial_attack_activity = temp.split(" ")[0];
 			if (temp.split(" ").length > 1) {
+				initial_attack_activity = temp.split(" ")[0];
+				initial_attack_activity = initial_attack_activity.substring(0, 1).toUpperCase() + initial_attack_activity.substring(1);
 				initial_attack_activity_number = (temp.substring(temp.lastIndexOf("(") + 1, temp.lastIndexOf(")")).replaceAll("new", "").replaceAll("fire", "").replaceAll("s", "")).trim();		// i.e. 20180915 is a special case
 			} else {
 				initial_attack_activity_number = "";
 			}
 		}
-		initial_attack_activity = initial_attack_activity.substring(0, 1).toUpperCase() + initial_attack_activity.substring(1);
+		
+//		initial_attack_activity = initial_attack_activity.substring(0, 1).toUpperCase() + initial_attack_activity.substring(1);
+//		temp = (mstr.substring(mstr.indexOf("new large incidents") + 20)).trim();
+//		if (temp != null) new_large_incidents = temp.split(" ")[0];
+//		temp = (mstr.substring(mstr.indexOf("large fires contained") + 22)).trim();
+//		if (temp != null) large_fires_contained = temp.split(" ")[0];
+//		temp = (mstr.substring(mstr.indexOf("uncontained large fires") + 24)).trim();
+//		if (temp != null) uncontained_large_fires = temp.split(" ")[0];
+//		temp = (mstr.substring(mstr.indexOf("area command teams committed") + 29)).trim();		// special case with null value i.e. 20170922  (area command teams committed does not exist)
+//		if (temp != null) area_command_teams_committed = temp.split(" ")[0];
+//		temp = (mstr.substring(mstr.indexOf("nimos committed") + 24)).trim();
+//		if (temp != null) NIMOs_committed = temp.split(" ")[0];
+//		temp = (mstr.substring(mstr.indexOf("type 1 imts committed") + 24)).trim();
+//		if (temp != null) type_1_IMTs_committed = temp.split(" ")[0];
+//		temp = (mstr.substring(mstr.indexOf("type 2 imts committed") + 22)).trim();
+//		if (temp != null) type_2_IMTs_committed = temp.split(" ")[0];
+		
 		temp = sb.substringBetween(mstr, "new large incidents", "large fires contained"); 
-		new_large_incidents = (temp.substring(temp.indexOf(" ") + 1)).trim();
+		if (temp != null) new_large_incidents = (temp.substring(temp.indexOf(" ") + 1)).trim();
 		temp = sb.substringBetween(mstr, "large fires contained", "uncontained large fires");
-		large_fires_contained = (temp.substring(temp.indexOf(" ") + 1)).trim();
-		temp = sb.substringBetween(mstr, "uncontained large fires", "area command teams committed");
-		uncontained_large_fires = (temp.substring(temp.indexOf(" ") + 1)).trim();
+		if (temp != null) large_fires_contained = (temp.substring(temp.indexOf(" ") + 1)).trim();
+		temp = sb.substringBetween(mstr, "uncontained large fires", "area command teams committed");		// fail because of null 	i.e. 20170922	(area command teams committed does not exist)
+		if (temp != null) uncontained_large_fires = (temp.substring(temp.indexOf(" ") + 1)).trim();
 		temp = sb.substringBetween(mstr, "area command teams committed", "nimos committed");
-		area_command_teams_committed = (temp.substring(temp.indexOf(" ") + 1)).trim();
+		if (temp != null) area_command_teams_committed = (temp.substring(temp.indexOf(" ") + 1)).trim();
 		temp = sb.substringBetween(mstr, "nimos committed", "type 1 imts committed");
-		NIMOs_committed = (temp.substring(temp.indexOf(" ") + 1)).trim();
+		if (temp != null) NIMOs_committed = (temp.substring(temp.indexOf(" ") + 1)).trim();
 		temp = sb.substringBetween(mstr, "type 1 imts committed", "type 2 imts committed");
-		type_1_IMTs_committed = (temp.substring(temp.indexOf(" ") + 1)).trim();
+		if (temp != null) type_1_IMTs_committed = (temp.substring(temp.indexOf(" ") + 1)).trim();
 		temp = (mstr.substring(mstr.indexOf("type 2 imts committed") + 22)).trim();
-		type_2_IMTs_committed = temp.split(" ")[0];
+		if (temp != null) type_2_IMTs_committed = temp.split(" ")[0];
 		
 		// Check either of the 2 lines right after "Active Incident Resource Summary" to see if information of each fire will be in a single line (i.e. 20180803) or multiple lines
 		int lineCount = 0;
@@ -486,7 +503,7 @@ class ScrollPane_FinalFile extends JScrollPane {
 			get_data_type_multiple_lines(lines);
 		}
 		
-		// The Format 7 of result when using adobe acrobat to convert from "pdf" to "text"		i.e. 20170914
+		// The Format 7 of result when using adobe acrobat to convert from "pdf" to "text"		i.e. 20170914			(currently wrong in 20170922 because area command team does not exist in this file)
 		if (lines[3].contains("National Preparedness Level ") && lines[8].isEmpty()) {
 			textarea.append("Format 7. 20170914" + "\n");
 			national_prepareness_level = lines[3].substring(lines[3].lastIndexOf("National Preparedness Level ") + 28);
