@@ -75,9 +75,7 @@ public class Utility {
 	}
 	
 	public void explore_files () {
-		File[] files = choose_files();
-		for (int i = 0; i < files.length; i++) {
-			new OptionPane_Explore(files[i]);
-		}
+		File[] file = choose_files();
+		new OptionPane_Explore(file);
 	}
 }

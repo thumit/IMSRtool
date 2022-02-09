@@ -16,7 +16,6 @@ import java.nio.file.Paths;
 import java.util.List;
 
 import javax.swing.BorderFactory;
-import javax.swing.JInternalFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -28,36 +27,46 @@ import convenience_classes.TextAreaReadMe;
 import convenience_classes.TitleScrollPane;
 
 public class OptionPane_Explore extends JOptionPane {
-	public OptionPane_Explore(File file) {
-		for (JInternalFrame i : IMSRmain.get_DesktopPane().getAllFrames()) {
-			i.setVisible(false);
-		}
-		
+	public OptionPane_Explore(File[] file) {
+		int id = 0;
+		boolean exit_exploration = false;
+		do {
+			Explore_Panel explore_panel = new Explore_Panel(file[id]);
+			JScrollPane scroll = new JScrollPane();
+			scroll.setViewportView(explore_panel);
+
+			String ExitOption[] = { "NEXT", "EXIT" };
+			int response = JOptionPane.showOptionDialog(IMSRmain.get_DesktopPane(), scroll, "EXPLORE",
+					JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, ExitOption, ExitOption[0]);
+			if (response == 0) { // Next
+				id = id + 1;
+			} else {
+				exit_exploration = true;
+			}
+		} while (exit_exploration == false);
+	}
+}
+
+class Explore_Panel extends JPanel{
+	public Explore_Panel(File file) {	
 		ScrollPane_TrimFile trim = new ScrollPane_TrimFile(file);
-		TitledBorder border = new TitledBorder("LINES HAVE LEADING AND ENDING SPACES TRIMMED");
+		TitledBorder border = new TitledBorder(file.getName().toString() + " - LINES HAVE LEADING AND ENDING SPACES TRIMMED");
 		border.setTitleJustification(TitledBorder.CENTER);
 		trim.setBorder(border);
 		
 		ScrollPane_FinalFile result = new ScrollPane_FinalFile(file);
-		border = new TitledBorder("CUSTOMIZED RESULT");
+		border = new TitledBorder(file.getName().toString() + " - CUSTOMIZED RESULT");
 		border.setTitleJustification(TitledBorder.CENTER);
 		result.setBorder(border);		
 		
-		JPanel combine_panel = new JPanel(new GridBagLayout());
+		setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
-		combine_panel.add(trim, GridBagLayoutHandle.get_c(c, "BOTH", 
+		add(trim, GridBagLayoutHandle.get_c(c, "BOTH", 
 				0, 0, 1, 1, 1, 1, 	// gridx, gridy, gridwidth, gridheight, weightx, weighty
 				0, 0, 0, 0));		// insets top, left, bottom, right
-		combine_panel.add(result, GridBagLayoutHandle.get_c(c, "BOTH", 
+		add(result, GridBagLayoutHandle.get_c(c, "BOTH", 
 				1, 0, 1, 1, 1, 1, 	// gridx, gridy, gridwidth, gridheight, weightx, weighty
 				0, 0, 0, 0));		// insets top, left, bottom, right
-		
-		String ExitOption[] = { "NEXT" };
-		int response = JOptionPane.showOptionDialog(IMSRmain.get_DesktopPane(), combine_panel,
-				file.getName().toString(), JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, ExitOption, ExitOption[0]);
-		for (JInternalFrame i : IMSRmain.get_DesktopPane().getAllFrames()) {
-			i.setVisible(true);
-		}
 	}
 }
 
