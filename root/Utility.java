@@ -76,6 +76,6 @@ public class Utility {
 	
 	public void explore_files () {
 		File[] file = choose_files();
-		new OptionPane_Explore(file);
+		if (file != null) new OptionPane_Explore(file);
 	}
 }

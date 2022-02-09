@@ -8,6 +8,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 import convenience_classes.SubstringBetween;
 import convenience_classes.TextAreaReadMe;
 
@@ -46,6 +47,19 @@ public class ISMR_Process {
 			date = file.getName().substring(0, 8);
 			process_data_method_1(lines);
 //			process_data_method_2(lines, textarea);
+		
+			national_fire_activity.add(date);
+			national_fire_activity.add(national_prepareness_level);
+			national_fire_activity.add(initial_attack_activity);
+			national_fire_activity.add(initial_attack_activity_number);
+			national_fire_activity.add(new_large_incidents);
+			national_fire_activity.add(large_fires_contained);
+			national_fire_activity.add(uncontained_large_fires);
+			national_fire_activity.add(area_command_teams_committed);
+			national_fire_activity.add(NIMOs_committed);
+			national_fire_activity.add(type_1_IMTs_committed);
+			national_fire_activity.add(type_2_IMTs_committed);
+			
 			lines_list = null; 	// free memory
 			lines = null;		// free memory
 		} catch (IOException e) {

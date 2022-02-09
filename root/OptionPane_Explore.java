@@ -35,15 +35,64 @@ public class OptionPane_Explore extends JOptionPane {
 			JScrollPane scroll = new JScrollPane();
 			scroll.setViewportView(explore_panel);
 
-			String ExitOption[] = { "NEXT", "EXIT" };
+			String ExitOption[] = { "NEXT", "AGGREGATE", "EXIT" };
 			int response = JOptionPane.showOptionDialog(IMSRmain.get_DesktopPane(), scroll, "EXPLORE",
 					JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, ExitOption, ExitOption[0]);
-			if (response == 0) { // Next
+			if (response == 0 && id < file.length) { // Next
 				id = id + 1;
+			} else if (response == 1) {
+				exit_exploration = true;
+				new Aggregate_Scroll(file);
 			} else {
 				exit_exploration = true;
 			}
 		} while (exit_exploration == false);
+	}
+}
+
+class Aggregate_Scroll extends JScrollPane {
+	public Aggregate_Scroll(File[] file) {		
+		TextAreaReadMe textarea = new TextAreaReadMe("icon_tree.png", 75, 75);	// Print to text area
+		for (File f : file) {
+			ISMR_Process ismr = new ISMR_Process(f);
+			textarea.append(String.join("\t", ismr.national_fire_activity)  + "\n");
+		}
+		textarea.append("--------------------------------------------------------------------" + "\n");
+		textarea.append("--------------------------------------------------------------------" + "\n");
+		textarea.append("--------------------------------------------------------------------" + "\n");
+		for (File f : file) {
+			ISMR_Process ismr = new ISMR_Process(f);
+			for (String fire : ismr.all_fires) {
+				textarea.append(fire + "\n");
+			}
+		}
+		
+		textarea.setSelectionStart(0);	// scroll to top
+		textarea.setSelectionEnd(0);
+		textarea.setEditable(false);
+		
+		TitleScrollPane explore_scrollpane = new TitleScrollPane("", "CENTER", textarea);
+		addHierarchyListener(new HierarchyListener() {	//	These codes make the license_scrollpane resizable --> the Big ScrollPane resizable --> JOptionPane resizable
+		    public void hierarchyChanged(HierarchyEvent e) {
+		        Window window = SwingUtilities.getWindowAncestor(explore_scrollpane);
+		        if (window instanceof Dialog) {
+		            Dialog dialog = (Dialog)window;
+		            if (!dialog.isResizable()) {
+		                dialog.setResizable(true);
+		                dialog.setPreferredSize(new Dimension((int) (IMSRmain.get_main().getWidth() / 1.1), (int) (IMSRmain.get_main().getHeight() / 1.21)));
+		            }
+		        }
+		    }
+		});
+		
+		// Add the Panel to this Big ScrollPane
+		setBorder(BorderFactory.createEmptyBorder());
+		setViewportView(explore_scrollpane);
+		
+		// Add everything to a popup panel
+		String ExitOption[] = {"EXIT" };
+		int response = JOptionPane.showOptionDialog(IMSRmain.get_DesktopPane(), this, "EXPLORE",
+				JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, ExitOption, ExitOption[0]);
 	}
 }
 
