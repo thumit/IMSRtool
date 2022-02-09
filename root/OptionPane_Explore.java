@@ -289,9 +289,9 @@ class ScrollPane_FinalFile extends JScrollPane {
 				initial_attack_activity = "Heavy";
 			}
 		} else {
+			initial_attack_activity = temp.split(" ")[0].toUpperCase();
+			if (initial_attack_activity.length() > 1) initial_attack_activity = initial_attack_activity.substring(0, 1) + initial_attack_activity.substring(1).toLowerCase();
 			if (temp.split(" ").length > 1) {
-				initial_attack_activity = temp.split(" ")[0];
-				initial_attack_activity = initial_attack_activity.substring(0, 1).toUpperCase() + initial_attack_activity.substring(1);
 				initial_attack_activity_number = (temp.substring(temp.lastIndexOf("(") + 1, temp.lastIndexOf(")")).replaceAll("new", "").replaceAll("fire", "").replaceAll("s", "")).trim();		// i.e. 20180915 is a special case
 			} else {
 				initial_attack_activity_number = "";
