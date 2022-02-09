@@ -482,35 +482,46 @@ public class ISMR_Process {
 	private void get_data_type_multiple_lines(String[] lines) {		// Information of a Fire is in 15 lines
 		// Loop all lines
 		String current_area = "";
+		int gacc_priority = 0;
 		int count = 0;
 		for (int i = 0; i < lines.length; i++) {
 			if (lines[i].contains("(PL")) {
 				if (lines[i].startsWith("Alaska")) {
 					current_area = "AICC";
+					gacc_priority = gacc_priority + 1;
 				} else if (lines[i].startsWith("Eastern")) {
 					current_area = "EACC";
+					gacc_priority = gacc_priority + 1;
 				} else if (lines[i].startsWith("Great Basin")) {
 					current_area = "GBCC";
+					gacc_priority = gacc_priority + 1;
 				} else if (lines[i].startsWith("Northern California")) {
 					current_area = "ONCC";
+					gacc_priority = gacc_priority + 1;
 				} else if (lines[i].startsWith("Northern Rockies")) {
 					current_area = "NRCC";
+					gacc_priority = gacc_priority + 1;
 				} else if (lines[i].startsWith("Northwest")) {
 					current_area = "NWCC";
+					gacc_priority = gacc_priority + 1;
 				} else if (lines[i].startsWith("Rocky Mountain")) {
 					current_area = "RMCC";
+					gacc_priority = gacc_priority + 1;
 				} else if (lines[i].startsWith("Southern Area")) {
 					current_area = "SACC";
+					gacc_priority = gacc_priority + 1;
 				} else if (lines[i].startsWith("Southern California")) {
 					current_area = "OSCC";
+					gacc_priority = gacc_priority + 1;
 				} else if (lines[i].startsWith("Southwest")) {
 					current_area = "SWCC";
+					gacc_priority = gacc_priority + 1;
 				}
 			}
 			
 			if (lines[i].isEmpty() && count == 15 && lines[i - 14].toUpperCase().equals(lines[i - 14]) && lines[i - 14].contains("-")) {		// this is likely a fire, smart check based on the "unit" column
-				String priority = String.valueOf(area_fires(current_area).size() + 1);
-				String this_fire = String.join("\t", date, current_area, priority, lines[i - 15], lines[i - 14], lines[i - 13], lines[i - 12], lines[i - 11],
+				String fire_priority = String.valueOf(area_fires(current_area).size() + 1);
+				String this_fire = String.join("\t", date, current_area, String.valueOf(gacc_priority), fire_priority, lines[i - 15], lines[i - 14], lines[i - 13], lines[i - 12], lines[i - 11],
 														lines[i - 10], lines[i - 9], lines[i - 8], lines[i - 7], lines[i - 6],
 														lines[i - 5], lines[i - 4], lines[i - 3], lines[i - 2], lines[i - 1]);
 				all_fires.add(this_fire);
@@ -523,29 +534,40 @@ public class ISMR_Process {
 	private void get_data_type_single_line(String[] lines) {		// Information of a Fire is in one line		(Note: a special case: 20180803 at page 10 where the table without header if expanding 2 pages) 
 		// Loop all lines
 		String current_area = "";
+		int gacc_priority = 0;
 		int count = 0;
 		do {
 			if (lines[count].contains("(PL")) {
 				if (lines[count].startsWith("Alaska")) {
 					current_area = "AICC";
+					gacc_priority = gacc_priority + 1;
 				} else if (lines[count].startsWith("Eastern")) {
 					current_area = "EACC";
+					gacc_priority = gacc_priority + 1;
 				} else if (lines[count].startsWith("Great Basin")) {
 					current_area = "GBCC";
+					gacc_priority = gacc_priority + 1;
 				} else if (lines[count].startsWith("Northern California")) {
 					current_area = "ONCC";
+					gacc_priority = gacc_priority + 1;
 				} else if (lines[count].startsWith("Northern Rockies")) {
 					current_area = "NRCC";
+					gacc_priority = gacc_priority + 1;
 				} else if (lines[count].startsWith("Northwest")) {
 					current_area = "NWCC";
+					gacc_priority = gacc_priority + 1;
 				} else if (lines[count].startsWith("Rocky Mountain")) {
 					current_area = "RMCC";
+					gacc_priority = gacc_priority + 1;
 				} else if (lines[count].startsWith("Southern Area")) {
 					current_area = "SACC";
+					gacc_priority = gacc_priority + 1;
 				} else if (lines[count].startsWith("Southern California")) {
 					current_area = "OSCC";
+					gacc_priority = gacc_priority + 1;
 				} else if (lines[count].startsWith("Southwest")) {
 					current_area = "SWCC";
+					gacc_priority = gacc_priority + 1;
 				}
 			}
 			
@@ -555,8 +577,8 @@ public class ISMR_Process {
 			if (line_length >= 15 && line_split[line_length - 14].toUpperCase().equals(line_split[line_length - 14]) && line_split[line_length - 14].contains("-")) {		// this is likely a fire, smart check based on the "unit" column
 				unit_id = line_split.length - 14;
 				
-				String priority = String.valueOf(area_fires(current_area).size() + 1);
-				String this_fire = String.join("\t", date, current_area, priority);
+				String fire_priority = String.valueOf(area_fires(current_area).size() + 1);
+				String this_fire = String.join("\t", date, current_area, String.valueOf(gacc_priority), fire_priority);
 				// this is the incident name, join by space
 				for (int id = 0; id < unit_id; id++) {
 					this_fire = String.join(" ", this_fire, line_split[id]);

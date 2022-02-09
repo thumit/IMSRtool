@@ -46,7 +46,7 @@ public class OptionPane_Explore extends JOptionPane {
 			} else {
 				exit_exploration = true;
 			}
-		} while (exit_exploration == false);
+		} while (exit_exploration == false && id < file.length);
 	}
 }
 
@@ -56,7 +56,7 @@ class Aggregate_Scroll extends JScrollPane {
 				"initial_attack_activity_number", "new_large_incidents", "large_fires_contained",
 				"uncontained_large_fires", "area_command_teams_committed", "NIMOs_committed", "type_1_IMTs_committed",
 				"type_2_IMTs_committed" };
-		String[] header2 = new String[] { "date", "gacc", "priority", "incident_name", "unit", "size_acres",
+		String[] header2 = new String[] { "date", "gacc", "gacc_priority", "fire_priority", "incident_name", "unit", "size_acres",
 				"size_chge", "percentage", "ctn_comp", "est", "personnel_total", "personnel_chge", "resources_crw",
 				"resources_eng", "resources_heli", "strc_lost", "ctd", "origin_own" };
 		
@@ -221,7 +221,7 @@ class ScrollPane_FinalFile extends JScrollPane {
 				"initial_attack_activity_number", "new_large_incidents", "large_fires_contained",
 				"uncontained_large_fires", "area_command_teams_committed", "NIMOs_committed", "type_1_IMTs_committed",
 				"type_2_IMTs_committed" };
-		String[] header2 = new String[] { "date", "gacc", "priority", "incident_name", "unit", "size_acres",
+		String[] header2 = new String[] { "date", "gacc", "gacc_priority", "fire_priority", "incident_name", "unit", "size_acres",
 				"size_chge", "percentage", "ctn_comp", "est", "personnel_total", "personnel_chge", "resources_crw",
 				"resources_eng", "resources_heli", "strc_lost", "ctd", "origin_own" };
 		
