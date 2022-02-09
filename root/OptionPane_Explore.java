@@ -164,6 +164,7 @@ class ScrollPane_FinalFile extends JScrollPane {
 	String type_1_IMTs_committed;
 	String type_2_IMTs_committed;
 	
+	List<String> all_fires = new ArrayList<String>();	// All fires with priority order as in the ISMR file
 	List<String> AICC = new ArrayList<String>();	// Alaska
 	List<String> EACC = new ArrayList<String>();	// Eastern
 	List<String> GBCC = new ArrayList<String>();	// Great Basin
@@ -174,24 +175,38 @@ class ScrollPane_FinalFile extends JScrollPane {
 	List<String> SACC = new ArrayList<String>();	// Southern Area
 	List<String> OSCC = new ArrayList<String>();	// Southern California
 	List<String> SWCC = new ArrayList<String>();	// Southwest
-	TextAreaReadMe textarea = new TextAreaReadMe("icon_tree.png", 75, 75);
 	
-	public ScrollPane_FinalFile(File file) {	
-		// Print to text area-----------------------------------------------------------------------------------------		
-		textarea.setEditable(false);
+	public ScrollPane_FinalFile(File file) {
+		TextAreaReadMe textarea = new TextAreaReadMe("icon_tree.png", 75, 75);	// Print to text area
 		try {
-			// All lines to be in array
+			// Read all lines to list and array
 //			List<String> lines_list = Files.readAllLines(Paths.get(file.getAbsolutePath()), StandardCharsets.UTF_8);		// Not sure why this UTF_8 fail
-			List<String> lines_list = Files.readAllLines(Paths.get(file.getAbsolutePath()), Charset.defaultCharset());
+			List<String> lines_list = Files.readAllLines(Paths.get(file.getAbsolutePath()), Charset.defaultCharset());		// Therefore I use default
 			String[] lines = lines_list.stream().toArray(String[] ::new);
 			
 			date = file.getName().substring(0, 8);
 			process_data_method_1(lines);
-//			process_data_method_2(lines);
-			
+//			process_data_method_2(lines, textarea);
+			textarea.append(date + "\n");
+			textarea.append(national_prepareness_level + "\n");
+			textarea.append(initial_attack_activity + "\n");
+			textarea.append(initial_attack_activity_number + "\n");
+			textarea.append(new_large_incidents + "\n");
+			textarea.append(large_fires_contained + "\n");
+			textarea.append(uncontained_large_fires + "\n");
+			textarea.append(area_command_teams_committed + "\n");
+			textarea.append(NIMOs_committed + "\n");
+			textarea.append(type_1_IMTs_committed + "\n");
+			textarea.append(type_2_IMTs_committed + "\n");
+			textarea.append("--------------------------------------------------------------------" + "\n");
+			for (String fire : all_fires) {
+				textarea.append(fire + "\n");
+			}
 			textarea.setSelectionStart(0);	// scroll to top
 			textarea.setSelectionEnd(0);
+			textarea.setEditable(false);
 			lines_list = null; // free memory
+			lines = null; // free memory
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.err.println(e.getClass().getName() + ": " + e.getMessage());
@@ -214,6 +229,32 @@ class ScrollPane_FinalFile extends JScrollPane {
 		// Add the Panel to this Big ScrollPane
 		setBorder(BorderFactory.createEmptyBorder());
 		setViewportView(explore_scrollpane);			
+	}
+	
+	private List<String> area_fires(String area_name) {
+		if (area_name.equals("AICC")) {
+			return AICC;
+		} else if (area_name.equals("EACC")) {
+			return EACC;
+		} else if (area_name.equals("GBCC")) {
+			return GBCC;
+		} else if (area_name.equals("ONCC")) {
+			return ONCC;
+		} else if (area_name.equals("NRCC")) {
+			return NRCC;
+		} else if (area_name.equals("NWCC")) {
+			return NWCC;
+		} else if (area_name.equals("RMCC")) {
+			return RMCC;
+		} else if (area_name.equals("SACC")) {
+			return SACC;
+		} else if (area_name.equals("OSCC")) {
+			return OSCC;
+		} else if (area_name.equals("SWCC")) {
+			return SWCC;
+		} else {
+			return null;
+		}
 	}
 	
 	private void process_data_method_1(String[] lines) {
@@ -304,7 +345,7 @@ class ScrollPane_FinalFile extends JScrollPane {
 		// IMPORTANT NOTE NOTE NOTE: 20190902-03-04 ... adobe acrobat failed to convert tables (tables are not recognized and not included in text files)
 	}
 	
-	private void process_data_method_2(String[] lines) {	// unused method because method 1 is better
+	private void process_data_method_2(String[] lines, TextAreaReadMe textarea) {	// unused method because method 1 is better
 		for (int i = 0; i < lines.length; i++) {
 			lines[i] = lines[i].replaceAll("\\s{2,}", " ").trim(); // 2 or more spaces will be replaced by one space, then leading and ending spaces will be removed
 		}
@@ -600,96 +641,75 @@ class ScrollPane_FinalFile extends JScrollPane {
 		}
 	}
 	
+
 	private void get_data_type_multiple_lines(String[] lines) {		// Information of a Fire is in 15 lines
-		textarea.append(date + "\n");
-		textarea.append(national_prepareness_level + "\n");
-		textarea.append(initial_attack_activity + "\n");
-		textarea.append(initial_attack_activity_number + "\n");
-		textarea.append(new_large_incidents + "\n");
-		textarea.append(large_fires_contained + "\n");
-		textarea.append(uncontained_large_fires + "\n");
-		textarea.append(area_command_teams_committed + "\n");
-		textarea.append(NIMOs_committed + "\n");
-		textarea.append(type_1_IMTs_committed + "\n");
-		textarea.append(type_2_IMTs_committed + "\n");
-		textarea.append("--------------------------------------------------------------------" + "\n");
-		
 		// Loop all lines
-		List<String> current_area = null;
+		String current_area = "";
 		int count = 0;
 		for (int i = 0; i < lines.length; i++) {
-			if (lines[i].startsWith("Alaska")) {
-				current_area = new ArrayList<>(AICC);
-			} else if (lines[i].startsWith("Eastern")) {
-				current_area = new ArrayList<>(EACC);
-			} else if (lines[i].startsWith("Great Basin")) {
-				current_area = new ArrayList<>(GBCC);
-			} else if (lines[i].startsWith("Northern California")) {
-				current_area = new ArrayList<>(ONCC);
-			} else if (lines[i].startsWith("Northern Rockies")) {
-				current_area = new ArrayList<>(NRCC);
-			} else if (lines[i].startsWith("Northwest")) {
-				current_area = new ArrayList<>(NWCC);
-			} else if (lines[i].startsWith("Rocky Mountain")) {
-				current_area = new ArrayList<>(RMCC);
-			} else if (lines[i].startsWith("Southern Area")) {
-				current_area = new ArrayList<>(SACC);
-			} else if (lines[i].startsWith("Southern California")) {
-				current_area = new ArrayList<>(OSCC);
-			} else if (lines[i].startsWith("Southwest")) {
-				current_area = new ArrayList<>(SWCC);
+			if (lines[i].contains("(PL")) {
+				if (lines[i].startsWith("Alaska")) {
+					current_area = "AICC";
+				} else if (lines[i].startsWith("Eastern")) {
+					current_area = "EACC";
+				} else if (lines[i].startsWith("Great Basin")) {
+					current_area = "GBCC";
+				} else if (lines[i].startsWith("Northern California")) {
+					current_area = "ONCC";
+				} else if (lines[i].startsWith("Northern Rockies")) {
+					current_area = "NRCC";
+				} else if (lines[i].startsWith("Northwest")) {
+					current_area = "NWCC";
+				} else if (lines[i].startsWith("Rocky Mountain")) {
+					current_area = "RMCC";
+				} else if (lines[i].startsWith("Southern Area")) {
+					current_area = "SACC";
+				} else if (lines[i].startsWith("Southern California")) {
+					current_area = "OSCC";
+				} else if (lines[i].startsWith("Southwest")) {
+					current_area = "SWCC";
+				}
 			}
 			
 			if (lines[i].isEmpty() && count == 15 && lines[i - 14].toUpperCase().equals(lines[i - 14]) && lines[i - 14].contains("-")) {		// this is likely a fire, smart check based on the "unit" column
-				String this_fire = String.join("\t", date, lines[i - 15], lines[i - 14], lines[i - 13], lines[i - 12], lines[i - 11],
+				String priority = String.valueOf(area_fires(current_area).size() + 1);
+				String this_fire = String.join("\t", date, current_area, priority, lines[i - 15], lines[i - 14], lines[i - 13], lines[i - 12], lines[i - 11],
 														lines[i - 10], lines[i - 9], lines[i - 8], lines[i - 7], lines[i - 6],
 														lines[i - 5], lines[i - 4], lines[i - 3], lines[i - 2], lines[i - 1]);
-				current_area.add(this_fire);
-				textarea.append(current_area.get(current_area.size() - 1) + "\n");
+				all_fires.add(this_fire);
+				area_fires(current_area).add(this_fire);
 			}
 			count = (lines[i].isEmpty()) ? 0 : (count + 1);	// increase count by 1 if not empty line
 		}
 	}
 	
-	private void get_data_type_single_line(String[] lines) {		// Information of a Fire is in one line
-		// Note: there is a special case: 20180803 at page 10 where the table without header if expanding 2 pages 
-		textarea.append(date + "\n");
-		textarea.append(national_prepareness_level + "\n");
-		textarea.append(initial_attack_activity + "\n");
-		textarea.append(initial_attack_activity_number + "\n");
-		textarea.append(new_large_incidents + "\n");
-		textarea.append(large_fires_contained + "\n");
-		textarea.append(uncontained_large_fires + "\n");
-		textarea.append(area_command_teams_committed + "\n");
-		textarea.append(NIMOs_committed + "\n");
-		textarea.append(type_1_IMTs_committed + "\n");
-		textarea.append(type_2_IMTs_committed + "\n");
-		textarea.append("--------------------------------------------------------------------" + "\n");
-		
+	private void get_data_type_single_line(String[] lines) {		// Information of a Fire is in one line		(Note: a special case: 20180803 at page 10 where the table without header if expanding 2 pages) 
 		// Loop all lines
-		List<String> current_area = null;
+		String current_area = "";
 		int count = 0;
 		do {
-			if (lines[count].startsWith("Alaska")) {
-				current_area = new ArrayList<>(AICC);
-			} else if (lines[count].startsWith("Eastern")) {
-				current_area = new ArrayList<>(EACC);
-			} else if (lines[count].startsWith("Great Basin")) {
-				current_area = new ArrayList<>(GBCC);
-			} else if (lines[count].startsWith("Northern California")) {
-				current_area = new ArrayList<>(ONCC);
-			} else if (lines[count].startsWith("Northern Rockies")) {
-				current_area = new ArrayList<>(NRCC);
-			} else if (lines[count].startsWith("Northwest")) {
-				current_area = new ArrayList<>(NWCC);
-			} else if (lines[count].startsWith("Rocky Mountain")) {
-				current_area = new ArrayList<>(RMCC);
-			} else if (lines[count].startsWith("Southern Area")) {
-				current_area = new ArrayList<>(SACC);
-			} else if (lines[count].startsWith("Southern California")) {
-				current_area = new ArrayList<>(OSCC);
-			} else if (lines[count].startsWith("Southwest")) {
-				current_area = new ArrayList<>(SWCC);
+			if (lines[count].contains("(PL")) {
+				if (lines[count].startsWith("Alaska")) {
+					current_area = "AICC";
+				} else if (lines[count].startsWith("Eastern")) {
+					current_area = "EACC";
+				} else if (lines[count].startsWith("Great Basin")) {
+					current_area = "GBCC";
+				} else if (lines[count].startsWith("Northern California")) {
+					current_area = "ONCC";
+				} else if (lines[count].startsWith("Northern Rockies")) {
+					current_area = "NRCC";
+				} else if (lines[count].startsWith("Northwest")) {
+					current_area = "NWCC";
+				} else if (lines[count].startsWith("Rocky Mountain")) {
+					current_area = "RMCC";
+				} else if (lines[count].startsWith("Southern Area")) {
+					current_area = "SACC";
+				} else if (lines[count].startsWith("Southern California")) {
+					current_area = "OSCC";
+				} else if (lines[count].startsWith("Southwest")) {
+					current_area = "SWCC";
+				}
 			}
 			
 			String[] line_split = lines[count].split(" ");
@@ -698,7 +718,8 @@ class ScrollPane_FinalFile extends JScrollPane {
 			if (line_length >= 15 && line_split[line_length - 14].toUpperCase().equals(line_split[line_length - 14]) && line_split[line_length - 14].contains("-")) {		// this is likely a fire, smart check based on the "unit" column
 				unit_id = line_split.length - 14;
 				
-				String this_fire = date;
+				String priority = String.valueOf(area_fires(current_area).size() + 1);
+				String this_fire = String.join("\t", date, current_area, priority);
 				// this is the incident name, join by space
 				for (int id = 0; id < unit_id; id++) {
 					this_fire = String.join(" ", this_fire, line_split[id]);
@@ -707,9 +728,8 @@ class ScrollPane_FinalFile extends JScrollPane {
 				for (int id = unit_id; id < line_split.length; id++) {
 					this_fire = String.join("\t", this_fire, line_split[id]);
 				}
-
-				current_area.add(this_fire);
-				textarea.append(current_area.get(current_area.size() - 1) + "\n");
+				all_fires.add(this_fire);
+				area_fires(current_area).add(this_fire);
 			}
 			count = count + 1;
 		} while (count < lines.length);

@@ -19,7 +19,7 @@ public class IMSRmain extends JFrame {
 	private static IMSRMenuBar 			menuBar;
 	private JMenu 						menuUtility, menuHelp;
 	private JMenuItem					extract, explore; 	// For menuUtility
-	private JMenuItem 					content, update, contact, about; 	// For menuHelp
+	private JMenuItem 					content, update, about; 	// For menuHelp
 	private static IMSRDesktopPane 		desktopPane;
 	private static IMSRContentPane 		contentPane;
 	private static IMSRmain 			main;
@@ -47,7 +47,6 @@ public class IMSRmain extends JFrame {
 				extract = new JMenuItem("Extract");
 				content = new JMenuItem("Content");
 				update = new JMenuItem("Update");
-				contact = new JMenuItem("Contact");
 				about = new JMenuItem("About");
 				
 				// Add components: Menubar, Menus, MenuItems----------------------------------
@@ -55,7 +54,6 @@ public class IMSRmain extends JFrame {
 				menuUtility.add(extract);				
 				menuHelp.add(content);
 				menuHelp.add(update);
-				menuHelp.add(contact);
 				menuHelp.add(about);
 
 				menuBar.add(menuUtility);

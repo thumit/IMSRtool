@@ -11,13 +11,8 @@ import convenience_classes.FilesChooser;
 
 
 public class Utility {
-	private String fileDelimited;
-	
-	
-	public void explore_files () {
-		// Open File chooser
-		File[] files = FilesChooser.chosenFiles(); 
-		
+	public File[] choose_files() {
+		File[] files = FilesChooser.chosenFiles(); // Open File chooser
 		if (files!= null) {
 			// Loop through all files to get extension, match extension with delimited
 			List<String> extentionList = new ArrayList<String>();	//A list contain all extension that have its delimited identified							
@@ -27,7 +22,7 @@ public class Utility {
 				if (files[i].isFile()) {
 					File currentfile = files[i];
 					String extension = "";
-					fileDelimited = "";
+					String fileDelimited = "";
 					int j = currentfile.getName().lastIndexOf('.');
 					if (j > 0) {
 						extension = currentfile.getName().substring(j + 1);
@@ -73,9 +68,16 @@ public class Utility {
 //						System.err.println(e.getClass().getName() + ": " + e.getMessage());
 //					}
 					
-					new OptionPane_Explore(currentfile);
 				}
 			}
+		}
+		return files;
+	}
+	
+	public void explore_files () {
+		File[] files = choose_files();
+		for (int i = 0; i < files.length; i++) {
+			new OptionPane_Explore(files[i]);
 		}
 	}
 }
