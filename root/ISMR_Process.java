@@ -37,7 +37,7 @@ public class ISMR_Process {
 	List<String> SACC = new ArrayList<String>();	// Southern Area
 	List<String> OSCC = new ArrayList<String>();	// Southern California
 	List<String> SWCC = new ArrayList<String>();	// Southwest
-	
+
 	public ISMR_Process(File file) {
 		try {
 			// Read all lines to list and array
@@ -67,7 +67,6 @@ public class ISMR_Process {
 			System.err.println(e.getClass().getName() + ": " + e.getMessage());
 		}
 	}
-	
 	
 	private List<String> area_fires(String area_name) {
 		if (area_name.equals("AICC")) {

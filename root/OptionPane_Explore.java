@@ -52,7 +52,16 @@ public class OptionPane_Explore extends JOptionPane {
 
 class Aggregate_Scroll extends JScrollPane {
 	public Aggregate_Scroll(File[] file) {		
+		String[] header1 = new String[] { "date", "national_prepareness_level", "initial_attack_activity",
+				"initial_attack_activity_number", "new_large_incidents", "large_fires_contained",
+				"uncontained_large_fires", "area_command_teams_committed", "NIMOs_committed", "type_1_IMTs_committed",
+				"type_2_IMTs_committed" };
+		String[] header2 = new String[] { "date", "gacc", "priority", "incident_name", "unit", "size_acres",
+				"size_chge", "percentage", "ctn_comp", "est", "personnel_total", "personnel_chge", "resources_crw",
+				"resources_eng", "resources_heli", "strc_lost", "ctd", "origin_own" };
+		
 		TextAreaReadMe textarea = new TextAreaReadMe("icon_tree.png", 75, 75);	// Print to text area
+		textarea.append(String.join("\t", header1)  + "\n");
 		for (File f : file) {
 			ISMR_Process ismr = new ISMR_Process(f);
 			textarea.append(String.join("\t", ismr.national_fire_activity)  + "\n");
@@ -60,6 +69,7 @@ class Aggregate_Scroll extends JScrollPane {
 		textarea.append("--------------------------------------------------------------------" + "\n");
 		textarea.append("--------------------------------------------------------------------" + "\n");
 		textarea.append("--------------------------------------------------------------------" + "\n");
+		textarea.append(String.join("\t", header2)  + "\n");
 		for (File f : file) {
 			ISMR_Process ismr = new ISMR_Process(f);
 			for (String fire : ismr.all_fires) {
@@ -207,6 +217,14 @@ class ScrollPane_TrimFile extends JScrollPane {
 
 class ScrollPane_FinalFile extends JScrollPane {
 	public ScrollPane_FinalFile(File file) {
+		String[] header1 = new String[] { "date", "national_prepareness_level", "initial_attack_activity",
+				"initial_attack_activity_number", "new_large_incidents", "large_fires_contained",
+				"uncontained_large_fires", "area_command_teams_committed", "NIMOs_committed", "type_1_IMTs_committed",
+				"type_2_IMTs_committed" };
+		String[] header2 = new String[] { "date", "gacc", "priority", "incident_name", "unit", "size_acres",
+				"size_chge", "percentage", "ctn_comp", "est", "personnel_total", "personnel_chge", "resources_crw",
+				"resources_eng", "resources_heli", "strc_lost", "ctd", "origin_own" };
+		
 		TextAreaReadMe textarea = new TextAreaReadMe("icon_tree.png", 75, 75);	// Print to text area
 		ISMR_Process ismr = new ISMR_Process(file);
 		textarea.append(ismr.date + "\n");
@@ -221,6 +239,7 @@ class ScrollPane_FinalFile extends JScrollPane {
 		textarea.append(ismr.type_1_IMTs_committed + "\n");
 		textarea.append(ismr.type_2_IMTs_committed + "\n");
 		textarea.append("--------------------------------------------------------------------" + "\n");
+		textarea.append(String.join("\t", header2)  + "\n");
 		for (String fire : ismr.all_fires) {
 			textarea.append(fire + "\n");
 		}
