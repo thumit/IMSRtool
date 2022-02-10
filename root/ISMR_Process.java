@@ -10,7 +10,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import convenience_classes.SubstringBetween;
-import convenience_classes.TextAreaReadMe;
 
 public class ISMR_Process {
 	String date;
@@ -40,14 +39,11 @@ public class ISMR_Process {
 
 	public ISMR_Process(File file) {
 		try {
-			// Read all lines to list and array
 //			List<String> lines_list = Files.readAllLines(Paths.get(file.getAbsolutePath()), StandardCharsets.UTF_8);		// Not sure why this UTF_8 fail
 			List<String> lines_list = Files.readAllLines(Paths.get(file.getAbsolutePath()), Charset.defaultCharset());		// Therefore I use default
 			String[] lines = lines_list.stream().toArray(String[] ::new);
 			date = file.getName().substring(0, 8);
 			process_data_method_1(lines);
-//			process_data_method_2(lines, textarea);
-		
 			national_fire_activity.add(date);
 			national_fire_activity.add(national_prepareness_level);
 			national_fire_activity.add(initial_attack_activity);
@@ -59,7 +55,6 @@ public class ISMR_Process {
 			national_fire_activity.add(NIMOs_committed);
 			national_fire_activity.add(type_1_IMTs_committed);
 			national_fire_activity.add(type_2_IMTs_committed);
-			
 			lines_list = null; 	// free memory
 			lines = null;		// free memory
 		} catch (IOException e) {
@@ -108,35 +103,39 @@ public class ISMR_Process {
 		}
 		String[] merge_lines = Arrays.copyOfRange(lines, 0, mergeCount + 1);
 		String mstr = String.join(" ", merge_lines).toLowerCase().trim();
-		
 		SubstringBetween sb = new SubstringBetween();
-		String temp = sb.substringBetween(mstr, "national preparedness level", "national fire activity"); 
+		
+		String st = "national preparedness level";
+		String temp = sb.substringBetween(mstr, st, get_next_term(mstr, st)); 
 		if (temp != null) national_prepareness_level = (temp.substring(temp.indexOf(" ") + 1)).trim();	// remove all characters (such as :) before the first space and then trim
-		temp = sb.substringBetween(mstr, "initial attack activity", "new large incidents"); 
-		if (temp == null) temp = sb.substringBetween(mstr, "initial activity", "new large incidents"); 
-		temp = (temp.substring(temp.indexOf(" ") + 1)).trim();	// remove all characters (such as :) before the first space and then trim
-		if (temp.matches("-?(0|[1-9]\\d*)")) {		// this special case happens in several instance	i.e. 20180813, 20170331			use Regex to check if this is just a number
-			initial_attack_activity_number = temp;
-			int num = Integer.valueOf(temp);
-			if (num <= 199) {
-				initial_attack_activity = "Light";
-			} else if (num >= 200 && num <= 299) {
-				initial_attack_activity = "Moderate";
-			} else if (num >= 300) {
-				initial_attack_activity = "Heavy";
-			}
-		} else {
-			initial_attack_activity = temp.split(" ")[0].toUpperCase();
-			if (initial_attack_activity.length() > 1) initial_attack_activity = initial_attack_activity.substring(0, 1) + initial_attack_activity.substring(1).toLowerCase();
-			if (initial_attack_activity.contains("(")) initial_attack_activity = initial_attack_activity.substring(0, initial_attack_activity.indexOf("(")); // special case: 20170620
-			if (temp.split(" ").length > 1) {
-				initial_attack_activity_number = (temp.substring(temp.lastIndexOf("(") + 1, temp.lastIndexOf(")")).replaceAll("new", "").replaceAll("fire", "").replaceAll("s", "")).trim();		// i.e. 20180915 is a special case
+		st = "initial attack activity";				// Note a special case 20170629:   Light (169) --> stupid reversed information
+		temp = sb.substringBetween(mstr, st, get_next_term(mstr, st));
+		if (temp == null) {
+			st = "initial activity";	// i.e. 20170712 to 18
+			temp = sb.substringBetween(mstr, st, get_next_term(mstr, st));
+		}
+		if (temp != null) {
+			temp = (temp.substring(temp.indexOf(" ") + 1)).trim();	// remove all characters (such as :) before the first space and then trim
+			if (temp.matches("-?(0|[1-9]\\d*)")) {		// this special case happens in several instance	i.e. 20180813, 20170331			use Regex to check if this is just a number
+				initial_attack_activity_number = temp;
+				int num = Integer.valueOf(temp);
+				if (num <= 199) {
+					initial_attack_activity = "Light";
+				} else if (num >= 200 && num <= 299) {
+					initial_attack_activity = "Moderate";
+				} else if (num >= 300) {
+					initial_attack_activity = "Heavy";
+				}
 			} else {
-				initial_attack_activity_number = "";
+				initial_attack_activity = temp.split(" ")[0].toUpperCase();
+				if (initial_attack_activity.length() > 1) initial_attack_activity = initial_attack_activity.substring(0, 1) + initial_attack_activity.substring(1).toLowerCase();
+				if (initial_attack_activity.contains("(")) initial_attack_activity = initial_attack_activity.substring(0, initial_attack_activity.indexOf("(")); // special case: 20170620
+				if (temp.split(" ").length > 1) {
+					initial_attack_activity_number = (temp.substring(temp.lastIndexOf("(") + 1, temp.lastIndexOf(")")).replaceAll("new", "").replaceAll("fire", "").replaceAll("s", "")).trim();		// i.e. 20180915 is a special case
+				}
 			}
 		}
 		
-//		initial_attack_activity = initial_attack_activity.substring(0, 1).toUpperCase() + initial_attack_activity.substring(1);
 //		temp = (mstr.substring(mstr.indexOf("new large incidents") + 20)).trim();
 //		if (temp != null) new_large_incidents = temp.split(" ")[0];
 //		temp = (mstr.substring(mstr.indexOf("large fires contained") + 22)).trim();
@@ -152,20 +151,28 @@ public class ISMR_Process {
 //		temp = (mstr.substring(mstr.indexOf("type 2 imts committed") + 22)).trim();
 //		if (temp != null) type_2_IMTs_committed = temp.split(" ")[0];
 		
-		temp = sb.substringBetween(mstr, "new large incidents", "large fires contained"); 
+		st = "new large incidents";
+		temp = sb.substringBetween(mstr, st, get_next_term(mstr, st)); 
 		if (temp != null) new_large_incidents = (temp.substring(temp.indexOf(" ") + 1)).trim();
-		temp = sb.substringBetween(mstr, "large fires contained", "uncontained large fires");
+		st = "large fires contained";
+		temp = sb.substringBetween(mstr, st, get_next_term(mstr, st)); 
 		if (temp != null) large_fires_contained = (temp.substring(temp.indexOf(" ") + 1)).trim();
-		temp = sb.substringBetween(mstr, "uncontained large fires", "area command teams committed");		// fail because of null 	i.e. 20170922	(area command teams committed does not exist)
+		st = "uncontained large fires";
+		temp = sb.substringBetween(mstr, st, get_next_term(mstr, st));  		// fail because of null 	i.e. 20170922	(area command teams committed does not exist)
 		if (temp != null) uncontained_large_fires = (temp.substring(temp.indexOf(" ") + 1)).trim();
-		temp = sb.substringBetween(mstr, "area command teams committed", "nimos committed");
+		st = "area command teams committed";
+		temp = sb.substringBetween(mstr, st, get_next_term(mstr, st)); 
 		if (temp != null) area_command_teams_committed = (temp.substring(temp.indexOf(" ") + 1)).trim();
-		temp = sb.substringBetween(mstr, "nimos committed", "type 1 imts committed");
+		st = "nimos committed";
+		temp = sb.substringBetween(mstr, st, get_next_term(mstr, st)); 
 		if (temp != null) NIMOs_committed = (temp.substring(temp.indexOf(" ") + 1)).trim();
-		temp = sb.substringBetween(mstr, "type 1 imts committed", "type 2 imts committed");
+		st = "type 1 imts committed";
+		temp = sb.substringBetween(mstr, st, get_next_term(mstr, st)); 
 		if (temp != null) type_1_IMTs_committed = (temp.substring(temp.indexOf(" ") + 1)).trim();
-		temp = (mstr.substring(mstr.indexOf("type 2 imts committed") + 22)).trim();
+		st = "type 2 imts committed";
+		temp = (mstr.substring(mstr.indexOf(st) + 22)).trim();
 		if (temp != null) type_2_IMTs_committed = temp.split(" ")[0];
+		
 		
 		// Check either of the 2 lines right after "Active Incident Resource Summary" to see if information of each fire will be in a single line (i.e. 20180803) or multiple lines
 		int lineCount = 0;
@@ -175,15 +182,27 @@ public class ISMR_Process {
 			}
 		}
 		if (lines[lineCount].split(" ").length > 1 || lines[lineCount + 1].split(" ").length > 1) {	// either line will have at least 2 words
-			get_data_type_single_line(lines);
+			get_fire_infor_from_single_line(lines);
 		} else {	// both lines have 1 or 0 word
-			get_data_type_multiple_lines(lines);
+			get_fire_infor_from_multiple_lines(lines);
 		}
 
 		// IMPORTANT NOTE NOTE NOTE: 20190902-03-04 ... adobe acrobat failed to convert tables (tables are not recognized and not included in text files)
 	}
+	
+	private String get_next_term(String mstr, String st) {
+		String temp = (mstr.substring(mstr.indexOf(st) + 1)).trim(); // remove 1 leading character then use it to find next term
+		String[] term = new String[] { "national prepareness level", "national fire activity",
+				"initial attack activity", "new large incidents", "large fires contained", "uncontained large fires",
+				"area command teams committed", "nimos committed", "type 1 imts committed", "type 2 imts committed" };
+		for (int i = 0; i < term.length; i++) {
+			if (temp.indexOf(term[i]) > -1)
+				return term[i];
+		}
+		return null; // should never happen
+	}
 
-	private void get_data_type_multiple_lines(String[] lines) {		// Information of a Fire is in 15 lines
+	private void get_fire_infor_from_multiple_lines(String[] lines) {		// Information of a Fire is in 15 lines
 		// Loop all lines
 		String current_area = "";
 		int gacc_priority = 0;
@@ -235,7 +254,7 @@ public class ISMR_Process {
 		}
 	}
 	
-	private void get_data_type_single_line(String[] lines) {		// Information of a Fire is in one line		(Note: a special case: 20180803 at page 10 where the table without header if expanding 2 pages) 
+	private void get_fire_infor_from_single_line(String[] lines) {		// Information of a Fire is in one line		(Note: a special case: 20180803 at page 10 where the table without header if expanding 2 pages) 
 		// Loop all lines
 		String current_area = "";
 		int gacc_priority = 0;
