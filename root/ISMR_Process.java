@@ -108,7 +108,7 @@ public class ISMR_Process {
 		String st = "national preparedness level";
 		String temp = sb.substringBetween(mstr, st, get_next_term(mstr, st)); 
 		if (temp != null) national_prepareness_level = (temp.substring(temp.indexOf(" ") + 1)).trim();	// remove all characters (such as :) before the first space and then trim
-		st = "initial attack activity";				// Note a special case 20170629:   Light (169) --> stupid reversed information
+		st = "initial attack activity";
 		temp = sb.substringBetween(mstr, st, get_next_term(mstr, st));
 		if (temp == null) {
 			st = "initial activity";	// i.e. 20170712 to 18
@@ -133,6 +133,16 @@ public class ISMR_Process {
 				if (temp.split(" ").length > 1) {
 					initial_attack_activity_number = (temp.substring(temp.lastIndexOf("(") + 1, temp.lastIndexOf(")")).replaceAll("new", "").replaceAll("fire", "").replaceAll("s", "")).trim();		// i.e. 20180915 is a special case
 				}
+			}
+		}
+		// Fix a special case 20170629: Light (169) --> stupid reversed information that needs to be switch
+		if (initial_attack_activity.matches("-?(0|[1-9]\\d*)") && !initial_attack_activity_number.matches("-?(0|[1-9]\\d*)")) {
+			temp = initial_attack_activity;
+			initial_attack_activity = initial_attack_activity_number;
+			initial_attack_activity_number = temp;
+			if (initial_attack_activity != null && initial_attack_activity.length() > 1) {
+				initial_attack_activity = initial_attack_activity.split(" ")[0].toUpperCase();
+				initial_attack_activity = initial_attack_activity.substring(0, 1) + initial_attack_activity.substring(1).toLowerCase();
 			}
 		}
 		
