@@ -106,13 +106,13 @@ public class ISMR_Process {
 		SubstringBetween sb = new SubstringBetween();
 		
 		String st = "national preparedness level";
-		String temp = sb.substringBetween(mstr, st, get_next_term(mstr, st)); 
+		String temp = sb.substringBetween(mstr, st, get_national_next_term(mstr, st)); 
 		if (temp != null) national_prepareness_level = (temp.substring(temp.indexOf(" ") + 1)).trim();	// remove all characters (such as :) before the first space and then trim
 		st = "initial attack activity";
-		temp = sb.substringBetween(mstr, st, get_next_term(mstr, st));
+		temp = sb.substringBetween(mstr, st, get_national_next_term(mstr, st));
 		if (temp == null) {
 			st = "initial activity";	// i.e. 20170712 to 18
-			temp = sb.substringBetween(mstr, st, get_next_term(mstr, st));
+			temp = sb.substringBetween(mstr, st, get_national_next_term(mstr, st));
 		}
 		if (temp != null) {
 			temp = (temp.substring(temp.indexOf(" ") + 1)).trim();	// remove all characters (such as :) before the first space and then trim
@@ -162,22 +162,22 @@ public class ISMR_Process {
 //		if (temp != null) type_2_IMTs_committed = temp.split(" ")[0];
 		
 		st = "new large incidents";
-		temp = sb.substringBetween(mstr, st, get_next_term(mstr, st)); 
+		temp = sb.substringBetween(mstr, st, get_national_next_term(mstr, st)); 
 		if (temp != null) new_large_incidents = (temp.substring(temp.indexOf(" ") + 1)).trim();
 		st = "large fires contained";
-		temp = sb.substringBetween(mstr, st, get_next_term(mstr, st)); 
+		temp = sb.substringBetween(mstr, st, get_national_next_term(mstr, st)); 
 		if (temp != null) large_fires_contained = (temp.substring(temp.indexOf(" ") + 1)).trim();
 		st = "uncontained large fires";
-		temp = sb.substringBetween(mstr, st, get_next_term(mstr, st));  		// fail because of null 	i.e. 20170922	(area command teams committed does not exist)
+		temp = sb.substringBetween(mstr, st, get_national_next_term(mstr, st));  		// fail because of null 	i.e. 20170922	(area command teams committed does not exist)
 		if (temp != null) uncontained_large_fires = (temp.substring(temp.indexOf(" ") + 1)).trim();
 		st = "area command teams committed";
-		temp = sb.substringBetween(mstr, st, get_next_term(mstr, st)); 
+		temp = sb.substringBetween(mstr, st, get_national_next_term(mstr, st)); 
 		if (temp != null) area_command_teams_committed = (temp.substring(temp.indexOf(" ") + 1)).trim();
 		st = "nimos committed";
-		temp = sb.substringBetween(mstr, st, get_next_term(mstr, st)); 
+		temp = sb.substringBetween(mstr, st, get_national_next_term(mstr, st)); 
 		if (temp != null) NIMOs_committed = (temp.substring(temp.indexOf(" ") + 1)).trim();
 		st = "type 1 imts committed";
-		temp = sb.substringBetween(mstr, st, get_next_term(mstr, st)); 
+		temp = sb.substringBetween(mstr, st, get_national_next_term(mstr, st)); 
 		if (temp != null) type_1_IMTs_committed = (temp.substring(temp.indexOf(" ") + 1)).trim();
 		st = "type 2 imts committed";
 		temp = (mstr.substring(mstr.indexOf(st) + 22)).trim();
@@ -200,10 +200,21 @@ public class ISMR_Process {
 		// IMPORTANT NOTE NOTE NOTE: 20190902-03-04 ... adobe acrobat failed to convert tables (tables are not recognized and not included in text files)
 	}
 	
-	private String get_next_term(String mstr, String st) {
+	private String get_national_next_term(String mstr, String st) {
 		String temp = (mstr.substring(mstr.indexOf(st) + 1)).trim(); // remove 1 leading character then use it to find next term
 		String[] term = new String[] { "national prepareness level", "national fire activity",
 				"initial attack activity", "new large incidents", "large fires contained", "uncontained large fires",
+				"area command teams committed", "nimos committed", "type 1 imts committed", "type 2 imts committed" };
+		for (int i = 0; i < term.length; i++) {
+			if (temp.indexOf(term[i]) > -1)
+				return term[i];
+		}
+		return null; // should never happen
+	}
+	
+	private String get_area_next_term(String mstr, String st) {
+		String temp = (mstr.substring(mstr.indexOf(st) + 1)).trim(); // remove 1 leading character then use it to find next term
+		String[] term = new String[] { "new fires", "new large incidents", "uncontained large fires",
 				"area command teams committed", "nimos committed", "type 1 imts committed", "type 2 imts committed" };
 		for (int i = 0; i < term.length; i++) {
 			if (temp.indexOf(term[i]) > -1)
@@ -219,34 +230,34 @@ public class ISMR_Process {
 		int count = 0;
 		for (int i = 0; i < lines.length; i++) {
 			if (lines[i].contains("(PL")) {
-				if (lines[i].startsWith("Alaska")) {
+				if (lines[i].startsWith("Alaska Area")) {
 					current_area = "AICC";
 					gacc_priority = gacc_priority + 1;
 				} else if (lines[i].startsWith("Eastern")) {
 					current_area = "EACC";
 					gacc_priority = gacc_priority + 1;
-				} else if (lines[i].startsWith("Great Basin")) {
+				} else if (lines[i].startsWith("Great Basin Area")) {
 					current_area = "GBCC";
 					gacc_priority = gacc_priority + 1;
-				} else if (lines[i].startsWith("Northern California")) {
+				} else if (lines[i].startsWith("Northern California Area")) {
 					current_area = "ONCC";
 					gacc_priority = gacc_priority + 1;
-				} else if (lines[i].startsWith("Northern Rockies")) {
+				} else if (lines[i].startsWith("Northern Rockies Area")) {
 					current_area = "NRCC";
 					gacc_priority = gacc_priority + 1;
-				} else if (lines[i].startsWith("Northwest")) {
+				} else if (lines[i].startsWith("Northwest Area")) {
 					current_area = "NWCC";
 					gacc_priority = gacc_priority + 1;
-				} else if (lines[i].startsWith("Rocky Mountain")) {
+				} else if (lines[i].startsWith("Rocky Mountain Area")) {
 					current_area = "RMCC";
 					gacc_priority = gacc_priority + 1;
 				} else if (lines[i].startsWith("Southern Area")) {
 					current_area = "SACC";
 					gacc_priority = gacc_priority + 1;
-				} else if (lines[i].startsWith("Southern California")) {
+				} else if (lines[i].startsWith("Southern California Area")) {
 					current_area = "OSCC";
 					gacc_priority = gacc_priority + 1;
-				} else if (lines[i].startsWith("Southwest")) {
+				} else if (lines[i].startsWith("Southwest Area")) {
 					current_area = "SWCC";
 					gacc_priority = gacc_priority + 1;
 				}
@@ -268,63 +279,60 @@ public class ISMR_Process {
 		// Loop all lines
 		String current_area = "";
 		int gacc_priority = 0;
-		int count = 0;
+		int i = 0;
 		do {
-			if (lines[count].contains("(PL")) {
-				if (lines[count].startsWith("Alaska")) {
+			if (lines[i].contains("(PL")) {
+				if (lines[i].startsWith("Alaska Area")) {
 					current_area = "AICC";
 					gacc_priority = gacc_priority + 1;
-				} else if (lines[count].startsWith("Eastern")) {
+				} else if (lines[i].startsWith("Eastern")) {
 					current_area = "EACC";
 					gacc_priority = gacc_priority + 1;
-				} else if (lines[count].startsWith("Great Basin")) {
+				} else if (lines[i].startsWith("Great Basin Area")) {
 					current_area = "GBCC";
 					gacc_priority = gacc_priority + 1;
-				} else if (lines[count].startsWith("Northern California")) {
+				} else if (lines[i].startsWith("Northern California Area")) {
 					current_area = "ONCC";
 					gacc_priority = gacc_priority + 1;
-				} else if (lines[count].startsWith("Northern Rockies")) {
+				} else if (lines[i].startsWith("Northern Rockies Area")) {
 					current_area = "NRCC";
 					gacc_priority = gacc_priority + 1;
-				} else if (lines[count].startsWith("Northwest")) {
+				} else if (lines[i].startsWith("Northwest Area")) {
 					current_area = "NWCC";
 					gacc_priority = gacc_priority + 1;
-				} else if (lines[count].startsWith("Rocky Mountain")) {
+				} else if (lines[i].startsWith("Rocky Mountain Area")) {
 					current_area = "RMCC";
 					gacc_priority = gacc_priority + 1;
-				} else if (lines[count].startsWith("Southern Area")) {
+				} else if (lines[i].startsWith("Southern Area")) {
 					current_area = "SACC";
 					gacc_priority = gacc_priority + 1;
-				} else if (lines[count].startsWith("Southern California")) {
+				} else if (lines[i].startsWith("Southern California Area")) {
 					current_area = "OSCC";
 					gacc_priority = gacc_priority + 1;
-				} else if (lines[count].startsWith("Southwest")) {
+				} else if (lines[i].startsWith("Southwest Area")) {
 					current_area = "SWCC";
 					gacc_priority = gacc_priority + 1;
 				}
 			}
 			
-			String[] line_split = lines[count].split(" ");
+			String[] line_split = lines[i].split(" ");
 			int unit_id = 0;	// find the second column of the table
 			int line_length = line_split.length;
 			if (line_length >= 15 && line_split[line_length - 14].toUpperCase().equals(line_split[line_length - 14]) && line_split[line_length - 14].contains("-")) {		// this is likely a fire, smart check based on the "unit" column
 				unit_id = line_split.length - 14;
-				
 				String fire_priority = String.valueOf(area_fires(current_area).size() + 1);
 				String this_fire = String.join("\t", date, current_area, String.valueOf(gacc_priority), fire_priority);
-				// this is the incident name, join by space
 				for (int id = 0; id < unit_id; id++) {
-					this_fire = String.join(" ", this_fire, line_split[id]);
+					this_fire = String.join(" ", this_fire, line_split[id]);	// this is the incident name, join by space
 				}
-				// this is information in the whole line of this fire
 				for (int id = unit_id; id < line_split.length; id++) {
-					this_fire = String.join("\t", this_fire, line_split[id]);
+					this_fire = String.join("\t", this_fire, line_split[id]);	// this is all information in one whole line of this fire
 				}
 				all_fires.add(this_fire);
 				area_fires(current_area).add(this_fire);
 			}
-			count = count + 1;
-		} while (count < lines.length);
+			i = i + 1;
+		} while (i < lines.length);
 	}
 	
 }
