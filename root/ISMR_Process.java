@@ -118,6 +118,7 @@ public class ISMR_Process {
 					initial_attack_new_fires = (temp.substring(temp.lastIndexOf("(") + 1, temp.lastIndexOf(")")).replaceAll("new", "").replaceAll("fire", "").replaceAll("s", "")).trim();		// i.e. 20180915 is a special case
 				}
 			}
+			if (initial_attack_activity.isBlank()) initial_attack_activity = null;	// Fix when it print out just empty value
 		}
 		
 		// Fix a special case 20170629: Light (169) --> stupid reversed information that needs to be switch
