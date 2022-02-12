@@ -71,7 +71,7 @@ public class ISMR_Process {
 			if (lines[i].contains("Active Incident Resource Summary") || lines[i].contains("GACC")) {		// Special case 20200110: "Active Incident Resource Summary" is not written correctly --> Use GACC
 				for (int j = 0; j < i; j++) {
 					if (lines[j].contains("Type 2 IMTs")) {
-						mergeCount = j + 1;		// Merge up to after this line
+						mergeCount = j + 2;		// Merge up to this line		(some special case such as 20200107 is j+2, usually j+1 or j in most cases)
 					}
 				}
 			}
