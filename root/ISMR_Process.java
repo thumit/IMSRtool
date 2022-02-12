@@ -251,52 +251,64 @@ public class ISMR_Process {
 		String[] merge_lines = Arrays.copyOfRange(lines, start_line, end_line);
 		String mstr = String.join(" ", merge_lines).toLowerCase().replaceAll("\\s{2,}", " ").trim();	// 2 or more spaces will be replaced by one space, then leading and ending spaces will be removed
 		
-		int i = mstr.indexOf("new fires") + 9;
-		if (i > -1) gacc_new_fires = (mstr.substring(i + 1)).trim().split(" ")[0];
-		if (!gacc_new_fires.matches("-?(0|[1-9]\\d*)"))	gacc_new_fires = null;
-		i = mstr.indexOf("new large incidents") + 19;
-		if (i > -1) gacc_new_large_incidents = (mstr.substring(i + 1)).trim().split(" ")[0];
-		if (!gacc_new_large_incidents.matches("-?(0|[1-9]\\d*)")) gacc_new_large_incidents = null;
-		i = mstr.indexOf("uncontained large fires") + 23;
-		if (i > -1) gacc_uncontained_large_fires = (mstr.substring(i + 1)).trim().split(" ")[0];
-		if (!gacc_uncontained_large_fires.matches("-?(0|[1-9]\\d*)")) gacc_uncontained_large_fires = null;
-		i = mstr.indexOf("area command teams committed") + 28;
-		if (i > -1) gacc_area_command_teams_committed = (mstr.substring(i + 1)).trim().split(" ")[0];
-		if (!gacc_area_command_teams_committed.matches("-?(0|[1-9]\\d*)")) gacc_area_command_teams_committed = null;
-		i = mstr.indexOf("nimos committed") + 15;
-		if (i > -1) gacc_nimos_committed = (mstr.substring(i + 1)).trim().split(" ")[0];
-		if (!gacc_nimos_committed.matches("-?(0|[1-9]\\d*)")) gacc_nimos_committed = null;
-		i = mstr.indexOf("type 1 imts committed") + 21;
-		if (i > -1) gacc_type_1_imts_committed = (mstr.substring(i + 1)).trim().split(" ")[0];
-		if (!gacc_type_1_imts_committed.matches("-?(0|[1-9]\\d*)"))	gacc_type_1_imts_committed = null;
-		i = mstr.indexOf("type 2 imts committed") + 21;
-		if (i > -1) gacc_type_2_imts_committed = (mstr.substring(i + 1)).trim().split(" ")[0];
-		if (!gacc_type_2_imts_committed.matches("-?(0|[1-9]\\d*)"))	gacc_type_2_imts_committed = null;
+//		int i = mstr.indexOf("new fires") + 9;
+//		if (i > -1) gacc_new_fires = (mstr.substring(i + 1)).trim().split(" ")[0];
+//		if (!gacc_new_fires.matches("-?(0|[1-9]\\d*)"))	gacc_new_fires = null;
+//		i = mstr.indexOf("new large incidents") + 19;
+//		if (i > -1) gacc_new_large_incidents = (mstr.substring(i + 1)).trim().split(" ")[0];
+//		if (!gacc_new_large_incidents.matches("-?(0|[1-9]\\d*)")) gacc_new_large_incidents = null;
+//		i = mstr.indexOf("uncontained large fires") + 23;
+//		if (i > -1) gacc_uncontained_large_fires = (mstr.substring(i + 1)).trim().split(" ")[0];
+//		if (!gacc_uncontained_large_fires.matches("-?(0|[1-9]\\d*)")) gacc_uncontained_large_fires = null;
+//		i = mstr.indexOf("area command teams committed") + 28;
+//		if (i > -1) gacc_area_command_teams_committed = (mstr.substring(i + 1)).trim().split(" ")[0];
+//		if (!gacc_area_command_teams_committed.matches("-?(0|[1-9]\\d*)")) gacc_area_command_teams_committed = null;
+//		i = mstr.indexOf("nimos committed") + 15;
+//		if (i > -1) gacc_nimos_committed = (mstr.substring(i + 1)).trim().split(" ")[0];
+//		if (!gacc_nimos_committed.matches("-?(0|[1-9]\\d*)")) gacc_nimos_committed = null;
+//		i = mstr.indexOf("type 1 imts committed") + 21;
+//		if (i > -1) gacc_type_1_imts_committed = (mstr.substring(i + 1)).trim().split(" ")[0];
+//		if (!gacc_type_1_imts_committed.matches("-?(0|[1-9]\\d*)"))	gacc_type_1_imts_committed = null;
+//		i = mstr.indexOf("type 2 imts committed") + 21;
+//		if (i > -1) gacc_type_2_imts_committed = (mstr.substring(i + 1)).trim().split(" ")[0];
+//		if (!gacc_type_2_imts_committed.matches("-?(0|[1-9]\\d*)"))	gacc_type_2_imts_committed = null;
 		
 		String info = null;
-		if (gacc_new_fires == null || gacc_new_large_incidents == null || gacc_uncontained_large_fires == null) {	// special cases: i.e. 20180620, 20180622, 20180804, ...
-			// For example in the 20180804 text file: 2 types of writing gacc activity: single line (Northern Rockies Area) or multiple lines (Southwest Area)
-			String[] spit_st = mstr.split(" ");
-			
-		} else {	// normal cases
-			info = String.join("\t", date, current_area, String.valueOf(gacc_priority), 
-					gacc_prepareness_level, gacc_new_fires, gacc_new_large_incidents, gacc_uncontained_large_fires,
-					gacc_area_command_teams_committed, gacc_nimos_committed, gacc_type_1_imts_committed,
-					gacc_type_2_imts_committed);
-		}
-		gacc_fire_activity.add(info);
-		
-	}
-	
-//	private String get_area_next_term(String mstr, String st) {
-//		String temp = (mstr.substring(mstr.indexOf(st) + 1)).trim(); // remove 1 leading character then use it to find next term
-//		String[] term = new String[] { "new fires", "new large incidents", "uncontained large fires",
-//				"area command teams committed", "nimos committed", "type 1 imts committed", "type 2 imts committed" };
-//		for (int i = 0; i < term.length; i++) {
-//			if (temp.indexOf(term[i]) > -1)	return term[i];
+		// Match term and value (a very smart matching) that works for both normal cases and special cases (i.e. 20180620, 20180622, 20180804, ...)
+		// Example of the special case 20180804 text file: 2 types of writing gacc activity: single line (Northern Rockies Area) or multiple lines (Southwest Area)
+//		if (gacc_new_fires == null || gacc_new_large_incidents == null || gacc_uncontained_large_fires == null) {	// different recognitions of incorrect output
+			List<String> term = new ArrayList<String>();
+			if (mstr.contains("new fires")) term.add("new fires");
+			if (mstr.contains("new large incidents")) term.add("new large incidents");
+			if (mstr.contains("uncontained large fires")) term.add("uncontained large fires");
+			if (mstr.contains("area command teams committed")) term.add("area command teams committed");
+			if (mstr.contains("nimos committed")) term.add("nimos committed");
+			if (mstr.contains("type 1 imts committed") || mstr.contains("type 1 teams committed")) term.add("type 1 imts committed");		// i.e. 20180704 uses "type 1 teams committed"
+			if (mstr.contains("type 2 imts committed") || mstr.contains("type 2 teams committed")) term.add("type 2 imts committed");		// i.e. 20180704 uses "type 2 teams committed"
+			List<String> value = new ArrayList<String>();
+			String[] split_value = (mstr.replaceAll("type 1", "").replaceAll("type 2", "").replaceAll("\\s{2,}", " ")).split(" ");	// remove the number 1 and 2
+			for (String st : split_value) {
+				if (st.matches("-?(0|[1-9]\\d*)")) {	// if this is numeric
+					value.add(st);
+				}
+			}
+			// get the value associated with the term
+			for (int j = 0; j < term.size(); j++) {
+				if (term.get(j).equals("new fires")) gacc_new_fires = value.get(j);
+				if (term.get(j).equals("new large incidents")) gacc_new_large_incidents = value.get(j);
+				if (term.get(j).equals("uncontained large fires")) gacc_uncontained_large_fires = value.get(j);
+				if (term.get(j).equals("area command teams committed")) gacc_area_command_teams_committed = value.get(j);
+				if (term.get(j).equals("nimos committed")) gacc_nimos_committed = value.get(j);
+				if (term.get(j).equals("type 1 imts committed")) gacc_type_1_imts_committed = value.get(j);	
+				if (term.get(j).equals("type 2 imts committed")) gacc_type_2_imts_committed = value.get(j);
+			}
 //		}
-//		return null; // should never happen
-//	}
+		info = String.join("\t", date, current_area, String.valueOf(gacc_priority), 
+				gacc_prepareness_level, gacc_new_fires, gacc_new_large_incidents, gacc_uncontained_large_fires,
+				gacc_area_command_teams_committed, gacc_nimos_committed, gacc_type_1_imts_committed,
+				gacc_type_2_imts_committed);
+		gacc_fire_activity.add(info);
+	}
 
 	private List<String> area_fires(String area_name) {
 		if (area_name.equals("AICC")) {
