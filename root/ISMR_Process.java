@@ -68,7 +68,7 @@ public class ISMR_Process {
 		int mergeCount = 0;
 		for (int i = 0; i < lines.length; i++) {
 			lines[i] = lines[i].replaceAll("\\s{2,}", " ").trim(); // 2 or more spaces will be replaced by one space, then leading and ending spaces will be removed
-			if (lines[i].contains("Active Incident Resource Summary") || lines[i].contains("GACC")) {		// Special case 20200110: "Active Incident Resource Summary" is not written correctly
+			if (lines[i].contains("Active Incident Resource Summary") || lines[i].contains("GACC")) {		// Special case 20200110: "Active Incident Resource Summary" is not written correctly --> Use GACC
 				for (int j = 0; j < i; j++) {
 					if (lines[j].contains("Type 2 IMTs")) {
 						mergeCount = j + 1;		// Merge up to after this line
@@ -341,16 +341,28 @@ public class ISMR_Process {
 	}
 	
 	private void get_fire_data(String[] lines) {
-		// Check either of the 2 lines right after "Active Incident Resource Summary" to see if information of each fire will be in a single line (i.e. 20180803) or multiple lines
-		int lineCount = 0;
-		for (int i = 0; i < lines.length; i++) {
-			if (lines[i].contains("Active Incident Resource Summary")) {
-				lineCount = i + 1;
-			}
-		}
-		if (lines[lineCount].split(" ").length > 1 || lines[lineCount + 1].split(" ").length > 1) {	// either line will have at least 2 words
+//		// Check either of the 2 lines right after "Active Incident Resource Summary" to see if information of each fire will be in a single line (i.e. 20180803) or multiple lines
+//		int lineCount = 0;
+//		for (int i = 0; i < lines.length; i++) {
+//			if (lines[i].contains("Active Incident Resource Summary")) {
+//				lineCount = i + 1;
+//			}
+//		}
+//		if (lines[lineCount].split(" ").length > 1 || lines[lineCount + 1].split(" ").length > 1) {	// either line will have at least 2 words
+//			get_fire_infor_from_single_line(lines);
+//		} else {	// both lines have 1 or 0 word
+//			get_fire_infor_from_multiple_lines(lines);
+//		}
+		
+		// Check the first line that contains "GACC" to see if information of each fire will be in a single line (i.e. 20180803) or multiple lines
+		int gacc_line = 0;
+		do {
+			gacc_line = gacc_line + 1;
+		} while (!lines[gacc_line].contains("GACC"));
+
+		if (lines[gacc_line].split(" ").length > 1) { // this line will have at least 2 words
 			get_fire_infor_from_single_line(lines);
-		} else {	// both lines have 1 or 0 word
+		} else { // both lines have 1 or 0 word
 			get_fire_infor_from_multiple_lines(lines);
 		}
 		// IMPORTANT NOTE NOTE NOTE: 20190902-03-04 ... adobe acrobat failed to convert tables (tables are not recognized and not included in text files)
