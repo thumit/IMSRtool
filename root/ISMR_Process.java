@@ -157,7 +157,7 @@ public class ISMR_Process {
 		if (temp != null) large_fires_contained = (temp.substring(temp.indexOf(" ") + 1)).trim();
 		st = "uncontained large fires";
 		temp = sb.substringBetween(mstr, st, get_national_next_term(mstr, st));  		// fail because of null 	i.e. 20170922	(area command teams committed does not exist)
-		if (temp != null) uncontained_large_fires = (temp.substring(temp.indexOf(" ") + 1)).trim();
+		if (temp != null) uncontained_large_fires = ((temp.substring(temp.indexOf(" ") + 1))).replaceAll("\\*", "").trim();		// replace *** to handle special case 20210701-31 (that actually in ISMR2020 folder)
 		st = "area command teams committed";
 		temp = sb.substringBetween(mstr, st, get_national_next_term(mstr, st)); 
 		if (temp != null) area_command_teams_committed = (temp.substring(temp.indexOf(" ") + 1)).trim();
