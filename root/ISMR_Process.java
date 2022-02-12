@@ -112,13 +112,15 @@ public class ISMR_Process {
 		}
 		
 		// Fix a special case 20170629: Light (169) --> stupid reversed information that needs to be switch
-		if (initial_attack_activity.matches("-?(0|[1-9]\\d*)") && !initial_attack_new_fires.matches("-?(0|[1-9]\\d*)")) {
-			temp = initial_attack_activity;
-			initial_attack_activity = initial_attack_new_fires;
-			initial_attack_new_fires = temp;
-			if (initial_attack_activity != null && initial_attack_activity.length() > 1) {
-				initial_attack_activity = initial_attack_activity.split(" ")[0].toUpperCase();
-				initial_attack_activity = initial_attack_activity.substring(0, 1) + initial_attack_activity.substring(1).toLowerCase();
+		if (initial_attack_activity != null && initial_attack_new_fires != null) {
+			if (initial_attack_activity.matches("-?(0|[1-9]\\d*)") && !initial_attack_new_fires.matches("-?(0|[1-9]\\d*)")) {
+				temp = initial_attack_activity;
+				initial_attack_activity = initial_attack_new_fires;
+				initial_attack_new_fires = temp;
+				if (initial_attack_activity != null && initial_attack_activity.length() > 1) {
+					initial_attack_activity = initial_attack_activity.split(" ")[0].toUpperCase();
+					initial_attack_activity = initial_attack_activity.substring(0, 1) + initial_attack_activity.substring(1).toLowerCase();
+				}
 			}
 		}
 		
