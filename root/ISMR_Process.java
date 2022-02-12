@@ -68,7 +68,7 @@ public class ISMR_Process {
 		int mergeCount = 0;
 		for (int i = 0; i < lines.length; i++) {
 			lines[i] = lines[i].replaceAll("\\s{2,}", " ").trim(); // 2 or more spaces will be replaced by one space, then leading and ending spaces will be removed
-			if (lines[i].contains("Active Incident Resource Summary")) {
+			if (lines[i].contains("Active Incident Resource Summary") || lines[i].contains("GACC")) {		// Special case 20200110: "Active Incident Resource Summary" is not written correctly
 				for (int j = 0; j < i; j++) {
 					if (lines[j].contains("Type 2 IMTs")) {
 						mergeCount = j + 1;		// Merge up to after this line
@@ -110,6 +110,7 @@ public class ISMR_Process {
 				}
 			}
 		}
+		
 		// Fix a special case 20170629: Light (169) --> stupid reversed information that needs to be switch
 		if (initial_attack_activity.matches("-?(0|[1-9]\\d*)") && !initial_attack_new_fires.matches("-?(0|[1-9]\\d*)")) {
 			temp = initial_attack_activity;
