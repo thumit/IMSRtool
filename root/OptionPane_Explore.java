@@ -53,7 +53,7 @@ public class OptionPane_Explore extends JOptionPane {
 class Aggregate_Scroll extends JScrollPane {
 	public Aggregate_Scroll(File[] file) {		
 		String[] header1 = new String[] { "date", "national_prepareness_level", "initial_attack_activity",
-				"initial_attack_activity_number", "new_large_incidents", "large_fires_contained",
+				"initial_attack_new_fires", "new_large_incidents", "large_fires_contained",
 				"uncontained_large_fires", "area_command_teams_committed", "NIMOs_committed", "type_1_IMTs_committed",
 				"type_2_IMTs_committed" };
 		String[] header2 = new String[] { "date", "gacc", "gacc_priority", "fire_priority", "incident_name", "unit", "size_acres",
@@ -218,7 +218,7 @@ class ScrollPane_TrimFile extends JScrollPane {
 class ScrollPane_FinalFile extends JScrollPane {
 	public ScrollPane_FinalFile(File file) {
 		String[] header1 = new String[] { "date", "national_prepareness_level", "initial_attack_activity",
-				"initial_attack_activity_number", "new_large_incidents", "large_fires_contained",
+				"initial_attack_new_fires", "new_large_incidents", "large_fires_contained",
 				"uncontained_large_fires", "area_command_teams_committed", "NIMOs_committed", "type_1_IMTs_committed",
 				"type_2_IMTs_committed" };
 		String[] header2 = new String[] { "date", "gacc", "gacc_priority", "fire_priority", "incident_name", "unit", "size_acres",
@@ -230,7 +230,7 @@ class ScrollPane_FinalFile extends JScrollPane {
 		textarea.append(ismr.date + "\n");
 		textarea.append(ismr.national_prepareness_level + "\n");
 		textarea.append(ismr.initial_attack_activity + "\n");
-		textarea.append(ismr.initial_attack_activity_number + "\n");
+		textarea.append(ismr.initial_attack_new_fires + "\n");
 		textarea.append(ismr.new_large_incidents + "\n");
 		textarea.append(ismr.large_fires_contained + "\n");
 		textarea.append(ismr.uncontained_large_fires + "\n");

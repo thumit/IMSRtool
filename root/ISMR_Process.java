@@ -15,7 +15,7 @@ public class ISMR_Process {
 	String date;
 	String national_prepareness_level;
 	String initial_attack_activity;
-	String initial_attack_activity_number;
+	String initial_attack_new_fires;
 	String new_large_incidents;
 	String large_fires_contained;
 	String uncontained_large_fires;
@@ -43,18 +43,9 @@ public class ISMR_Process {
 			List<String> lines_list = Files.readAllLines(Paths.get(file.getAbsolutePath()), Charset.defaultCharset());		// Therefore I use default
 			String[] lines = lines_list.stream().toArray(String[] ::new);
 			date = file.getName().substring(0, 8);
-			process_data_method_1(lines);
-			national_fire_activity.add(date);
-			national_fire_activity.add(national_prepareness_level);
-			national_fire_activity.add(initial_attack_activity);
-			national_fire_activity.add(initial_attack_activity_number);
-			national_fire_activity.add(new_large_incidents);
-			national_fire_activity.add(large_fires_contained);
-			national_fire_activity.add(uncontained_large_fires);
-			national_fire_activity.add(area_command_teams_committed);
-			national_fire_activity.add(NIMOs_committed);
-			national_fire_activity.add(type_1_IMTs_committed);
-			national_fire_activity.add(type_2_IMTs_committed);
+			get_national_data(lines);
+			get_gacc_data(lines);
+			get_fire_data(lines);
 			lines_list = null; 	// free memory
 			lines = null;		// free memory
 		} catch (IOException e) {
@@ -89,7 +80,7 @@ public class ISMR_Process {
 		}
 	}
 	
-	private void process_data_method_1(String[] lines) {
+	private void get_national_data(String[] lines) {
 		int mergeCount = 0;
 		for (int i = 0; i < lines.length; i++) {
 			lines[i] = lines[i].replaceAll("\\s{2,}", " ").trim(); // 2 or more spaces will be replaced by one space, then leading and ending spaces will be removed
@@ -117,7 +108,7 @@ public class ISMR_Process {
 		if (temp != null) {
 			temp = (temp.substring(temp.indexOf(" ") + 1)).trim();	// remove all characters (such as :) before the first space and then trim
 			if (temp.matches("-?(0|[1-9]\\d*)")) {		// this special case happens in several instance	i.e. 20180813, 20170331			use Regex to check if this is just a number
-				initial_attack_activity_number = temp;
+				initial_attack_new_fires = temp;
 				int num = Integer.valueOf(temp);
 				if (num <= 199) {
 					initial_attack_activity = "Light";
@@ -131,15 +122,15 @@ public class ISMR_Process {
 				if (initial_attack_activity.length() > 1) initial_attack_activity = initial_attack_activity.substring(0, 1) + initial_attack_activity.substring(1).toLowerCase();
 				if (initial_attack_activity.contains("(")) initial_attack_activity = initial_attack_activity.substring(0, initial_attack_activity.indexOf("(")); // special case: 20170620
 				if (temp.split(" ").length > 1) {
-					initial_attack_activity_number = (temp.substring(temp.lastIndexOf("(") + 1, temp.lastIndexOf(")")).replaceAll("new", "").replaceAll("fire", "").replaceAll("s", "")).trim();		// i.e. 20180915 is a special case
+					initial_attack_new_fires = (temp.substring(temp.lastIndexOf("(") + 1, temp.lastIndexOf(")")).replaceAll("new", "").replaceAll("fire", "").replaceAll("s", "")).trim();		// i.e. 20180915 is a special case
 				}
 			}
 		}
 		// Fix a special case 20170629: Light (169) --> stupid reversed information that needs to be switch
-		if (initial_attack_activity.matches("-?(0|[1-9]\\d*)") && !initial_attack_activity_number.matches("-?(0|[1-9]\\d*)")) {
+		if (initial_attack_activity.matches("-?(0|[1-9]\\d*)") && !initial_attack_new_fires.matches("-?(0|[1-9]\\d*)")) {
 			temp = initial_attack_activity;
-			initial_attack_activity = initial_attack_activity_number;
-			initial_attack_activity_number = temp;
+			initial_attack_activity = initial_attack_new_fires;
+			initial_attack_new_fires = temp;
 			if (initial_attack_activity != null && initial_attack_activity.length() > 1) {
 				initial_attack_activity = initial_attack_activity.split(" ")[0].toUpperCase();
 				initial_attack_activity = initial_attack_activity.substring(0, 1) + initial_attack_activity.substring(1).toLowerCase();
@@ -180,10 +171,27 @@ public class ISMR_Process {
 		temp = sb.substringBetween(mstr, st, get_national_next_term(mstr, st)); 
 		if (temp != null) type_1_IMTs_committed = (temp.substring(temp.indexOf(" ") + 1)).trim();
 		st = "type 2 imts committed";
-		temp = (mstr.substring(mstr.indexOf(st) + 22)).trim();
+		temp = (mstr.substring(mstr.indexOf(st) + 22)).trim();		// Note: different from above, not use sub string between
 		if (temp != null) type_2_IMTs_committed = temp.split(" ")[0];
 		
+		national_fire_activity.add(date);
+		national_fire_activity.add(national_prepareness_level);
+		national_fire_activity.add(initial_attack_activity);
+		national_fire_activity.add(initial_attack_new_fires);
+		national_fire_activity.add(new_large_incidents);
+		national_fire_activity.add(large_fires_contained);
+		national_fire_activity.add(uncontained_large_fires);
+		national_fire_activity.add(area_command_teams_committed);
+		national_fire_activity.add(NIMOs_committed);
+		national_fire_activity.add(type_1_IMTs_committed);
+		national_fire_activity.add(type_2_IMTs_committed);
+	}
+	
+	private void get_gacc_data(String[] lines) {
 		
+	}
+	
+	private void get_fire_data(String[] lines) {
 		// Check either of the 2 lines right after "Active Incident Resource Summary" to see if information of each fire will be in a single line (i.e. 20180803) or multiple lines
 		int lineCount = 0;
 		for (int i = 0; i < lines.length; i++) {
@@ -196,7 +204,6 @@ public class ISMR_Process {
 		} else {	// both lines have 1 or 0 word
 			get_fire_infor_from_multiple_lines(lines);
 		}
-
 		// IMPORTANT NOTE NOTE NOTE: 20190902-03-04 ... adobe acrobat failed to convert tables (tables are not recognized and not included in text files)
 	}
 	
@@ -206,8 +213,7 @@ public class ISMR_Process {
 				"initial attack activity", "new large incidents", "large fires contained", "uncontained large fires",
 				"area command teams committed", "nimos committed", "type 1 imts committed", "type 2 imts committed" };
 		for (int i = 0; i < term.length; i++) {
-			if (temp.indexOf(term[i]) > -1)
-				return term[i];
+			if (temp.indexOf(term[i]) > -1) return term[i];
 		}
 		return null; // should never happen
 	}
@@ -217,8 +223,7 @@ public class ISMR_Process {
 		String[] term = new String[] { "new fires", "new large incidents", "uncontained large fires",
 				"area command teams committed", "nimos committed", "type 1 imts committed", "type 2 imts committed" };
 		for (int i = 0; i < term.length; i++) {
-			if (temp.indexOf(term[i]) > -1)
-				return term[i];
+			if (temp.indexOf(term[i]) > -1)	return term[i];
 		}
 		return null; // should never happen
 	}
