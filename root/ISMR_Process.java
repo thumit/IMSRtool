@@ -150,7 +150,7 @@ public class ISMR_Process {
 //		temp = (mstr.substring(mstr.indexOf("type 2 imts committed") + 22)).trim();
 //		if (temp != null) type_2_IMTs_committed = temp.split(" ")[0];
 		
-		st = "new large incidents";
+		st = "new large incidents"; if (date.startsWith("2014")) st = "new large fires";
 		temp = sb.substringBetween(mstr, st, get_national_next_term(mstr, st)); 
 		if (temp != null) new_large_incidents = (temp.substring(temp.indexOf(" ") + 1)).replaceAll("\\(\\*\\)", "").trim();		// replace (*) to handle special cases in 2015 data i.e. 20150102
 		st = "large fires contained";
@@ -197,8 +197,8 @@ public class ISMR_Process {
 		
 		String temp = (mstr.substring(mstr.indexOf(st) + 1)).trim(); // remove 1 leading character then use it to find next term
 		String[] term = new String[] { "national prepareness level", "national fire activity",
-				"initial attack activity", "new large incidents", "large fires contained", "uncontained large fires",
-				"area command teams committed", "nimos committed", "type 1 imts committed", "type 2 imts committed" };
+				"initial attack activity", "new large incidents", "new large fires", "large fires contained", "uncontained large fires",
+				"area command teams committed", "nimos committed", "type 1 imts committed", "type 2 imts committed" };		// "new large fires" is a special case used for 2014 data instead of "new large incidents"
 		int start_id = 0;
 		for (int i = 0; i < term.length; i++) {
 			if (term[i].contains(st)) {
@@ -309,6 +309,7 @@ public class ISMR_Process {
 			List<String> term = new ArrayList<String>();
 			if (mstr.contains("new fires")) term.add("new fires");
 			if (mstr.contains("new large incidents")) term.add("new large incidents");
+			if (mstr.contains("new large fires")) term.add("new large fires");	// Handle 2014 data which uses "new large fires"
 			if (mstr.contains("uncontained large fires")) term.add("uncontained large fires");
 			if (mstr.contains("area command teams committed")) term.add("area command teams committed");
 			if (mstr.contains("nimos committed")) term.add("nimos committed");
@@ -325,6 +326,7 @@ public class ISMR_Process {
 			for (int j = 0; j < term.size(); j++) {
 				if (term.get(j).equals("new fires")) gacc_new_fires = value.get(j);
 				if (term.get(j).equals("new large incidents")) gacc_new_large_incidents = value.get(j);
+				if (term.get(j).equals("new large fires")) gacc_new_large_incidents = value.get(j);		// Handle 2014 data which uses "new large fires"
 				if (term.get(j).equals("uncontained large fires")) gacc_uncontained_large_fires = value.get(j);
 				if (term.get(j).equals("area command teams committed")) gacc_area_command_teams_committed = value.get(j);
 				if (term.get(j).equals("nimos committed")) gacc_nimos_committed = value.get(j);
