@@ -92,6 +92,7 @@ public class ISMR_Process {
 		String st = "national preparedness level";
 		String temp = sb.substringBetween(mstr, st, get_national_next_term(mstr, st)); 
 		if (temp != null) national_prepareness_level = (temp.substring(temp.indexOf(" ") + 1)).trim();	// remove all characters (such as :) before the first space and then trim
+		if (temp != null) national_prepareness_level = national_prepareness_level.split(" ")[0];	// Fix the case in 2016 data i.e. 20160429,20160506, etc
 		st = "initial attack activity";
 		temp = sb.substringBetween(mstr, st, get_national_next_term(mstr, st));
 		if (temp == null) {
@@ -185,11 +186,26 @@ public class ISMR_Process {
 	}
 	
 	private String get_national_next_term(String mstr, String st) {
+//		String temp = (mstr.substring(mstr.indexOf(st) + 1)).trim(); // remove 1 leading character then use it to find next term
+//		String[] term = new String[] { "national prepareness level", "national fire activity",
+//				"initial attack activity", "new large incidents", "large fires contained", "uncontained large fires",
+//				"area command teams committed", "nimos committed", "type 1 imts committed", "type 2 imts committed" };
+//		for (int i = 0; i < term.length; i++) {
+//			if (temp.indexOf(term[i]) > -1) return term[i];
+//		}
+//		return null; // should never happen
+		
 		String temp = (mstr.substring(mstr.indexOf(st) + 1)).trim(); // remove 1 leading character then use it to find next term
 		String[] term = new String[] { "national prepareness level", "national fire activity",
 				"initial attack activity", "new large incidents", "large fires contained", "uncontained large fires",
 				"area command teams committed", "nimos committed", "type 1 imts committed", "type 2 imts committed" };
+		int start_id = 0;
 		for (int i = 0; i < term.length; i++) {
+			if (term[i].contains(st)) {
+				start_id = i + 1;
+			}
+		}
+		for (int i = start_id; i < term.length; i++) {
 			if (temp.indexOf(term[i]) > -1) return term[i];
 		}
 		return null; // should never happen
