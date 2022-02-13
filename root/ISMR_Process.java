@@ -152,7 +152,7 @@ public class ISMR_Process {
 		
 		st = "new large incidents";
 		temp = sb.substringBetween(mstr, st, get_national_next_term(mstr, st)); 
-		if (temp != null) new_large_incidents = (temp.substring(temp.indexOf(" ") + 1)).trim();
+		if (temp != null) new_large_incidents = (temp.substring(temp.indexOf(" ") + 1)).replaceAll("\\(\\*\\)", "").trim();
 		st = "large fires contained";
 		temp = sb.substringBetween(mstr, st, get_national_next_term(mstr, st)); 
 		if (temp != null) large_fires_contained = (temp.substring(temp.indexOf(" ") + 1)).trim();
