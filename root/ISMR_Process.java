@@ -339,7 +339,7 @@ public class ISMR_Process {
 				gacc_area_command_teams_committed, gacc_nimos_committed, gacc_type_1_imts_committed,
 				gacc_type_2_imts_committed);
 		gacc_fire_activity.add(info);
-		// IMPORTANT NOTE NOTE NOTE: 20180619: Rocky Mountain Area has uncontained large files but do not printed in pdf file
+		// IMPORTANT NOTE NOTE NOTE: 20180619: Rocky Mountain Area has uncontained large files but do not printed in pdf file (Erin's excel file got the right number of 4 uncontained)
 	}
 
 	private List<String> area_fires(String area_name) {

@@ -63,18 +63,20 @@ class Aggregate_Scroll extends JScrollPane {
 				"size_chge", "percentage", "ctn_comp", "est", "personnel_total", "personnel_chge", "resources_crw",
 				"resources_eng", "resources_heli", "strc_lost", "ctd", "origin_own" };
 		
+		ISMR_Process[] ismr_process = new ISMR_Process[file.length];
+		for (int i = 0; i < file.length; i++) {
+			ismr_process[i] = new ISMR_Process(file[i]);
+		}
 		TextAreaReadMe textarea = new TextAreaReadMe("icon_tree.png", 75, 75);	// Print to text area
 		textarea.append(String.join("\t", header1)  + "\n");
-		for (File f : file) {
-			ISMR_Process ismr = new ISMR_Process(f);
+		for (ISMR_Process ismr : ismr_process) {
 			textarea.append(String.join("\t", ismr.national_fire_activity)  + "\n");
 		}
 		textarea.append("--------------------------------------------------------------------" + "\n");
 		textarea.append("--------------------------------------------------------------------" + "\n");
 		textarea.append("--------------------------------------------------------------------" + "\n");
 		textarea.append(String.join("\t", header2)  + "\n");
-		for (File f : file) {
-			ISMR_Process ismr = new ISMR_Process(f);
+		for (ISMR_Process ismr : ismr_process) {
 			for (String st : ismr.gacc_fire_activity) {
 				textarea.append(st + "\n");
 			}
@@ -83,10 +85,17 @@ class Aggregate_Scroll extends JScrollPane {
 		textarea.append("--------------------------------------------------------------------" + "\n");
 		textarea.append("--------------------------------------------------------------------" + "\n");
 		textarea.append(String.join("\t", header3)  + "\n");
-		for (File f : file) {
-			ISMR_Process ismr = new ISMR_Process(f);
+		for (ISMR_Process ismr : ismr_process) {
 			for (String fire : ismr.all_fires) {
 				textarea.append(fire + "\n");
+			}
+		}
+		textarea.append("--------------------------------------------------------------------" + "\n");
+		textarea.append("--------------------------------------------------------------------" + "\n");
+		textarea.append("--------------------------------------------------------------------" + "\n");
+		for (ISMR_Process ismr : ismr_process) {
+			if (ismr.all_fires.isEmpty()) {
+				textarea.append(ismr.date + " has no fire" + "\n");
 			}
 		}
 		
