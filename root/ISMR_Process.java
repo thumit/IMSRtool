@@ -437,6 +437,7 @@ public class ISMR_Process {
 			}
 			
 			if (lines[i].isEmpty() && count == 15 && lines[i - 14].toUpperCase().equals(lines[i - 14]) && lines[i - 14].contains("-")) {		// this is likely a fire, smart check based on the "unit" column
+				lines[i - 15] = lines[i - 15].replaceAll("\\*", "").trim().toUpperCase();	// This will remove the * (if exist in the name) and change the name to capital (IMPORTANT)
 				String fire_priority = String.valueOf(area_fires(current_area).size() + 1);
 				String this_fire = String.join("\t", date, current_area, String.valueOf(gacc_priority), fire_priority, lines[i - 15], lines[i - 14], lines[i - 13], lines[i - 12], lines[i - 11],
 														lines[i - 10], lines[i - 9], lines[i - 8], lines[i - 7], lines[i - 6],
@@ -495,9 +496,12 @@ public class ISMR_Process {
 				unit_id = line_split.length - 14;
 				String fire_priority = String.valueOf(area_fires(current_area).size() + 1);
 				String this_fire = String.join("\t", date, current_area, String.valueOf(gacc_priority), fire_priority);
+				String fire_name = "";
 				for (int id = 0; id < unit_id; id++) {
-					this_fire = String.join(" ", this_fire, line_split[id]);	// this is the incident name, join by space
+					fire_name = String.join(" ", fire_name, line_split[id]);	// this is the incident name, join by space
 				}
+				fire_name = fire_name.replaceAll("\\*", "").trim().toUpperCase();	// This will remove the * (if exist in the name) and change the name to capital (IMPORTANT)
+				this_fire = String.join(" ", this_fire, fire_name);
 				for (int id = unit_id; id < line_split.length; id++) {
 					this_fire = String.join("\t", this_fire, line_split[id]);	// this is all information in one whole line of this fire
 				}
