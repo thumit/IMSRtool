@@ -52,7 +52,8 @@ public class ISMR_Process {
 //			List<String> lines_list = Files.readAllLines(Paths.get(file.getAbsolutePath()), StandardCharsets.UTF_8);		// Not sure why this UTF_8 fail
 			List<String> lines_list = Files.readAllLines(Paths.get(file.getAbsolutePath()), Charset.defaultCharset());		// Therefore I use default
 			String[] lines = lines_list.stream().toArray(String[] ::new);
-			date = file.getName().substring(0, 8);
+//			date = file.getName().substring(0, 8);
+			date = String.join("-", file.getName().substring(0, 4), file.getName().substring(4, 6), file.getName().substring(6, 8));	// use this data format yyyy-mm-dd to join easily with Ross data
 			get_national_data(lines);
 			get_area_data(lines);
 			get_fire_data(lines);
