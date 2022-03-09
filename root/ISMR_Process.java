@@ -502,7 +502,7 @@ public class ISMR_Process {
 					fire_name = String.join(" ", fire_name, line_split[id]);	// this is the incident name, join by space
 				}
 				fire_name = fire_name.replaceAll("\\*", "").trim().toUpperCase();	// This will remove the * (if exist in the name) and change the name to capital (IMPORTANT)
-				this_fire = String.join(" ", this_fire, fire_name);
+				this_fire = String.join("\t", this_fire, fire_name);
 				for (int id = unit_id; id < line_split.length; id++) {
 					this_fire = String.join("\t", this_fire, line_split[id]);	// this is all information in one whole line of this fire
 				}
