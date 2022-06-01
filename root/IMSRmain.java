@@ -18,7 +18,7 @@ public class IMSRmain extends JFrame {
 	// Define variables------------------------------------------------------------------------
 	private static IMSRMenuBar 			menuBar;
 	private JMenu 						menuUtility, menuHelp;
-	private JMenuItem					extract, explore; 	// For menuUtility
+	private JMenuItem					extract, explore, sqlserver; 	// For menuUtility
 	private JMenuItem 					content, update, about; 	// For menuHelp
 	private static IMSRDesktopPane 		desktopPane;
 	private static IMSRContentPane 		contentPane;
@@ -45,13 +45,15 @@ public class IMSRmain extends JFrame {
 				
 				explore = new JMenuItem("Explore");
 				extract = new JMenuItem("Extract");
+				sqlserver = new JMenuItem("SQLserver");
 				content = new JMenuItem("Content");
 				update = new JMenuItem("Update");
 				about = new JMenuItem("About");
 				
 				// Add components: Menubar, Menus, MenuItems----------------------------------
 				menuUtility.add(explore);
-				menuUtility.add(extract);				
+				menuUtility.add(extract);		
+				menuUtility.add(sqlserver);
 				menuHelp.add(content);
 				menuHelp.add(update);
 				menuHelp.add(about);
@@ -83,6 +85,14 @@ public class IMSRmain extends JFrame {
 				extract.setMnemonic(KeyEvent.VK_E);
 				extract.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent event) {
+					}
+				});	
+				
+				sqlserver.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_3, Toolkit.getDefaultToolkit ().getMenuShortcutKeyMask()));	// CTRL on Windows, *** on MAC-OS
+				sqlserver.setMnemonic(KeyEvent.VK_S);
+				sqlserver.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent event) {
+						SQLserver sql = new SQLserver();
 					}
 				});	
 			}
