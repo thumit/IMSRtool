@@ -32,3 +32,6 @@
 /Keyword.class
 /CardKeyword.class
 /KeywordsExtractor.class
+/DelimiterPreservingCharTokenizer.class
+/WhiteSpacePreservingTokenizer.class
+/DelimiterTrimFilter.class
