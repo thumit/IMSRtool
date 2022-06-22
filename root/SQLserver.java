@@ -60,8 +60,8 @@ public class SQLserver {
         ResultSet resultSet = null;
 		try (Connection connection = DriverManager.getConnection(conn_SIT2015); Statement statement = connection.createStatement();) {
 			// Create and execute a SELECT SQL statement.
-//			String selectSql = "SELECT [LIFE_SAFETY_HEALTH_STATUS_NARR] FROM [SIT209_HISTORY_INCIDENT_209_REPORTS]";
-			String selectSql = "SELECT [CURRENT_THREAT_12]FROM [SIT209_HISTORY_INCIDENT_209_REPORTS]";
+			String selectSql = "SELECT [LIFE_SAFETY_HEALTH_STATUS_NARR] FROM [SIT209_HISTORY_INCIDENT_209_REPORTS]";
+//			String selectSql = "SELECT [CURRENT_THREAT_12]FROM [SIT209_HISTORY_INCIDENT_209_REPORTS]";
 			resultSet = statement.executeQuery(selectSql);
 			// Print results from select statement
 //			while (resultSet.next()) {
@@ -79,21 +79,40 @@ public class SQLserver {
 			
 			try {
 				// Identify Keywords and frequency
+				int allword_frequency = 0;
+				int keyword_frequency = 0;
 				List<Keyword> kw = guessFromString(combine_st);
 				for (Keyword i : kw) {
-					if (i.getFrequency() > 100) System.out.println(i.getStem() + "\t" + i.getFrequency());
+					int freq = i.getFrequency();
+					if (freq >= 10) {
+						System.out.println(i.getStem() + "\t" + freq);
+						keyword_frequency = keyword_frequency + freq;
+					}
+					allword_frequency = allword_frequency + freq;
 				}
+				System.out.println(keyword_frequency);
+				System.out.println(allword_frequency);
+				double ratio = keyword_frequency / allword_frequency * 100;
+				System.out.println("selection vs all ratio = " + ratio + " %");
 				
 				// Search using keyword
 				int doc_ID = 0;
-				int count = 0;
+				int records_count = 0;
+				String searh_word = "evac*";
 				for (String st : row_data) {
 					if (st != null) {
 						try {
 							// Reference: https://stackoverflow.com/questions/49066168/search-a-text-string-with-a-lucene-query-in-java
 							
 							// 0. Specify the analyzer for tokenizing text. The same analyzer should be used for indexing and searching
-					        Analyzer analyzer = new ClassicAnalyzer();
+							Analyzer analyzer = new ClassicAnalyzer();
+							TokenStream tokenStream = analyzer.tokenStream(null, new StringReader(st));
+							tokenStream = new LowerCaseFilter(tokenStream);		// to lower-case
+							tokenStream = new ClassicFilter(tokenStream);		// remove dots from acronyms (and "'s" but already done manually above
+							tokenStream = new ASCIIFoldingFilter(tokenStream);	// convert any char to ASCII
+//							tokenStream = new StopFilter(tokenStream, EnglishAnalyzer.getDefaultStopSet());		// remove English stop words
+//							tokenStream = new PorterStemFilter(tokenStream);
+//							tokenStream = new SnowballFilter(tokenStream, "English");
 							
 					        // 1. create the index
 					        Directory index = new ByteBuffersDirectory();
@@ -109,7 +128,6 @@ public class SQLserver {
 					        w.close();
 
 					        // 2. query
-					        String searh_word = "fire";
 							Query query = new QueryParser("content", analyzer).parse(searh_word);
 
 					        // 3. search
@@ -128,7 +146,7 @@ public class SQLserver {
 //									Document d = searcher.doc(docId);
 //									System.out.println((i + 1) + ". " + d.get("title") + "\t" + d.get("content"));
 //								}
-								count++;
+								records_count++;
 					        }
 
 					        // 5. reader can only be closed when there is no need to access the documents any more.
@@ -138,7 +156,7 @@ public class SQLserver {
 						}
 					}
 				}
-				System.out.println("Total records that contain the word 'fire' = " + count);
+				System.out.println("Number of records that contain the word '" + searh_word + "' = " + records_count);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -252,7 +270,8 @@ public class SQLserver {
 			while (tokenStream.incrementToken()) {
 				String term = token.toString();
 //				String stem = stem(term);					// stem
-				String stem = term.replaceAll("-0", "-");	// no stem
+//				String stem = term.replaceAll("-0", "-");	// no stem
+				String stem = term;
 				if (stem != null) {
 					// create the keyword or get the existing one if any
 					Keyword keyword = find(keywords, new Keyword(stem));
