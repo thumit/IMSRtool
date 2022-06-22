@@ -14,6 +14,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -21,18 +22,35 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.lucene.analysis.ASCIIFoldingFilter;
-import org.apache.lucene.analysis.LowerCaseFilter;
-import org.apache.lucene.analysis.PorterStemFilter;
+import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.StopFilter;
 import org.apache.lucene.analysis.TokenStream;
+import org.apache.lucene.analysis.core.LowerCaseFilter;
 import org.apache.lucene.analysis.en.EnglishAnalyzer;
+import org.apache.lucene.analysis.en.PorterStemFilter;
+import org.apache.lucene.analysis.miscellaneous.ASCIIFoldingFilter;
 import org.apache.lucene.analysis.shingle.ShingleFilter;
 import org.apache.lucene.analysis.snowball.SnowballFilter;
+import org.apache.lucene.analysis.standard.ClassicAnalyzer;
 import org.apache.lucene.analysis.standard.ClassicFilter;
-import org.apache.lucene.analysis.standard.ClassicTokenizer;
+import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
-import org.apache.lucene.util.Version;
+import org.apache.lucene.document.Document;
+import org.apache.lucene.document.Field;
+import org.apache.lucene.document.StringField;
+import org.apache.lucene.document.TextField;
+import org.apache.lucene.index.DirectoryReader;
+import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.index.IndexWriterConfig;
+import org.apache.lucene.queryparser.classic.ParseException;
+import org.apache.lucene.queryparser.classic.QueryParser;
+import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.Query;
+import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.search.TopDocs;
+import org.apache.lucene.store.ByteBuffersDirectory;
+import org.apache.lucene.store.Directory;
 
 public class SQLserver {
 
@@ -42,26 +60,85 @@ public class SQLserver {
         ResultSet resultSet = null;
 		try (Connection connection = DriverManager.getConnection(conn_SIT2015); Statement statement = connection.createStatement();) {
 			// Create and execute a SELECT SQL statement.
-			String selectSql = "SELECT [LIFE_SAFETY_HEALTH_STATUS_NARR] FROM [SIT209_HISTORY_INCIDENT_209_REPORTS]";
+//			String selectSql = "SELECT [LIFE_SAFETY_HEALTH_STATUS_NARR] FROM [SIT209_HISTORY_INCIDENT_209_REPORTS]";
+			String selectSql = "SELECT [CURRENT_THREAT_12]FROM [SIT209_HISTORY_INCIDENT_209_REPORTS]";
 			resultSet = statement.executeQuery(selectSql);
 			// Print results from select statement
 //			while (resultSet.next()) {
 //				System.out.println(resultSet.getString(1));
 //			}
 			
-			
-			
 			// Apache Lucene: https://stackoverflow.com/questions/17447045/java-library-for-keywords-extraction-from-input-text
-			String st = "";
+			List<String> row_data = new ArrayList<String>();
+			String combine_st = "";
 			while (resultSet.next()) {
-				st = st + ". " + resultSet.getString(1);
+				String st = resultSet.getString(1);
+				combine_st = combine_st + ". " + st;
+				row_data.add(st);
 			}
 			
 			try {
-				List<Keyword> kw = guessFromString(st);
+				// Identify Keywords and frequency
+				List<Keyword> kw = guessFromString(combine_st);
 				for (Keyword i : kw) {
-					if (i.getFrequency() > 10) System.out.println(i.getStem() + "\t" + i.getFrequency());
+					if (i.getFrequency() > 100) System.out.println(i.getStem() + "\t" + i.getFrequency());
 				}
+				
+				// Search using keyword
+				int doc_ID = 0;
+				int count = 0;
+				for (String st : row_data) {
+					if (st != null) {
+						try {
+							// Reference: https://stackoverflow.com/questions/49066168/search-a-text-string-with-a-lucene-query-in-java
+							
+							// 0. Specify the analyzer for tokenizing text. The same analyzer should be used for indexing and searching
+					        Analyzer analyzer = new ClassicAnalyzer();
+							
+					        // 1. create the index
+					        Directory index = new ByteBuffersDirectory();
+					        IndexWriterConfig config = new IndexWriterConfig(analyzer);
+					        IndexWriter w = new IndexWriter(index, config);
+							doc_ID++;
+					        Document doc = new Document();
+					        String title = String.valueOf(doc_ID);
+					        String content = st;
+					        doc.add(new StringField("title", title, Field.Store.YES)); // adding title field
+					        doc.add(new TextField("content", content, Field.Store.YES)); // adding content field
+					        w.addDocument(doc);
+					        w.close();
+
+					        // 2. query
+					        String searh_word = "fire";
+							Query query = new QueryParser("content", analyzer).parse(searh_word);
+
+					        // 3. search
+					        int hitsPerPage = 10;
+					        IndexReader reader = DirectoryReader.open(index);
+					        IndexSearcher searcher = new IndexSearcher(reader);
+					        TopDocs docs = searcher.search(query, hitsPerPage);
+					        ScoreDoc[] hits = docs.scoreDocs;
+
+					        // 4. display results
+					        int number_of_hits = hits.length;
+					        if (number_of_hits > 0) {
+//					        	System.out.println(number_of_hits + " hits.");
+//								for (int i = 0; i < hits.length; ++i) {
+//									int docId = hits[i].doc;
+//									Document d = searcher.doc(docId);
+//									System.out.println((i + 1) + ". " + d.get("title") + "\t" + d.get("content"));
+//								}
+								count++;
+					        }
+
+					        // 5. reader can only be closed when there is no need to access the documents any more.
+					        reader.close();
+						} catch (ParseException e) {
+							e.printStackTrace();
+						}
+					}
+				}
+				System.out.println("Total records that contain the word 'fire' = " + count);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -82,7 +159,7 @@ public class SQLserver {
 		return example;
 	}
 
-
+	
 //	public static String stem(String term) throws IOException {
 //		TokenStream tokenStream = null;
 //		try {
@@ -150,16 +227,16 @@ public class SQLserver {
 //			input = input.replaceAll("(?:'(?:[tdsm]|[vr]e|ll))+\\b", "");
 			
 			// tokenize input
-			tokenStream = new ClassicTokenizer(Version.LUCENE_36, new StringReader(input));
-			tokenStream = new LowerCaseFilter(Version.LUCENE_36, tokenStream);	// to lower-case
-			tokenStream = new ClassicFilter(tokenStream);						// remove dots from acronyms (and "'s" but already done manually above
-			tokenStream = new ASCIIFoldingFilter(tokenStream);					// convert any char to ASCII
-//			tokenStream = new StopFilter(Version.LUCENE_36, tokenStream, EnglishAnalyzer.getDefaultStopSet());	// remove English stop words
+			Analyzer analyzer = new ClassicAnalyzer();
+			tokenStream = analyzer.tokenStream(null, new StringReader(input));
+			tokenStream = new LowerCaseFilter(tokenStream);		// to lower-case
+			tokenStream = new ClassicFilter(tokenStream);		// remove dots from acronyms (and "'s" but already done manually above
+			tokenStream = new ASCIIFoldingFilter(tokenStream);	// convert any char to ASCII
+//			tokenStream = new StopFilter(tokenStream, EnglishAnalyzer.getDefaultStopSet());		// remove English stop words
 //			tokenStream = new PorterStemFilter(tokenStream);
-			tokenStream = new SnowballFilter(tokenStream, "English");
+//			tokenStream = new SnowballFilter(tokenStream, "English");
 			
-			
-//			ShingleFilter sf = new ShingleFilter(tokenStream, 2);
+//			ShingleFilter sf = new ShingleFilter(tokenStream, 2, 2);
 //			// sf.setOutputUnigrams(false);
 //			tokenStream = sf;
 			
