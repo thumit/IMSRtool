@@ -1,4 +1,4 @@
-package root;
+package sql;
 
 import org.apache.lucene.analysis.CharArraySet;
 import org.apache.lucene.analysis.FilteringTokenFilter;

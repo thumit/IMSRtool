@@ -6,7 +6,7 @@
  * Important: use JDBC driver 9.4 JRE 11 because it is compatible with JDK15 
  * Important: add sqljdbc_xa.dll to the Native Location of the jar in the Build Path
  */
-package root;
+package sql;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
@@ -53,6 +54,7 @@ public class SQLserver {
 	}
 	
 	public void A2_Calculation() {
+		List<String> year = new ArrayList<String>();
 		List<String> INC209R = new ArrayList<String>();
 		List<String> row_data = new ArrayList<String>();
 		String combine_st = "";
@@ -73,7 +75,8 @@ public class SQLserver {
 					""";
 			resultSet = statement.executeQuery(selectSql);
 			while (resultSet.next()) {
-				INC209R.add(resultSet.getString(1) + "." + resultSet.getString(2));
+				year.add(resultSet.getString(1));
+				INC209R.add(resultSet.getString(2));
 				String st = resultSet.getString(3);
 				combine_st = combine_st + " " + st;
 				row_data.add(st);
@@ -129,14 +132,13 @@ public class SQLserver {
 //			String searh_word = "restrict*";
 //			String searh_word = "\"road* clos*\"~0";		// Lucene proximity search: https://lucene.apache.org/core/3_6_0/queryparsersyntax.html#Range%20Searches
 //			String searh_word = "\"no clos*\"~4 OR \"clos* none\"~4";
-//			String searh_word = "(area or road* OR highway* OR hwy OR motorway* OR route* OR trail*) AND clos* AND NOT(discontinu* OR lift* OR remove*)";		// discontinued, lifted, removed		except for, could be closed, no, none
-			String searh_word = "(area OR road* OR highway* OR hwy OR motorway* OR route* OR trail*) AND clos* AND NOT(discontinu* OR lift* OR remove*) AND NOT(\"no clos*\"~4 OR \"clos* none\"~4)";
+			// discontinued, lifted, removed, open		except for, could be closed, no, none		potential, being assessed, being signed, been reduced, being developed
+			String searh_word = "(area* OR highway* OR hwy* OR motorway* OR road* OR route* OR trail*) AND clos* AND NOT(discontinu* OR lift* OR remove* OR *open*) AND NOT(\"no clos*\"~4 OR \"clos* none\"~4)";
 			int total_rows = row_data.size();
 			for (int row = 0; row < total_rows; row++) {
 				String st = row_data.get(row);
 				if (st != null) {
 					try {
-//						st = String.join(" ", analyze(st, new SimpleAnalyzer()));	// Test, No need it
 						// Reference:
 						// https://stackoverflow.com/questions/49066168/search-a-text-string-with-a-lucene-query-in-java
 						// https://www.baeldung.com/lucene-analyzers
@@ -173,7 +175,7 @@ public class SQLserver {
 						for (int l = 0; l < line.length; l++) {
 							Document doc = new Document();
 							String content = line[l];
-							String title = String.valueOf(row + 1) + "." + INC209R.get(row) + ".Line " + String.valueOf(l + 1);
+							String title = String.valueOf(row + 1) + "." + year.get(row) + "." + INC209R.get(row) + ".Line " + String.valueOf(l + 1);
 							doc.add(new StringField("title", title, Field.Store.YES)); // adding title field
 							doc.add(new TextField("content", content, Field.Store.YES)); // adding content field
 							w.addDocument(doc);
@@ -182,7 +184,9 @@ public class SQLserver {
 
 						// 2. query
 //						Query query = new QueryParser("content", analyzer).parse(searh_word);
-						Query query = new ComplexPhraseQueryParser("content", analyzer).parse(searh_word);
+						ComplexPhraseQueryParser queryParser = new ComplexPhraseQueryParser("content", analyzer);
+						queryParser.setAllowLeadingWildcard(true);
+						Query query = queryParser.parse(searh_word);
 
 						// 3. search
 						int hitsPerPage = 10;
@@ -202,6 +206,31 @@ public class SQLserver {
 							}
 							records_hit_count++;
 						}
+						
+						// 5. calculate points
+						if (number_of_hits > 0) {
+							int max_point = 0;
+							for (int i = 0; i < hits.length; ++i) {
+								int docId = hits[i].doc;
+								Document d = searcher.doc(docId);
+								List<Keyword> kwords = guessFromString(d.get("content"));
+								if (max_point < 5) {
+//									if (find(kwords, new Keyword("area")).getFrequency() > 0) max_point = 5;
+//									else if (find(kwords, new Keyword("highway")).getFrequency() > 0) max_point = 5;
+//									else if (find(kwords, new Keyword("hwy")).getFrequency() > 0) max_point = 5;
+									if (Pattern.compile(get_Regex("area*")).matcher(d.get("content").toLowerCase()).find()) max_point = 5;	// Regex guide: https://dev.to/kooin/wildcard-type-search-in-java-pattern-3h54
+									else if (Pattern.compile(get_Regex("highway*")).matcher(d.get("content").toLowerCase()).find()) max_point = 5;
+									else if (Pattern.compile(get_Regex("hwy*")).matcher(d.get("content").toLowerCase()).find()) max_point = 5;
+									if (max_point < 3) {
+										if (Pattern.compile(get_Regex("motorway*")).matcher(d.get("content").toLowerCase()).find()) max_point = 3;
+										else if (Pattern.compile(get_Regex("road*")).matcher(d.get("content").toLowerCase()).find()) max_point = 3;
+										else if (Pattern.compile(get_Regex("route*")).matcher(d.get("content").toLowerCase()).find()) max_point = 3;
+										else if (Pattern.compile(get_Regex("trail*")).matcher(d.get("content").toLowerCase()).find()) max_point = 3;
+									}
+								}
+							}
+							System.out.println("A2 Points = " + max_point);
+						}
 
 						// 5. reader can only be closed when there is no need to access the documents
 						// any more.
@@ -216,16 +245,10 @@ public class SQLserver {
 			e.printStackTrace();
 		}
 	}
-
-	public List<String> analyze(String text, Analyzer analyzer) throws IOException{
-	    List<String> result = new ArrayList<String>();
-	    TokenStream tokenStream = analyzer.tokenStream(null, text);
-	    CharTermAttribute attr = tokenStream.addAttribute(CharTermAttribute.class);
-	    tokenStream.reset();
-	    while(tokenStream.incrementToken()) {
-	       result.add(attr.toString());
-	    }       
-	    return result;
+	
+	
+	public static String get_Regex (String input) {
+		return ("\\Q" + input + "\\E").replace("*", "\\E.*\\Q");
 	}
 	
 	public static <T> T find(Collection<T> collection, T example) {

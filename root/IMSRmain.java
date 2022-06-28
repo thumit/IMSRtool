@@ -14,6 +14,8 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 
+import sql.SQLserver;
+
 public class IMSRmain extends JFrame {
 	// Define variables------------------------------------------------------------------------
 	private static IMSRMenuBar 			menuBar;
