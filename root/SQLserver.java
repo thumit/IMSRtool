@@ -16,7 +16,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -25,13 +24,10 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.CharArraySet;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.core.LowerCaseFilter;
 import org.apache.lucene.analysis.core.SimpleAnalyzer;
 import org.apache.lucene.analysis.miscellaneous.ASCIIFoldingFilter;
-import org.apache.lucene.analysis.miscellaneous.KeepWordFilter;
-import org.apache.lucene.analysis.snowball.SnowballFilter;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -102,8 +98,10 @@ public class SQLserver {
 				// Search using keyword
 				int record_ID = 0;
 				int records_hit_count = 0;
-				String searh_word = "(road* OR highway* OR hwy OR motorway* OR route* OR trail*) AND clos* AND NOT(discontinu* OR lift* OR remove*)";		// discontinued, lifted, removed
 //				String searh_word = "\"road* clos*\"~0";		// Lucene proximity search: https://lucene.apache.org/core/3_6_0/queryparsersyntax.html#Range%20Searches
+//				String searh_word = "\"no clos*\"~4 OR \"clos* none\"~4";
+//				String searh_word = "(area or road* OR highway* OR hwy OR motorway* OR route* OR trail*) AND clos* AND NOT(discontinu* OR lift* OR remove*)";		// discontinued, lifted, removed		could be closed, no, none
+				String searh_word = "(area OR road* OR highway* OR hwy OR motorway* OR route* OR trail*) AND clos* AND NOT(discontinu* OR lift* OR remove*) AND NOT(\"no clos*\"~4 OR \"clos* none\"~4)";
 				for (String st : row_data) {
 					record_ID++;
 					if (st != null) {
@@ -141,7 +139,6 @@ public class SQLserver {
 							Directory index = new ByteBuffersDirectory();
 							IndexWriterConfig config = new IndexWriterConfig(analyzer);
 							IndexWriter w = new IndexWriter(index, config);
-							
 							String[] line = st.split("\\.");
 							for (int l = 0; l < line.length; l++) {
 								Document doc = new Document();
