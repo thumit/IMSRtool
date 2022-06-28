@@ -35,3 +35,6 @@
 /DelimiterPreservingCharTokenizer.class
 /WhiteSpacePreservingTokenizer.class
 /DelimiterTrimFilter.class
+/KeepOnlyFilter.class
+/CustomeAnalyzer.class
+/CustomAnalyzer.class

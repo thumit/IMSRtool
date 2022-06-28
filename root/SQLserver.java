@@ -16,6 +16,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -24,10 +25,13 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.CharArraySet;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.core.LowerCaseFilter;
 import org.apache.lucene.analysis.core.SimpleAnalyzer;
 import org.apache.lucene.analysis.miscellaneous.ASCIIFoldingFilter;
+import org.apache.lucene.analysis.miscellaneous.KeepWordFilter;
+import org.apache.lucene.analysis.snowball.SnowballFilter;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -49,6 +53,10 @@ import org.apache.lucene.store.Directory;
 public class SQLserver {
 
 	public SQLserver() {
+		A2_Calculation();
+	}
+	
+	public void A2_Calculation() {
 		// Connect to your database.
 		String conn_SIT2015 = "jdbc:sqlserver://localhost:1433;databaseName=SIT2015;integratedSecurity=true";
 		ResultSet resultSet = null;
@@ -69,7 +77,7 @@ public class SQLserver {
 			String combine_st = "";
 			while (resultSet.next()) {
 				String st = resultSet.getString(1);
-				combine_st = combine_st + ". " + st;
+				combine_st = combine_st + " " + st;
 				row_data.add(st);
 			}
 
@@ -88,16 +96,19 @@ public class SQLserver {
 				}
 				System.out.println(keyword_frequency);
 				System.out.println(allword_frequency);
-				double ratio = keyword_frequency / allword_frequency * 100;
+				double ratio = (double) keyword_frequency / (double) allword_frequency * 100;
 				System.out.println("selection vs all ratio = " + ratio + " %");
 
 				// Search using keyword
-				int doc_ID = 0;
-				int records_count = 0;
-				String searh_word = "\"road* clos*\"~0";		// Lucene proximity search: https://lucene.apache.org/core/3_6_0/queryparsersyntax.html#Range%20Searches
+				int record_ID = 0;
+				int records_hit_count = 0;
+				String searh_word = "(road* OR highway* OR hwy OR motorway* OR route* OR trail*) AND clos* AND NOT(discontinu* OR lift* OR remove*)";		// discontinued, lifted, removed
+//				String searh_word = "\"road* clos*\"~0";		// Lucene proximity search: https://lucene.apache.org/core/3_6_0/queryparsersyntax.html#Range%20Searches
 				for (String st : row_data) {
+					record_ID++;
 					if (st != null) {
 						try {
+//							st = String.join(" ", analyze(st, new SimpleAnalyzer()));	// Test, No need it
 							// Reference:
 							// https://stackoverflow.com/questions/49066168/search-a-text-string-with-a-lucene-query-in-java
 							// https://www.baeldung.com/lucene-analyzers
@@ -108,23 +119,38 @@ public class SQLserver {
 							Analyzer analyzer = new SimpleAnalyzer();
 							TokenStream tokenStream = analyzer.tokenStream(null, new StringReader(st));
 							tokenStream = new LowerCaseFilter(tokenStream); // to lower-case
-//							tokenStream = new ClassicFilter(tokenStream); // remove dots from acronyms (and "'s" but already done manually above
 							tokenStream = new ASCIIFoldingFilter(tokenStream); // convert any char to ASCII
+//							tokenStream = new ClassicFilter(tokenStream); // remove dots from acronyms (and "'s" but already done manually above
 //							tokenStream = new StopFilter(tokenStream, EnglishAnalyzer.getDefaultStopSet());		// remove English stop words
 //							tokenStream = new PorterStemFilter(tokenStream);
 //							tokenStream = new SnowballFilter(tokenStream, "English");
+							
+//							List<String> filter_words = Arrays.asList("road", "close");
+//							CharArraySet chars = new CharArraySet(filter_words, false);
+//							tokenStream = new KeepWordFilter(tokenStream, chars);
+							
+//							ShingleFilter sf = new ShingleFilter(tokenStream, 2, 2);
+//							// sf.setOutputUnigrams(false);
+//							tokenStream = sf;
+							
+							
+							
+							
 
 							// 1. create the index
 							Directory index = new ByteBuffersDirectory();
 							IndexWriterConfig config = new IndexWriterConfig(analyzer);
 							IndexWriter w = new IndexWriter(index, config);
-							doc_ID++;
-							Document doc = new Document();
-							String title = String.valueOf(doc_ID);
-							String content = st;
-							doc.add(new StringField("title", title, Field.Store.YES)); // adding title field
-							doc.add(new TextField("content", content, Field.Store.YES)); // adding content field
-							w.addDocument(doc);
+							
+							String[] line = st.split("\\.");
+							for (int l = 0; l < line.length; l++) {
+								Document doc = new Document();
+								String content = line[l];
+								String title = String.valueOf(record_ID) + ".Line " + String.valueOf(l);
+								doc.add(new StringField("title", title, Field.Store.YES)); // adding title field
+								doc.add(new TextField("content", content, Field.Store.YES)); // adding content field
+								w.addDocument(doc);
+							}
 							w.close();
 
 							// 2. query
@@ -145,9 +171,9 @@ public class SQLserver {
 								for (int i = 0; i < hits.length; ++i) {
 									int docId = hits[i].doc;
 									Document d = searcher.doc(docId);
-									System.out.println((i + 1) + ". " + d.get("title") + "\t" + d.get("content"));
+									System.out.println(d.get("title") + "\t" + d.get("content"));
 								}
-								records_count++;
+								records_hit_count++;
 							}
 
 							// 5. reader can only be closed when there is no need to access the documents
@@ -158,7 +184,7 @@ public class SQLserver {
 						}
 					}
 				}
-				System.out.println("Number of records that contain the word '" + searh_word + "' = " + records_count);
+				System.out.println("Number of records that contain the word '" + searh_word + "' = " + records_hit_count);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -167,6 +193,17 @@ public class SQLserver {
 		}
 	}
 
+	public List<String> analyze(String text, Analyzer analyzer) throws IOException{
+	    List<String> result = new ArrayList<String>();
+	    TokenStream tokenStream = analyzer.tokenStream(null, text);
+	    CharTermAttribute attr = tokenStream.addAttribute(CharTermAttribute.class);
+	    tokenStream.reset();
+	    while(tokenStream.incrementToken()) {
+	       result.add(attr.toString());
+	    }       
+	    return result;
+	}
+	
 	public static <T> T find(Collection<T> collection, T example) {
 		for (T element : collection) {
 			if (element.equals(example)) {
@@ -245,15 +282,26 @@ public class SQLserver {
 			Analyzer analyzer = new SimpleAnalyzer();
 			tokenStream = analyzer.tokenStream(null, new StringReader(input));
 			tokenStream = new LowerCaseFilter(tokenStream); // to lower-case
-//			tokenStream = new ClassicFilter(tokenStream); // remove dots from acronyms (and "'s" but already done manually above
 			tokenStream = new ASCIIFoldingFilter(tokenStream); // convert any char to ASCII
+//			tokenStream = new ClassicFilter(tokenStream); // remove dots from acronyms (and "'s" but already done manually above
 //			tokenStream = new StopFilter(tokenStream, EnglishAnalyzer.getDefaultStopSet());		// remove English stop words
 //			tokenStream = new PorterStemFilter(tokenStream);
 //			tokenStream = new SnowballFilter(tokenStream, "English");
-
+			
+//			List<String> filter_words = Arrays.asList("road", "close");
+//			CharArraySet chars = new CharArraySet(filter_words, false);
+//			tokenStream = new KeepWordFilter(tokenStream, chars);
+			
 //			ShingleFilter sf = new ShingleFilter(tokenStream, 2, 2);
 //			// sf.setOutputUnigrams(false);
 //			tokenStream = sf;
+			
+			
+			
+			
+			
+
+			
 
 			List<Keyword> keywords = new LinkedList<Keyword>();
 			CharTermAttribute token = tokenStream.getAttribute(CharTermAttribute.class);
