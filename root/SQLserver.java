@@ -59,7 +59,7 @@ public class SQLserver {
 		try (Connection connection = DriverManager.getConnection(conn_SIT2015);
 				Statement statement = connection.createStatement();) {
 			// Create and execute a SELECT SQL statement.
-			String selectSql = "SELECT [LIFE_SAFETY_HEALTH_STATUS_NARR] FROM [SIT209_HISTORY_INCIDENT_209_REPORTS]";
+			String selectSql = "SELECT [INC209R_IDENTIFIER], [LIFE_SAFETY_HEALTH_STATUS_NARR] FROM [SIT209_HISTORY_INCIDENT_209_REPORTS]";
 //			String selectSql = "SELECT [CURRENT_THREAT_12]FROM [SIT209_HISTORY_INCIDENT_209_REPORTS]";
 			resultSet = statement.executeQuery(selectSql);
 			// Print results from select statement
@@ -69,10 +69,12 @@ public class SQLserver {
 
 			// Apache Lucene:
 			// https://stackoverflow.com/questions/17447045/java-library-for-keywords-extraction-from-input-text
+			List<String> INC209R = new ArrayList<String>();
 			List<String> row_data = new ArrayList<String>();
 			String combine_st = "";
 			while (resultSet.next()) {
-				String st = resultSet.getString(1);
+				INC209R.add(resultSet.getString(1));
+				String st = resultSet.getString(2);
 				combine_st = combine_st + " " + st;
 				row_data.add(st);
 			}
@@ -96,14 +98,15 @@ public class SQLserver {
 				System.out.println("selection vs all ratio = " + ratio + " %");
 
 				// Search using keyword
-				int record_ID = 0;
 				int records_hit_count = 0;
+//				String searh_word = "restrict*";
 //				String searh_word = "\"road* clos*\"~0";		// Lucene proximity search: https://lucene.apache.org/core/3_6_0/queryparsersyntax.html#Range%20Searches
 //				String searh_word = "\"no clos*\"~4 OR \"clos* none\"~4";
 //				String searh_word = "(area or road* OR highway* OR hwy OR motorway* OR route* OR trail*) AND clos* AND NOT(discontinu* OR lift* OR remove*)";		// discontinued, lifted, removed		could be closed, no, none
 				String searh_word = "(area OR road* OR highway* OR hwy OR motorway* OR route* OR trail*) AND clos* AND NOT(discontinu* OR lift* OR remove*) AND NOT(\"no clos*\"~4 OR \"clos* none\"~4)";
-				for (String st : row_data) {
-					record_ID++;
+				int total_rows = row_data.size();
+				for (int row = 0; row < total_rows; row++) {
+					String st = row_data.get(row);
 					if (st != null) {
 						try {
 //							st = String.join(" ", analyze(st, new SimpleAnalyzer()));	// Test, No need it
@@ -143,7 +146,7 @@ public class SQLserver {
 							for (int l = 0; l < line.length; l++) {
 								Document doc = new Document();
 								String content = line[l];
-								String title = String.valueOf(record_ID) + ".Line " + String.valueOf(l);
+								String title = String.valueOf(row + 1) + "." + INC209R.get(row) + ".Line " + String.valueOf(l + 1);
 								doc.add(new StringField("title", title, Field.Store.YES)); // adding title field
 								doc.add(new TextField("content", content, Field.Store.YES)); // adding content field
 								w.addDocument(doc);
