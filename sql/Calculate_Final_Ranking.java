@@ -12,5 +12,6 @@ public class Calculate_Final_Ranking {
 
 	public Calculate_Final_Ranking() {
 		Calculate_A2 a2 = new Calculate_A2();
+		
 	}
 }

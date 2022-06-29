@@ -39,14 +39,16 @@ import org.apache.lucene.store.ByteBuffersDirectory;
 import org.apache.lucene.store.Directory;
 
 public class Calculate_A2 {
-
+	List<String> year = new ArrayList<String>();
+	List<String> INC209R = new ArrayList<String>();
+	List<String> INC = new ArrayList<String>();
+	List<String> row_data = new ArrayList<String>();
+	List<Integer> final_point = new ArrayList<Integer>();
+	boolean print_message = true;
+	
 	public Calculate_A2() {
-		List<String> year = new ArrayList<String>();
-		List<String> INC209R = new ArrayList<String>();
-		List<String> row_data = new ArrayList<String>();
-		String combine_st = "";
-		
 		// Connect to a database. Single connection can work the same as multiple connections (code for multiple connections is deleted)
+		String combine_st = "";
 		ResultSet resultSet = null;
 		String conn_SIT2015 = "jdbc:sqlserver://localhost:1433;databaseName=SIT2015;integratedSecurity=true";
 		try (Connection connection = DriverManager.getConnection(conn_SIT2015);
@@ -55,16 +57,17 @@ public class Calculate_A2 {
 			// Create and execute a SELECT SQL statement.
 			String selectSql = 
 					"""
-					SELECT 2015, [INC209R_IDENTIFIER], [LIFE_SAFETY_HEALTH_STATUS_NARR] FROM [SIT2015].[dbo].[SIT209_HISTORY_INCIDENT_209_REPORTS]
+					SELECT 2015, [INC209R_IDENTIFIER], [INC_IDENTIFIER], [LIFE_SAFETY_HEALTH_STATUS_NARR] FROM [SIT2015].[dbo].[SIT209_HISTORY_INCIDENT_209_REPORTS]
 					UNION
-					SELECT 2016, [INC209R_IDENTIFIER], [LIFE_SAFETY_HEALTH_STATUS_NARR] FROM [SIT2016].[dbo].[SIT209_HISTORY_INCIDENT_209_REPORTS]
+					SELECT 2016, [INC209R_IDENTIFIER], [INC_IDENTIFIER], [LIFE_SAFETY_HEALTH_STATUS_NARR] FROM [SIT2016].[dbo].[SIT209_HISTORY_INCIDENT_209_REPORTS]
 					""";
 			resultSet = statement.executeQuery(selectSql);
 			while (resultSet.next()) {
 				year.add(resultSet.getString(1));
 				INC209R.add(resultSet.getString(2));
-				String st = resultSet.getString(3);
-				combine_st = combine_st + " " + st;
+				INC.add(resultSet.getString(3));
+				String st = resultSet.getString(4);
+				if (st != null) combine_st = combine_st.concat(".").concat(st);		// https://stackoverflow.com/questions/5076740/whats-the-fastest-way-to-concatenate-two-strings-in-java
 				row_data.add(st);
 			}
 		} catch (SQLException e) {
@@ -99,6 +102,7 @@ public class Calculate_A2 {
 			int total_rows = row_data.size();
 			for (int row = 0; row < total_rows; row++) {
 				String st = row_data.get(row);
+				int this_caterory_point = 0;
 				if (st != null) {
 					try {
 						// Reference:
@@ -113,7 +117,8 @@ public class Calculate_A2 {
 						tokenStream.reset();
 						st = "";
 						while (tokenStream.incrementToken()) {
-							st = st + " " + token.toString();
+							String token_st = token.toString();
+							if (token_st != null) st = st.concat(" ").concat(token.toString());		// https://stackoverflow.com/questions/5076740/whats-the-fastest-way-to-concatenate-two-strings-in-java
 						}
 						if (tokenStream != null) {
 							tokenStream.close();
@@ -150,11 +155,11 @@ public class Calculate_A2 {
 						// 4. display results
 						int number_of_hits = hits.length;
 						if (number_of_hits > 0) {
-							System.out.println(number_of_hits + " hits.");
+							if (print_message) System.out.println(number_of_hits + " hits.");
 							for (int i = 0; i < hits.length; i++) {		// this is actually sentence hit, this will loop all the hit sentences
 								int docId = hits[i].doc;
 								Document d = searcher.doc(docId);
-								System.out.println(d.get("title") + "\t" + d.get("content"));
+								if (print_message) System.out.println(d.get("title") + "\t" + d.get("content"));
 							}
 							records_hit_count++;
 						}
@@ -181,7 +186,8 @@ public class Calculate_A2 {
 									}
 								}
 							}
-							System.out.println("A2 Points = " + max_point);
+							if (print_message) System.out.println("A2 Points = " + max_point);
+							this_caterory_point = max_point;
 						}
 
 						// 5. reader can only be closed when there is no need to access the documents any more.
@@ -190,8 +196,9 @@ public class Calculate_A2 {
 						e.printStackTrace();
 					}
 				}
+				final_point.add(this_caterory_point);
 			}
-			System.out.println("Number of records that contain the word '" + searh_word + "' = " + records_hit_count);
+			System.out.println(records_hit_count + " records found by thr query using '" + searh_word + "'");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
