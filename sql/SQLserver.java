@@ -132,8 +132,8 @@ public class SQLserver {
 //			String searh_word = "restrict*";
 //			String searh_word = "\"road* clos*\"~0";		// Lucene proximity search: https://lucene.apache.org/core/3_6_0/queryparsersyntax.html#Range%20Searches
 //			String searh_word = "\"no clos*\"~4 OR \"clos* none\"~4";
-			// discontinued, lifted, removed, open		except for, could be closed, no, none		potential, being assessed, being signed, been reduced, being developed
-			String searh_word = "(area* OR highway* OR hwy* OR motorway* OR road* OR route* OR trail*) AND clos* AND NOT(discontinu* OR lift* OR remove* OR *open*) AND NOT(\"no clos*\"~4 OR \"clos* none\"~4)";
+			// discontinued, lifted, removed, open		except for, could be closed, no, none		potential, being developed, being assessed, being signed, issued, been reduced, changed, modified, soft
+			String searh_word = "(highway* OR hwy* OR motorway* OR area* OR road* OR rd OR route* OR trail*) AND clos* AND NOT(discontinu* OR lift* OR remove* OR *open*) AND NOT(\"no clos*\"~4 OR \"clos* none\"~4 OR \"allow* public\"~1)";
 			int total_rows = row_data.size();
 			for (int row = 0; row < total_rows; row++) {
 				String st = row_data.get(row);
@@ -199,7 +199,7 @@ public class SQLserver {
 						int number_of_hits = hits.length;
 						if (number_of_hits > 0) {
 							System.out.println(number_of_hits + " hits.");
-							for (int i = 0; i < hits.length; ++i) {
+							for (int i = 0; i < hits.length; i++) {		// this is actually sentence hit, this will loop all the hit sentences
 								int docId = hits[i].doc;
 								Document d = searcher.doc(docId);
 								System.out.println(d.get("title") + "\t" + d.get("content"));
@@ -210,22 +210,22 @@ public class SQLserver {
 						// 5. calculate points
 						if (number_of_hits > 0) {
 							int max_point = 0;
-							for (int i = 0; i < hits.length; ++i) {
+							for (int i = 0; i < hits.length; i++) {		// this is actually sentence hit, this will loop all the hit sentences
 								int docId = hits[i].doc;
 								Document d = searcher.doc(docId);
-								List<Keyword> kwords = guessFromString(d.get("content"));
+								String c = d.get("content");
+//								List<Keyword> kwords = guessFromString(c);
+//								if (find(kwords, new Keyword("area")).getFrequency() > 0) max_point = 5;
+//								else if (find(kwords, new Keyword("highway")).getFrequency() > 0) max_point = 5;
+//								else if (find(kwords, new Keyword("hwy")).getFrequency() > 0) max_point = 5;
 								if (max_point < 5) {
-//									if (find(kwords, new Keyword("area")).getFrequency() > 0) max_point = 5;
-//									else if (find(kwords, new Keyword("highway")).getFrequency() > 0) max_point = 5;
-//									else if (find(kwords, new Keyword("hwy")).getFrequency() > 0) max_point = 5;
-									if (Pattern.compile(get_Regex("area*")).matcher(d.get("content").toLowerCase()).find()) max_point = 5;	// Regex guide: https://dev.to/kooin/wildcard-type-search-in-java-pattern-3h54
-									else if (Pattern.compile(get_Regex("highway*")).matcher(d.get("content").toLowerCase()).find()) max_point = 5;
-									else if (Pattern.compile(get_Regex("hwy*")).matcher(d.get("content").toLowerCase()).find()) max_point = 5;
+									boolean negative_sentence = (find_term(new String[] {"potential*clos", ", clos*developed", "clos*assessed" }, c)) ? true : false;
+									if (!negative_sentence && find_term(new String[] {"motorway*", "highway*", "hwy*" }, c)) max_point = 5;
 									if (max_point < 3) {
-										if (Pattern.compile(get_Regex("motorway*")).matcher(d.get("content").toLowerCase()).find()) max_point = 3;
-										else if (Pattern.compile(get_Regex("road*")).matcher(d.get("content").toLowerCase()).find()) max_point = 3;
-										else if (Pattern.compile(get_Regex("route*")).matcher(d.get("content").toLowerCase()).find()) max_point = 3;
-										else if (Pattern.compile(get_Regex("trail*")).matcher(d.get("content").toLowerCase()).find()) max_point = 3;
+										if (!negative_sentence && find_term(new String[] {"area*", "road*", "rd", "route*", "trail*"}, c)) max_point = 3;
+										if (max_point < 1) {
+											if (negative_sentence) max_point = 1;
+										}
 									}
 								}
 							}
@@ -246,9 +246,15 @@ public class SQLserver {
 		}
 	}
 	
+	public static boolean find_term (String[] term, String field) {
+		for (String st : term) {
+			if (Pattern.compile(get_Regex(st)).matcher(field.toLowerCase()).find()) return true;
+		}
+		return false;
+	}
 	
 	public static String get_Regex (String input) {
-		return ("\\Q" + input + "\\E").replace("*", "\\E.*\\Q");
+		return ("\\Q" + input + "\\E").replace("*", "\\E.*\\Q");	// Regex guide: https://dev.to/kooin/wildcard-type-search-in-java-pattern-3h54
 	}
 	
 	public static <T> T find(Collection<T> collection, T example) {
