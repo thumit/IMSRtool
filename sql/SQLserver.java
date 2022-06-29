@@ -18,16 +18,14 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.core.LowerCaseFilter;
-import org.apache.lucene.analysis.core.SimpleAnalyzer;
+import org.apache.lucene.analysis.core.WhitespaceAnalyzer;
 import org.apache.lucene.analysis.miscellaneous.ASCIIFoldingFilter;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.document.Document;
@@ -119,8 +117,17 @@ public class SQLserver {
 						// https://www.baeldung.com/lucene
 
 						// 0. Specify the analyzer for tokenizing text. The same analyzer should be used for indexing and searching
-						Analyzer analyzer = new SimpleAnalyzer();
-//						TokenStream tokenStream = customizeTokenStream(analyzer, st);
+						Analyzer analyzer = new WhitespaceAnalyzer();
+						TokenStream tokenStream = customizeTokenStream(analyzer, st);
+						CharTermAttribute token = tokenStream.getAttribute(CharTermAttribute.class);
+						tokenStream.reset();
+						st = "";
+						while (tokenStream.incrementToken()) {
+							st = st + " " + token.toString();
+						}
+						if (tokenStream != null) {
+							tokenStream.close();
+						}
 
 						// 1. create the index
 						Directory index = new ByteBuffersDirectory();
@@ -255,25 +262,25 @@ public class SQLserver {
 //
 //	}
 
-	public static String stem(String term) {
-		// add each token in a set, so that duplicates are removed
-		Set<String> stems = new HashSet<String>();
-		String[] arr = term.split("\\s+");
-		for (String st : arr) {
-			stems.add(st);
-		}
-
-		// if no stem or 3+ stems have been found, return null
-		if (stems.size() == 0 || stems.size() >= 3) {
-			return null;
-		}
-		String stem = stems.iterator().next();
-		// if the stem has non-alphanumerical chars, return null
-		if (!stem.matches("[a-zA-Z0-9-]+")) {
-			return null;
-		}
-		return stem;
-	}
+//	public static String stem(String term) {
+//		// add each token in a set, so that duplicates are removed
+//		Set<String> stems = new HashSet<String>();
+//		String[] arr = term.split("\\s+");
+//		for (String st : arr) {
+//			stems.add(st);
+//		}
+//
+//		// if no stem or 3+ stems have been found, return null
+//		if (stems.size() == 0 || stems.size() >= 3) {
+//			return null;
+//		}
+//		String stem = stems.iterator().next();
+//		// if the stem has non-alphanumerical chars, return null
+//		if (!stem.matches("[a-zA-Z0-9-]+")) {
+//			return null;
+//		}
+//		return stem;
+//	}
 
 	public static TokenStream customizeTokenStream(Analyzer analyzer, String input) {
 //		// hack to keep dashed words (e.g. "non-specific" rather than "non" and "specific")
@@ -305,9 +312,10 @@ public class SQLserver {
 		TokenStream tokenStream = null;
 		try {
 			// tokenize input
-			Analyzer analyzer = new SimpleAnalyzer();
+			Analyzer analyzer = new WhitespaceAnalyzer();
 			tokenStream = customizeTokenStream(analyzer, input);
 
+			// store keywords
 			List<Keyword> keywords = new LinkedList<Keyword>();
 			CharTermAttribute token = tokenStream.getAttribute(CharTermAttribute.class);
 			tokenStream.reset();
