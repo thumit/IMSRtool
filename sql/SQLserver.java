@@ -59,8 +59,7 @@ public class SQLserver {
 		List<String> row_data = new ArrayList<String>();
 		String combine_st = "";
 		
-		// Connect to your database.
-		// Single connection can work the same as the below multiple connections 
+		// Connect to a database. Single connection can work the same as multiple connections (code for multiple connections is deleted)
 		ResultSet resultSet = null;
 		String conn_SIT2015 = "jdbc:sqlserver://localhost:1433;databaseName=SIT2015;integratedSecurity=true";
 		try (Connection connection = DriverManager.getConnection(conn_SIT2015);
@@ -85,32 +84,8 @@ public class SQLserver {
 			e.printStackTrace();
 		}
 		
-//		// Multiple connection		
-//		List<String> databases = Arrays.asList("SIT2015", "SIT2016");
-//		for (String database : databases) {
-//			String conn_SIT2015 = "jdbc:sqlserver://localhost:1433;databaseName=" + database + ";integratedSecurity=true";
-//			ResultSet resultSet = null;
-//			try (Connection connection = DriverManager.getConnection(conn_SIT2015);
-//					Statement statement = connection.createStatement();
-//					) {
-//				// Create and execute a SELECT SQL statement.
-//				String selectSql = "SELECT [INC209R_IDENTIFIER], [LIFE_SAFETY_HEALTH_STATUS_NARR] FROM [SIT209_HISTORY_INCIDENT_209_REPORTS]";
-////				String selectSql = "SELECT [CURRENT_THREAT_12]FROM [SIT209_HISTORY_INCIDENT_209_REPORTS]";
-//
-//				resultSet = statement.executeQuery(selectSql);
-//				while (resultSet.next()) {
-//					INC209R.add(database + "." + resultSet.getString(1));
-//					String st = resultSet.getString(2);
-//					combine_st = combine_st + " " + st;
-//					row_data.add(st);
-//				}
-//			} catch (SQLException e) {
-//				e.printStackTrace();
-//			}
-//		}
-		
-		// Apache Lucene: https://stackoverflow.com/questions/17447045/java-library-for-keywords-extraction-from-input-text
-		try {	// Identify Keywords and frequency
+		// Identify keywords and frequency using Apache Lucene: https://stackoverflow.com/questions/17447045/java-library-for-keywords-extraction-from-input-text
+		try {
 			int allword_frequency = 0;
 			int keyword_frequency = 0;
 			List<Keyword> kw = guessFromString(combine_st);
@@ -131,7 +106,6 @@ public class SQLserver {
 			int records_hit_count = 0;
 //			String searh_word = "restrict*";
 //			String searh_word = "\"road* clos*\"~0";		// Lucene proximity search: https://lucene.apache.org/core/3_6_0/queryparsersyntax.html#Range%20Searches
-//			String searh_word = "\"no clos*\"~4 OR \"clos* none\"~4";
 			// discontinued, lifted, removed, open		except for, could be closed, no, none		potential, being developed, being assessed, being signed, issued, been reduced, changed, modified, soft
 			String searh_word = "(highway* OR hwy* OR motorway* OR area* OR road* OR rd OR route* OR trail*) AND clos* AND NOT(discontinu* OR lift* OR remove* OR *open*) AND NOT(\"no clos*\"~4 OR \"clos* none\"~4 OR \"allow* public\"~1)";
 			int total_rows = row_data.size();
@@ -144,28 +118,9 @@ public class SQLserver {
 						// https://www.baeldung.com/lucene-analyzers
 						// https://www.baeldung.com/lucene
 
-						// 0. Specify the analyzer for tokenizing text. The same analyzer should be used
-						// for indexing and searching
+						// 0. Specify the analyzer for tokenizing text. The same analyzer should be used for indexing and searching
 						Analyzer analyzer = new SimpleAnalyzer();
-						TokenStream tokenStream = analyzer.tokenStream(null, new StringReader(st));
-						tokenStream = new LowerCaseFilter(tokenStream); // to lower-case
-						tokenStream = new ASCIIFoldingFilter(tokenStream); // convert any char to ASCII
-//						tokenStream = new ClassicFilter(tokenStream); // remove dots from acronyms (and "'s" but already done manually above
-//						tokenStream = new StopFilter(tokenStream, EnglishAnalyzer.getDefaultStopSet());		// remove English stop words
-//						tokenStream = new PorterStemFilter(tokenStream);
-//						tokenStream = new SnowballFilter(tokenStream, "English");
-						
-//						List<String> filter_words = Arrays.asList("road", "close");
-//						CharArraySet chars = new CharArraySet(filter_words, false);
-//						tokenStream = new KeepWordFilter(tokenStream, chars);
-						
-//						ShingleFilter sf = new ShingleFilter(tokenStream, 2, 2);
-//						// sf.setOutputUnigrams(false);
-//						tokenStream = sf;
-						
-						
-						
-						
+//						TokenStream tokenStream = customizeTokenStream(analyzer, st);
 
 						// 1. create the index
 						Directory index = new ByteBuffersDirectory();
@@ -232,8 +187,7 @@ public class SQLserver {
 							System.out.println("A2 Points = " + max_point);
 						}
 
-						// 5. reader can only be closed when there is no need to access the documents
-						// any more.
+						// 5. reader can only be closed when there is no need to access the documents any more.
 						reader.close();
 					} catch (ParseException e) {
 						e.printStackTrace();
@@ -321,40 +275,38 @@ public class SQLserver {
 		return stem;
 	}
 
+	public static TokenStream customizeTokenStream(Analyzer analyzer, String input) {
+//		// hack to keep dashed words (e.g. "non-specific" rather than "non" and "specific")
+//		input = input.replaceAll("-+", "-0");
+//		// replace any punctuation char but apostrophes and dashes by a space
+//		input = input.replaceAll("[\\p{Punct}&&[^'-]]+", " ");
+//		// replace most common english contractions
+//		input = input.replaceAll("(?:'(?:[tdsm]|[vr]e|ll))+\\b", "");
+		
+		TokenStream tokenStream = analyzer.tokenStream(null, new StringReader(input));
+		tokenStream = new LowerCaseFilter(tokenStream); // to lower-case
+		tokenStream = new ASCIIFoldingFilter(tokenStream); // convert any char to ASCII
+//		tokenStream = new ClassicFilter(tokenStream); // remove dots from acronyms (and "'s" but already done manually above
+//		tokenStream = new StopFilter(tokenStream, EnglishAnalyzer.getDefaultStopSet());		// remove English stop words
+//		tokenStream = new PorterStemFilter(tokenStream);
+//		tokenStream = new SnowballFilter(tokenStream, "English");
+		
+//		List<String> filter_words = Arrays.asList("road", "close");
+//		CharArraySet chars = new CharArraySet(filter_words, false);
+//		tokenStream = new KeepWordFilter(tokenStream, chars);
+		
+//		ShingleFilter sf = new ShingleFilter(tokenStream, 2, 2);
+//		// sf.setOutputUnigrams(false);
+//		tokenStream = sf;
+		return tokenStream;
+	}
+	
 	public static List<Keyword> guessFromString(String input) throws IOException {
 		TokenStream tokenStream = null;
 		try {
-//			// hack to keep dashed words (e.g. "non-specific" rather than "non" and "specific")
-//			input = input.replaceAll("-+", "-0");
-//			// replace any punctuation char but apostrophes and dashes by a space
-//			input = input.replaceAll("[\\p{Punct}&&[^'-]]+", " ");
-//			// replace most common english contractions
-//			input = input.replaceAll("(?:'(?:[tdsm]|[vr]e|ll))+\\b", "");
-
 			// tokenize input
 			Analyzer analyzer = new SimpleAnalyzer();
-			tokenStream = analyzer.tokenStream(null, new StringReader(input));
-			tokenStream = new LowerCaseFilter(tokenStream); // to lower-case
-			tokenStream = new ASCIIFoldingFilter(tokenStream); // convert any char to ASCII
-//			tokenStream = new ClassicFilter(tokenStream); // remove dots from acronyms (and "'s" but already done manually above
-//			tokenStream = new StopFilter(tokenStream, EnglishAnalyzer.getDefaultStopSet());		// remove English stop words
-//			tokenStream = new PorterStemFilter(tokenStream);
-//			tokenStream = new SnowballFilter(tokenStream, "English");
-			
-//			List<String> filter_words = Arrays.asList("road", "close");
-//			CharArraySet chars = new CharArraySet(filter_words, false);
-//			tokenStream = new KeepWordFilter(tokenStream, chars);
-			
-//			ShingleFilter sf = new ShingleFilter(tokenStream, 2, 2);
-//			// sf.setOutputUnigrams(false);
-//			tokenStream = sf;
-			
-			
-			
-			
-			
-
-			
+			tokenStream = customizeTokenStream(analyzer, input);
 
 			List<Keyword> keywords = new LinkedList<Keyword>();
 			CharTermAttribute token = tokenStream.getAttribute(CharTermAttribute.class);
