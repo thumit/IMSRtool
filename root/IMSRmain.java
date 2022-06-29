@@ -14,13 +14,13 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 
-import sql.SQLserver;
+import sql.Calculate_Final_Ranking;
 
 public class IMSRmain extends JFrame {
 	// Define variables------------------------------------------------------------------------
 	private static IMSRMenuBar 			menuBar;
 	private JMenu 						menuUtility, menuHelp;
-	private JMenuItem					extract, explore, sqlserver; 	// For menuUtility
+	private JMenuItem					extract, explore, ranking; 	// For menuUtility
 	private JMenuItem 					content, update, about; 	// For menuHelp
 	private static IMSRDesktopPane 		desktopPane;
 	private static IMSRContentPane 		contentPane;
@@ -47,7 +47,7 @@ public class IMSRmain extends JFrame {
 				
 				explore = new JMenuItem("Explore");
 				extract = new JMenuItem("Extract");
-				sqlserver = new JMenuItem("SQLserver");
+				ranking = new JMenuItem("Ranking");
 				content = new JMenuItem("Content");
 				update = new JMenuItem("Update");
 				about = new JMenuItem("About");
@@ -55,7 +55,7 @@ public class IMSRmain extends JFrame {
 				// Add components: Menubar, Menus, MenuItems----------------------------------
 				menuUtility.add(explore);
 				menuUtility.add(extract);		
-				menuUtility.add(sqlserver);
+				menuUtility.add(ranking);
 				menuHelp.add(content);
 				menuHelp.add(update);
 				menuHelp.add(about);
@@ -84,17 +84,17 @@ public class IMSRmain extends JFrame {
 				});	
 				
 				extract.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_2, Toolkit.getDefaultToolkit ().getMenuShortcutKeyMask()));	// CTRL on Windows, *** on MAC-OS
-				extract.setMnemonic(KeyEvent.VK_E);
+				extract.setMnemonic(KeyEvent.VK_A);
 				extract.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent event) {
 					}
 				});	
 				
-				sqlserver.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_3, Toolkit.getDefaultToolkit ().getMenuShortcutKeyMask()));	// CTRL on Windows, *** on MAC-OS
-				sqlserver.setMnemonic(KeyEvent.VK_S);
-				sqlserver.addActionListener(new ActionListener() {
+				ranking.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_3, Toolkit.getDefaultToolkit ().getMenuShortcutKeyMask()));	// CTRL on Windows, *** on MAC-OS
+				ranking.setMnemonic(KeyEvent.VK_K);
+				ranking.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent event) {
-						SQLserver sql = new SQLserver();
+						Calculate_Final_Ranking sql = new Calculate_Final_Ranking();
 					}
 				});	
 			}

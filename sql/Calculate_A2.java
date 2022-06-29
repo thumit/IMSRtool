@@ -9,24 +9,17 @@
 package sql;
 
 import java.io.IOException;
-import java.io.StringReader;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.regex.Pattern;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
-import org.apache.lucene.analysis.core.LowerCaseFilter;
 import org.apache.lucene.analysis.core.WhitespaceAnalyzer;
-import org.apache.lucene.analysis.miscellaneous.ASCIIFoldingFilter;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -45,13 +38,9 @@ import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.ByteBuffersDirectory;
 import org.apache.lucene.store.Directory;
 
-public class SQLserver {
+public class Calculate_A2 {
 
-	public SQLserver() {
-		A2_Calculation();
-	}
-	
-	public void A2_Calculation() {
+	public Calculate_A2() {
 		List<String> year = new ArrayList<String>();
 		List<String> INC209R = new ArrayList<String>();
 		List<String> row_data = new ArrayList<String>();
@@ -84,9 +73,10 @@ public class SQLserver {
 		
 		// Identify keywords and frequency using Apache Lucene: https://stackoverflow.com/questions/17447045/java-library-for-keywords-extraction-from-input-text
 		try {
+			SQL_Utilities utilities = new SQL_Utilities();
 			int allword_frequency = 0;
 			int keyword_frequency = 0;
-			List<Keyword> kw = guessFromString(combine_st);
+			List<Keyword> kw = utilities.guessFromString(combine_st);
 			for (Keyword i : kw) {
 				int freq = i.getFrequency();
 				if (freq >= 10) {
@@ -118,7 +108,7 @@ public class SQLserver {
 
 						// 0. Specify the analyzer for tokenizing text. The same analyzer should be used for indexing and searching
 						Analyzer analyzer = new WhitespaceAnalyzer();
-						TokenStream tokenStream = customizeTokenStream(analyzer, st);
+						TokenStream tokenStream = utilities.customizeTokenStream(analyzer, st);
 						CharTermAttribute token = tokenStream.getAttribute(CharTermAttribute.class);
 						tokenStream.reset();
 						st = "";
@@ -181,10 +171,10 @@ public class SQLserver {
 //								else if (find(kwords, new Keyword("highway")).getFrequency() > 0) max_point = 5;
 //								else if (find(kwords, new Keyword("hwy")).getFrequency() > 0) max_point = 5;
 								if (max_point < 5) {
-									boolean negative_sentence = (find_term(new String[] {"potential*clos", ", clos*developed", "clos*assessed" }, c)) ? true : false;
-									if (!negative_sentence && find_term(new String[] {"motorway*", "highway*", "hwy*" }, c)) max_point = 5;
+									boolean negative_sentence = (utilities.find_term(new String[] {"potential*clos", ", clos*developed", "clos*assessed" }, c)) ? true : false;
+									if (!negative_sentence && utilities.find_term(new String[] {"motorway*", "highway*", "hwy*" }, c)) max_point = 5;
 									if (max_point < 3) {
-										if (!negative_sentence && find_term(new String[] {"area*", "road*", "rd", "route*", "trail*"}, c)) max_point = 3;
+										if (!negative_sentence && utilities.find_term(new String[] {"area*", "road*", "rd", "route*", "trail*"}, c)) max_point = 3;
 										if (max_point < 1) {
 											if (negative_sentence) max_point = 1;
 										}
@@ -204,141 +194,6 @@ public class SQLserver {
 			System.out.println("Number of records that contain the word '" + searh_word + "' = " + records_hit_count);
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
-	}
-	
-	public static boolean find_term (String[] term, String field) {
-		for (String st : term) {
-			if (Pattern.compile(get_Regex(st)).matcher(field.toLowerCase()).find()) return true;
-		}
-		return false;
-	}
-	
-	public static String get_Regex (String input) {
-		return ("\\Q" + input + "\\E").replace("*", "\\E.*\\Q");	// Regex guide: https://dev.to/kooin/wildcard-type-search-in-java-pattern-3h54
-	}
-	
-	public static <T> T find(Collection<T> collection, T example) {
-		for (T element : collection) {
-			if (element.equals(example)) {
-				return element;
-			}
-		}
-		collection.add(example);
-		return example;
-	}
-
-//	public static String stem(String term) throws IOException {
-//		TokenStream tokenStream = null;
-//		try {
-//			// tokenize
-//			tokenStream = new ClassicTokenizer(Version.LUCENE_36, new StringReader(term));
-//			// stem
-//			tokenStream = new PorterStemFilter(tokenStream);
-//
-//			// add each token in a set, so that duplicates are removed
-//			Set<String> stems = new HashSet<String>();
-//			CharTermAttribute token = tokenStream.getAttribute(CharTermAttribute.class);
-//			tokenStream.reset();
-//			while (tokenStream.incrementToken()) {
-//				stems.add(token.toString());
-//			}
-//
-//			// if no stem or 3+ stems have been found, return null
-//			if (stems.size() == 0 || stems.size() >= 3) {
-//				return null;
-//			}
-//			String stem = stems.iterator().next();
-//			// if the stem has non-alphanumerical chars, return null
-//			if (!stem.matches("[a-zA-Z0-9-]+")) {
-//				return null;
-//			}
-//			return stem;
-//		} finally {
-//			if (tokenStream != null) {
-//				tokenStream.close();
-//			}
-//		}
-//
-//	}
-
-//	public static String stem(String term) {
-//		// add each token in a set, so that duplicates are removed
-//		Set<String> stems = new HashSet<String>();
-//		String[] arr = term.split("\\s+");
-//		for (String st : arr) {
-//			stems.add(st);
-//		}
-//
-//		// if no stem or 3+ stems have been found, return null
-//		if (stems.size() == 0 || stems.size() >= 3) {
-//			return null;
-//		}
-//		String stem = stems.iterator().next();
-//		// if the stem has non-alphanumerical chars, return null
-//		if (!stem.matches("[a-zA-Z0-9-]+")) {
-//			return null;
-//		}
-//		return stem;
-//	}
-
-	public static TokenStream customizeTokenStream(Analyzer analyzer, String input) {
-//		// hack to keep dashed words (e.g. "non-specific" rather than "non" and "specific")
-//		input = input.replaceAll("-+", "-0");
-//		// replace any punctuation char but apostrophes and dashes by a space
-//		input = input.replaceAll("[\\p{Punct}&&[^'-]]+", " ");
-//		// replace most common english contractions
-//		input = input.replaceAll("(?:'(?:[tdsm]|[vr]e|ll))+\\b", "");
-		
-		TokenStream tokenStream = analyzer.tokenStream(null, new StringReader(input));
-		tokenStream = new LowerCaseFilter(tokenStream); // to lower-case
-		tokenStream = new ASCIIFoldingFilter(tokenStream); // convert any char to ASCII
-//		tokenStream = new ClassicFilter(tokenStream); // remove dots from acronyms (and "'s" but already done manually above
-//		tokenStream = new StopFilter(tokenStream, EnglishAnalyzer.getDefaultStopSet());		// remove English stop words
-//		tokenStream = new PorterStemFilter(tokenStream);
-//		tokenStream = new SnowballFilter(tokenStream, "English");
-		
-//		List<String> filter_words = Arrays.asList("road", "close");
-//		CharArraySet chars = new CharArraySet(filter_words, false);
-//		tokenStream = new KeepWordFilter(tokenStream, chars);
-		
-//		ShingleFilter sf = new ShingleFilter(tokenStream, 2, 2);
-//		// sf.setOutputUnigrams(false);
-//		tokenStream = sf;
-		return tokenStream;
-	}
-	
-	public static List<Keyword> guessFromString(String input) throws IOException {
-		TokenStream tokenStream = null;
-		try {
-			// tokenize input
-			Analyzer analyzer = new WhitespaceAnalyzer();
-			tokenStream = customizeTokenStream(analyzer, input);
-
-			// store keywords
-			List<Keyword> keywords = new LinkedList<Keyword>();
-			CharTermAttribute token = tokenStream.getAttribute(CharTermAttribute.class);
-			tokenStream.reset();
-			while (tokenStream.incrementToken()) {
-				String term = token.toString();
-//				String stem = stem(term);					// stem
-//				String stem = term.replaceAll("-0", "-");	// no stem
-				String stem = term;
-				if (stem != null) {
-					// create the keyword or get the existing one if any
-					Keyword keyword = find(keywords, new Keyword(stem));
-					// add its corresponding initial token
-					keyword.add(term);
-				}
-			}
-
-			// reverse sort by frequency
-			Collections.sort(keywords);
-			return keywords;
-		} finally {
-			if (tokenStream != null) {
-				tokenStream.close();
-			}
 		}
 	}
 }
