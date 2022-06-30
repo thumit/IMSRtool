@@ -43,7 +43,7 @@ public class Calculate_Final_Ranking {
 	
 	class Ranking_Points_Scroll extends JScrollPane {
 		public Ranking_Points_Scroll() {		
-			String[] header = new String[] { "RECORD", "YEAR", "INC", "INC209R", "A1", "A2", "B1", "D1", "D2"};
+			String[] header = new String[] { "RECORD", "YEAR", "INC", "INC209R", "TOTAL" , "A1", "A2", "B1", "D1", "D2"};
 			TextAreaReadMe textarea = new TextAreaReadMe("icon_tree.png", 75, 75);	// Print to text area
 			textarea.append(String.join("\t", header)  + "\n");
 			for (int i = 0; i < number_of_records; i++) {
@@ -51,6 +51,7 @@ public class Calculate_Final_Ranking {
 						+ "\t" + A2.year.get(i) 
 						+ "\t" + A2.INC.get(i) 
 						+ "\t" + A2.INC209R.get(i) 
+						+ "\t" + (A1.final_point.get(i) + A2.final_point.get(i) + B1.final_point.get(i) + D1.final_point.get(i) + D2.final_point.get(i))
 						+ "\t" + A1.final_point.get(i) 
 						+ "\t" + A2.final_point.get(i)
 						+ "\t" + B1.final_point.get(i)

@@ -139,23 +139,6 @@ public class Calculate_A1 {
 		// Identify keywords and frequency using Apache Lucene: https://stackoverflow.com/questions/17447045/java-library-for-keywords-extraction-from-input-text
 		try {
 			SQL_Utilities utilities = new SQL_Utilities();
-			int allword_frequency = 0;
-			int keyword_frequency = 0;
-			List<Keyword> kw = utilities.guessFromString(combine_st);
-			for (Keyword i : kw) {
-				int freq = i.getFrequency();
-				if (freq >= 10) {
-					System.out.println(i.getStem() + "\t" + freq);
-					keyword_frequency = keyword_frequency + freq;
-				}
-				allword_frequency = allword_frequency + freq;
-			}
-			System.out.println(keyword_frequency);
-			System.out.println(allword_frequency);
-			double ratio = (double) keyword_frequency / (double) allword_frequency * 100;
-			System.out.println("selection vs all ratio = " + ratio + " %");
-
-			// Search using keyword
 			int records_hit_count = 0;
 			// Note: downgraded to a warning, level i, evacuation center remains open, evacuations to the town of hyampom (300) expected within the next 24 hours, evacuations are expected
 			// Note: trigger points for evacuation have been identified

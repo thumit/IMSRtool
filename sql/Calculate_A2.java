@@ -78,23 +78,6 @@ public class Calculate_A2 {
 		// Identify keywords and frequency using Apache Lucene: https://stackoverflow.com/questions/17447045/java-library-for-keywords-extraction-from-input-text
 		try {
 			SQL_Utilities utilities = new SQL_Utilities();
-			int allword_frequency = 0;
-			int keyword_frequency = 0;
-			List<Keyword> kw = utilities.guessFromString(combine_st);
-			for (Keyword i : kw) {
-				int freq = i.getFrequency();
-				if (freq >= 10) {
-					System.out.println(i.getStem() + "\t" + freq);
-					keyword_frequency = keyword_frequency + freq;
-				}
-				allword_frequency = allword_frequency + freq;
-			}
-			System.out.println(keyword_frequency);
-			System.out.println(allword_frequency);
-			double ratio = (double) keyword_frequency / (double) allword_frequency * 100;
-			System.out.println("selection vs all ratio = " + ratio + " %");
-
-			// Search using keyword
 			int records_hit_count = 0;
 //			String searh_word = "restrict*";
 //			String searh_word = "\"road* clos*\"~0";		// Lucene proximity search: https://lucene.apache.org/core/3_6_0/queryparsersyntax.html#Range%20Searches

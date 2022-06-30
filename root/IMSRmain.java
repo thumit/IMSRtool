@@ -13,8 +13,11 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
+import javax.swing.event.MenuEvent;
+import javax.swing.event.MenuListener;
 
 import sql.Calculate_Final_Ranking;
+import sql.Calculate_Keyword_Frequency;
 
 public class IMSRmain extends JFrame {
 	// Define variables------------------------------------------------------------------------
@@ -119,14 +122,46 @@ public class IMSRmain extends JFrame {
 					}
 				});	
 				
-				menu_SIT_Keyword.setMnemonic(KeyEvent.VK_K);
 				menu_SIT_Ranking.setMnemonic(KeyEvent.VK_R);
+				menu_SIT_Keyword.setMnemonic(KeyEvent.VK_K);
+				menu_SIT_Keyword.addMenuListener(new MenuListener() {
+					@Override
+			        public void menuSelected(MenuEvent e) {					
+						menu_SIT_Keyword.removeAll();			// Remove all existing projects
+						String[] SIT_Field = new String[] { 
+								"[SIGNIF_EVENTS_SUMMARY]", "[HAZARDS_MATLS_INVOLVMENT_NARR]", "[DAMAGE_ASSESSMENT_INFO]",
+								"[LIFE_SAFETY_HEALTH_STATUS_NARR]", "[WEATHER_CONCERN_NARR]", 
+								"[PROJECTED_ACTIVITY_12]", "[PROJECTED_ACTIVITY_24]", "[PROJECTED_ACTIVITY_48]", "[PROJECTED_ACTIVITY_72]", "[PROJECTED_ACTIVITY_GT72]",
+								"[CURRENT_THREAT_12]", "[CURRENT_THREAT_24]", "[CURRENT_THREAT_48]", "[CURRENT_THREAT_72]", "[CURRENT_THREAT_GT72]",
+								"[CRIT_RES_NEEDS_12]", "[CRIT_RES_NEEDS_24]", "[CRIT_RES_NEEDS_48]", "[CRIT_RES_NEEDS_72]", "[CRIT_RES_NEEDS_GT72]",	    	  
+								"[STRATEGIC_DISCUSSION]", "[PLANNED_ACTIONS]", "[COMPLEXITY_LEVEL_NARR]", "[UNIT_OR_OTHER_NARR]", "[ADDTNL_COOP_ASSIST_ORG_NARR]"
+						};
+						for (int i = 0; i < SIT_Field.length; i++) {
+							JMenuItem newJItem = new JMenuItem(SIT_Field[i]);
+							menu_SIT_Keyword.add(newJItem);			// Add all existing projects
+							String current_field = SIT_Field[i];
+							newJItem.addActionListener(new ActionListener() {
+								public void actionPerformed(ActionEvent event) {
+									new Calculate_Keyword_Frequency(current_field);
+								}
+							});
+						}
+					}
+
+					@Override
+					public void menuDeselected(MenuEvent e) {
+					}
+
+					@Override
+					public void menuCanceled(MenuEvent e) {
+					}
+				});
 				
 				total_points.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, Toolkit.getDefaultToolkit ().getMenuShortcutKeyMask()));	// CTRL on Windows, *** on MAC-OS
 				total_points.setMnemonic(KeyEvent.VK_T);
 				total_points.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent event) {
-						Calculate_Final_Ranking sql = new Calculate_Final_Ranking();
+						new Calculate_Final_Ranking();
 					}
 				});	
 			}
