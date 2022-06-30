@@ -19,9 +19,10 @@ import sql.Calculate_Final_Ranking;
 public class IMSRmain extends JFrame {
 	// Define variables------------------------------------------------------------------------
 	private static IMSRMenuBar 			menuBar;
-	private JMenu 						menuUtility, menuHelp;
-	private JMenuItem					extract, explore, ranking; 	// For menuUtility
+	private JMenu 						menuUtility, menuHelp, menu_SIT_Ranking, menu_SIT_Keyword;
+	private JMenuItem					extract, explore; 			// For menuUtility
 	private JMenuItem 					content, update, about; 	// For menuHelp
+	private JMenuItem 					total_points, A1, A2, A3, B1, B2, B3, C1, C2, C3, C4, D1, D2; 			// For SIT_Ranking
 	private static IMSRDesktopPane 		desktopPane;
 	private static IMSRContentPane 		contentPane;
 	private static IMSRmain 			main;
@@ -44,21 +45,49 @@ public class IMSRmain extends JFrame {
 				menuBar = new IMSRMenuBar();
 				menuUtility = new JMenu("Utility");
 				menuHelp = new JMenu("Help");
+				menu_SIT_Keyword = new JMenu("SIT Keyword");
+				menu_SIT_Ranking = new JMenu("SIT Ranking");
 				
-				explore = new JMenuItem("Explore");
-				extract = new JMenuItem("Extract");
-				ranking = new JMenuItem("Ranking");
+				explore = new JMenuItem("IMSR Explore ");
+				extract = new JMenuItem("IMSR Extract");
 				content = new JMenuItem("Content");
 				update = new JMenuItem("Update");
 				about = new JMenuItem("About");
+				total_points = new JMenuItem("Total Points");
+				A1 = new JMenuItem("A1 Points");
+				A2 = new JMenuItem("A2 Points");
+				A3 = new JMenuItem("A3 Points");
+				B1 = new JMenuItem("B1 Points");
+				B2 = new JMenuItem("B2 Points");
+				B3 = new JMenuItem("B3 Points");
+				C1 = new JMenuItem("C1 Points");
+				C2 = new JMenuItem("C2 Points");
+				C3 = new JMenuItem("C3 Points");
+				C4 = new JMenuItem("C4 Points");
+				D1 = new JMenuItem("D1 Points");
+				D2 = new JMenuItem("D2 Points");
 				
 				// Add components: Menubar, Menus, MenuItems----------------------------------
 				menuUtility.add(explore);
-				menuUtility.add(extract);		
-				menuUtility.add(ranking);
+				menuUtility.add(extract);	
+				menuUtility.add(menu_SIT_Keyword);
+				menuUtility.add(menu_SIT_Ranking);	
 				menuHelp.add(content);
 				menuHelp.add(update);
 				menuHelp.add(about);
+				menu_SIT_Ranking.add(total_points);
+				menu_SIT_Ranking.add(A1);
+				menu_SIT_Ranking.add(A2);
+				menu_SIT_Ranking.add(A3);
+				menu_SIT_Ranking.add(B1);
+				menu_SIT_Ranking.add(B2);
+				menu_SIT_Ranking.add(B3);
+				menu_SIT_Ranking.add(C1);
+				menu_SIT_Ranking.add(C2);
+				menu_SIT_Ranking.add(C3);
+				menu_SIT_Ranking.add(C4);
+				menu_SIT_Ranking.add(D1);
+				menu_SIT_Ranking.add(D2);
 
 				menuBar.add(menuUtility);
 				menuBar.add(menuHelp);
@@ -90,9 +119,12 @@ public class IMSRmain extends JFrame {
 					}
 				});	
 				
-				ranking.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_3, Toolkit.getDefaultToolkit ().getMenuShortcutKeyMask()));	// CTRL on Windows, *** on MAC-OS
-				ranking.setMnemonic(KeyEvent.VK_K);
-				ranking.addActionListener(new ActionListener() {
+				menu_SIT_Keyword.setMnemonic(KeyEvent.VK_K);
+				menu_SIT_Ranking.setMnemonic(KeyEvent.VK_R);
+				
+				total_points.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, Toolkit.getDefaultToolkit ().getMenuShortcutKeyMask()));	// CTRL on Windows, *** on MAC-OS
+				total_points.setMnemonic(KeyEvent.VK_T);
+				total_points.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent event) {
 						Calculate_Final_Ranking sql = new Calculate_Final_Ranking();
 					}
