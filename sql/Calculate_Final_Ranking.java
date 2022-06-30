@@ -26,18 +26,20 @@ import root.IMSRmain;
 public class Calculate_Final_Ranking {
 	Calculate_A2 A2;
 	Calculate_B1 B1;
+	Calculate_D1 D1;
 	int number_of_records;
 
 	public Calculate_Final_Ranking() {
 		A2 = new Calculate_A2();
 		B1 = new Calculate_B1();
+		D1 = new Calculate_D1();
 		number_of_records = A2.year.size();
 		new Ranking_Points_Scroll();
 	}
 	
 	class Ranking_Points_Scroll extends JScrollPane {
 		public Ranking_Points_Scroll() {		
-			String[] header = new String[] { "RECORD", "YEAR", "INC", "INC209R", "A2", "B1"};
+			String[] header = new String[] { "RECORD", "YEAR", "INC", "INC209R", "A2", "B1", "D1"};
 			TextAreaReadMe textarea = new TextAreaReadMe("icon_tree.png", 75, 75);	// Print to text area
 			textarea.append(String.join("\t", header)  + "\n");
 			for (int i = 0; i < number_of_records; i++) {
@@ -47,6 +49,7 @@ public class Calculate_Final_Ranking {
 						+ "\t" + A2.INC209R.get(i) 
 						+ "\t" + A2.final_point.get(i)
 						+ "\t" + B1.final_point.get(i)
+						+ "\t" + D1.final_point.get(i)
 						+ "\n");
 			}
 			textarea.setSelectionStart(0);	// scroll to top
