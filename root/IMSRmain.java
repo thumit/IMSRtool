@@ -16,6 +16,7 @@ import javax.swing.KeyStroke;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 
+import sql.Calculate_A2;
 import sql.Calculate_Final_Ranking;
 import sql.Calculate_Keyword_Frequency;
 
@@ -162,6 +163,13 @@ public class IMSRmain extends JFrame {
 				total_points.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent event) {
 						new Calculate_Final_Ranking();
+					}
+				});	
+				
+				A2.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent event) {
+						Calculate_A2 A2 = new Calculate_A2();
+						A2.show_A2_scroll();
 					}
 				});	
 			}

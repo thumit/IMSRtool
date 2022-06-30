@@ -8,6 +8,11 @@
  */
 package sql;
 
+import java.awt.Dialog;
+import java.awt.Dimension;
+import java.awt.Window;
+import java.awt.event.HierarchyEvent;
+import java.awt.event.HierarchyListener;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -16,6 +21,11 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.swing.BorderFactory;
+import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
@@ -37,6 +47,10 @@ import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.ByteBuffersDirectory;
 import org.apache.lucene.store.Directory;
+
+import convenience_classes.TextAreaReadMe;
+import convenience_classes.TitleScrollPane;
+import root.IMSRmain;
 
 public class Calculate_A2 {
 	List<String> year = new ArrayList<String>();
@@ -185,6 +199,54 @@ public class Calculate_A2 {
 			System.out.println(records_hit_count + " records found by the query using '" + searh_word + "'");
 		} catch (IOException e) {
 			e.printStackTrace();
+		}
+	}
+	
+	public void show_A2_scroll() {
+		new A2_Scroll();
+	}
+	
+	class A2_Scroll extends JScrollPane {
+		public A2_Scroll() {		
+			String[] header = new String[] { "RECORD", "YEAR", "INC", "INC209R", "Final_Points" , "Box33"};
+			TextAreaReadMe textarea = new TextAreaReadMe("icon_tree.png", 75, 75);	// Print to text area
+			textarea.append(String.join("\t", header)  + "\n");
+			int number_of_records = year.size();
+			for (int i = 0; i < number_of_records; i++) {
+				textarea.append(String.valueOf(i+1)
+						+ "\t" + year.get(i) 
+						+ "\t" + INC.get(i) 
+						+ "\t" + INC209R.get(i) 
+						+ "\t" + final_point.get(i) 
+						+ "\t" + box33_row_data.get(i) 
+						+ "\n");
+			}
+			textarea.setSelectionStart(0);	// scroll to top
+			textarea.setSelectionEnd(0);
+			textarea.setEditable(false);
+			
+			TitleScrollPane explore_scrollpane = new TitleScrollPane("", "CENTER", textarea);
+			addHierarchyListener(new HierarchyListener() {	//	These codes make the license_scrollpane resizable --> the Big ScrollPane resizable --> JOptionPane resizable
+			    public void hierarchyChanged(HierarchyEvent e) {
+			        Window window = SwingUtilities.getWindowAncestor(explore_scrollpane);
+			        if (window instanceof Dialog) {
+			            Dialog dialog = (Dialog)window;
+			            if (!dialog.isResizable()) {
+			                dialog.setResizable(true);
+			                dialog.setPreferredSize(new Dimension((int) (IMSRmain.get_main().getWidth() / 1.1), (int) (IMSRmain.get_main().getHeight() / 1.21)));
+			            }
+			        }
+			    }
+			});
+			
+			// Add the Panel to this Big ScrollPane
+			setBorder(BorderFactory.createEmptyBorder());
+			setViewportView(explore_scrollpane);
+			
+			// Add everything to a popup panel
+			String ExitOption[] = {"EXIT" };
+			int response = JOptionPane.showOptionDialog(IMSRmain.get_DesktopPane(), this, "California Priority Points",
+					JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, ExitOption, ExitOption[0]);
 		}
 	}
 }
