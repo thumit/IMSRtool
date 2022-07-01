@@ -56,7 +56,12 @@ public class Calculate_A2 {
 	List<String> year = new ArrayList<String>();
 	List<String> INC209R = new ArrayList<String>();
 	List<String> INC = new ArrayList<String>();
-	List<String> box33_row_data = new ArrayList<String>();
+	List<String> box33_data = new ArrayList<String>();
+	List<String> road_flag_data = new ArrayList<String>();
+	List<String> area_flag_data = new ArrayList<String>();
+	List<String> trail_flag_data = new ArrayList<String>();
+	List<Integer> box33_point = new ArrayList<Integer>();
+	List<Integer> flag_point = new ArrayList<Integer>();
 	List<Integer> final_point = new ArrayList<Integer>();
 	boolean print_message = true;
 	
@@ -71,9 +76,9 @@ public class Calculate_A2 {
 			// Create and execute a SELECT SQL statement.
 			String selectSql = 
 					"""
-					SELECT 2015, [INC209R_IDENTIFIER], [INC_IDENTIFIER], [LIFE_SAFETY_HEALTH_STATUS_NARR] FROM [SIT2015].[dbo].[SIT209_HISTORY_INCIDENT_209_REPORTS]
+					SELECT 2015, [INC209R_IDENTIFIER], [INC_IDENTIFIER], [LIFE_SAFETY_HEALTH_STATUS_NARR], [ROAD_CLOSURE_FLAG], [AREA_CLOSURE_FLAG], [TRAIL_CLOSURE_FLAG] FROM [SIT2015].[dbo].[SIT209_HISTORY_INCIDENT_209_REPORTS]
 					UNION
-					SELECT 2016, [INC209R_IDENTIFIER], [INC_IDENTIFIER], [LIFE_SAFETY_HEALTH_STATUS_NARR] FROM [SIT2016].[dbo].[SIT209_HISTORY_INCIDENT_209_REPORTS]
+					SELECT 2016, [INC209R_IDENTIFIER], [INC_IDENTIFIER], [LIFE_SAFETY_HEALTH_STATUS_NARR], [ROAD_CLOSURE_FLAG], [AREA_CLOSURE_FLAG], [TRAIL_CLOSURE_FLAG] FROM [SIT2016].[dbo].[SIT209_HISTORY_INCIDENT_209_REPORTS]
 					ORDER BY [INC_IDENTIFIER], [INC209R_IDENTIFIER]
 					""";
 			resultSet = statement.executeQuery(selectSql);
@@ -83,7 +88,18 @@ public class Calculate_A2 {
 				INC.add(resultSet.getString(3));
 				String st = resultSet.getString(4);
 				if (st != null) combine_st = combine_st.concat(".").concat(st);		// https://stackoverflow.com/questions/5076740/whats-the-fastest-way-to-concatenate-two-strings-in-java
-				box33_row_data.add(st);
+				box33_data.add(st);
+				road_flag_data.add(resultSet.getString(5));
+				area_flag_data.add(resultSet.getString(6));
+				trail_flag_data.add(resultSet.getString(7));
+				if ((resultSet.getString(5) != null && resultSet.getString(5).equals("Y"))
+						|| (resultSet.getString(6) != null && resultSet.getString(6).equals("Y"))
+						|| (resultSet.getString(7) != null && resultSet.getString(7).equals("Y"))) {
+					flag_point.add(3);
+				} else {
+					flag_point.add(0);
+				}
+				
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -97,9 +113,9 @@ public class Calculate_A2 {
 //			String searh_word = "\"road* clos*\"~0";		// Lucene proximity search: https://lucene.apache.org/core/3_6_0/queryparsersyntax.html#Range%20Searches
 			// discontinued, lifted, removed, open		except for, could be closed, no, none		potential, being developed, being assessed, being signed, issued, been reduced, changed, modified, soft
 			String searh_word = "(highway* OR hwy* OR motorway* OR area* OR road* OR rd OR route* OR trail*) AND clos* AND NOT(discontinu* OR lift* OR remove* OR *open*) AND NOT(\"no clos*\"~4 OR \"clos* none\"~4 OR \"allow* public\"~1)";
-			int total_rows = box33_row_data.size();
+			int total_rows = box33_data.size();
 			for (int row = 0; row < total_rows; row++) {
-				String st = box33_row_data.get(row);
+				String st = box33_data.get(row);
 				int this_caterory_point = 0;
 				if (st != null) {
 					try {
@@ -174,7 +190,7 @@ public class Calculate_A2 {
 //								else if (find(kwords, new Keyword("highway")).getFrequency() > 0) max_point = 5;
 //								else if (find(kwords, new Keyword("hwy")).getFrequency() > 0) max_point = 5;
 								if (max_point < 5) {
-									boolean negative_sentence = (utilities.find_term(new String[] { "potential*clos", ", clos*developed", "clos*assessed" }, c)) ? true : false;
+									boolean negative_sentence = (utilities.find_term(new String[] { "potential*clos", "possible*clos", ", clos*developed", "clos*assessed" }, c)) ? true : false;
 									if (!negative_sentence && utilities.find_term(new String[] { "motorway*", "highway*", "hwy*" }, c)) max_point = 5;
 									if (max_point < 3) {
 										if (!negative_sentence && utilities.find_term(new String[] { "area*", "road*", "rd", "route*", "trail*" }, c)) max_point = 3;
@@ -194,7 +210,8 @@ public class Calculate_A2 {
 						e.printStackTrace();
 					}
 				}
-				final_point.add(this_caterory_point);
+				box33_point.add(this_caterory_point);
+				final_point.add(Math.max(this_caterory_point, flag_point.get(row)));
 			}
 			System.out.println(records_hit_count + " records found by the query using '" + searh_word + "'");
 		} catch (IOException e) {
@@ -208,7 +225,7 @@ public class Calculate_A2 {
 	
 	class A2_Scroll extends JScrollPane {
 		public A2_Scroll() {		
-			String[] header = new String[] { "RECORD", "YEAR", "INC", "INC209R", "Final_Points" , "Box33"};
+			String[] header = new String[] { "RECORD", "YEAR", "INC", "INC209R", "Box33", "Box33_Point", "Flag_Point", "Final_Point" };
 			TextAreaReadMe textarea = new TextAreaReadMe("icon_tree.png", 75, 75);	// Print to text area
 			textarea.append(String.join("\t", header)  + "\n");
 			int number_of_records = year.size();
@@ -217,8 +234,10 @@ public class Calculate_A2 {
 						+ "\t" + year.get(i) 
 						+ "\t" + INC.get(i) 
 						+ "\t" + INC209R.get(i) 
+						+ "\t" + box33_data.get(i) 
+						+ "\t" + box33_point.get(i) 
+						+ "\t" + flag_point.get(i) 
 						+ "\t" + final_point.get(i) 
-						+ "\t" + box33_row_data.get(i) 
 						+ "\n");
 			}
 			textarea.setSelectionStart(0);	// scroll to top

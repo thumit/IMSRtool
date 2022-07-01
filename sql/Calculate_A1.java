@@ -144,7 +144,7 @@ public class Calculate_A1 {
 			// Note: trigger points for evacuation have been identified
 			// management action points have been established for evacuations of resid
 			// evacuation trigger point
-			String searh_word = "evac* AND NOT(lift*) AND NOT(\"no evac*\"~2 OR \"evac* center*\"~0)";
+			String searh_word = "evac* AND NOT(\"no evac*\"~2 OR \"evac* center*\"~0)";
 			int total_rows = box33_row_data.size();
 			for (int row = 0; row < total_rows; row++) {
 				String st = box33_row_data.get(row);
@@ -218,9 +218,10 @@ public class Calculate_A1 {
 								Document d = searcher.doc(docId);
 								String c = d.get("content");
 								if (max_point < 5) {
+									boolean one_point_sentence = (utilities.find_term(new String[] { "evac*lifted" }, c)) ? true : false;
 									boolean two_point_sentence = (utilities.find_term(new String[] { "potential*evac", "evac*expected" }, c)) ? true : false;
-									boolean three_point_sentence = (utilities.find_term(new String[] { "voluntary*evac",  "evac*warning", "evac*notice", "evacuation not" }, c)) ? true : false;
-									boolean four_point_sentence = (utilities.find_term(new String[] { "advisor*evac",  "evac*advisor" }, c)) ? true : false;
+									boolean three_point_sentence = (utilities.find_term(new String[] {  "advisor*evac",  "evac*advisor", "voluntary*evac", "evac*notice", "evacuation not" }, c)) ? true : false;
+									boolean four_point_sentence = (utilities.find_term(new String[] { "evac*warning" }, c)) ? true : false;
 									max_point = 5;	// all the others: mandatory, level 1, , level 2, level 3, level i, level ii, level iii, evac (in general)
 									if (two_point_sentence) max_point = 2;
 									if (three_point_sentence) max_point = 3;
