@@ -190,14 +190,12 @@ public class Calculate_A2 {
 //								else if (find(kwords, new Keyword("highway")).getFrequency() > 0) max_point = 5;
 //								else if (find(kwords, new Keyword("hwy")).getFrequency() > 0) max_point = 5;
 								if (max_point < 5) {
-									boolean negative_sentence = (utilities.find_term(new String[] { "potential*clos", "possible*clos", ", clos*developed", "clos*assessed" }, c)) ? true : false;
-									if (!negative_sentence && utilities.find_term(new String[] { "motorway*", "highway*", "hwy*" }, c)) max_point = 5;
-									if (max_point < 3) {
-										if (!negative_sentence && utilities.find_term(new String[] { "area*", "road*", "rd", "route*", "trail*" }, c)) max_point = 3;
-										if (max_point < 1) {
-											if (negative_sentence) max_point = 1;
-										}
-									}
+									boolean one_point_sentence = (utilities.find_term(new String[] { "potential*clos", "possible*clos", ", clos*developed", "clos*assessed" }, c)) ? true : false;
+									boolean three_point_sentence = (utilities.find_term(new String[] { "area*", "road*", "rd", "route*", "trail*" }, c)) ? true : false;
+									boolean five_point_sentence = (utilities.find_term(new String[] { "motorway*", "highway*", "hwy*" }, c)) ? true : false;
+									if (one_point_sentence) max_point = 1;
+									if (three_point_sentence) max_point = 3;
+									if (five_point_sentence) max_point = 5;
 								}
 							}
 							if (print_message) System.out.println("A2 Points = " + max_point);

@@ -51,20 +51,17 @@ import org.apache.lucene.store.Directory;
 import convenience_classes.TextAreaReadMe;
 import convenience_classes.TitleScrollPane;
 import root.IMSRmain;
-import sql.Calculate_A2.A2_Scroll;
 
-public class Calculate_A1 {
+public class Calculate_B2 {
 	List<String> year = new ArrayList<String>();
 	List<String> INC209R = new ArrayList<String>();
 	List<String> INC = new ArrayList<String>();
-	List<String> box33_data = new ArrayList<String>();
-	List<String> box34_data = new ArrayList<String>();
-	List<Integer> box33_point = new ArrayList<Integer>();
-	List<Integer> box34_point = new ArrayList<Integer>();
+	List<String> box38_48h_data = new ArrayList<String>();
+	List<Integer> box38_48h_point = new ArrayList<Integer>();
 	List<Integer> final_point = new ArrayList<Integer>();
 	boolean print_message = true;
 	
-	public Calculate_A1() {
+	public Calculate_B2() {
 		// Connect to a database. Single connection can work the same as multiple connections (code for multiple connections is deleted)
 		String combine_st = "";
 		ResultSet resultSet = null;
@@ -75,79 +72,19 @@ public class Calculate_A1 {
 			// Create and execute a SELECT SQL statement.
 			String selectSql = 
 					"""
-					-- List of Box34 items:
-					--No Likely Threat
-					--Potential Future Threat
-					--Mass Notifications in Progress
-					--Mass Notifications Completed
-					--No Evacuation(s) Imminent
-					--Planning for Evacuation
-					--Planning for Shelter-in-Place
-					--Evacuation(s) in Progress
-					--Shelter-in-Place in Progress
-					--Repopulation in Progress
-					--Mass Immunization in Progress
-					--Mass Immunization Complete
-					--Quarantine in Progress
-					--Area Restriction in Effect
-					
-					SELECT 
-					[YEAR], table1.[INC209R_IDENTIFIER], [INC_IDENTIFIER], [LIFE_SAFETY_HEALTH_STATUS_NARR], CODE_NAME_AGGR, ABBREVIATION_AGGR,
-					CASE WHEN CHARINDEX('Evacuation(s) in Progress', CODE_NAME_AGGR)>0 THEN 5		--order must be 5, 3, 1. This is very important otherwise results will be wrong
-					WHEN CHARINDEX('Planning for Evacuation', CODE_NAME_AGGR)>0 THEN 3
-					WHEN CHARINDEX('No Evacuation(s) Imminent', CODE_NAME_AGGR)>0 THEN 1
-					ELSE 0 END AS A1_Box34_Points
-					FROM
-					
-					(SELECT 2015 AS [YEAR], [INC209R_IDENTIFIER], [INC_IDENTIFIER],[LIFE_SAFETY_HEALTH_STATUS_NARR] FROM [SIT2015].[dbo].[SIT209_HISTORY_INCIDENT_209_REPORTS]) table1
-					LEFT JOIN
-					(SELECT INC209R_IDENTIFIER,
-					STRING_AGG(STR(INC209RLSM_IDENTIFIER, 7, 0),',') INC209RLSM_IDENTIFIER_AGGR,
-					STRING_AGG(STR(LSTT_IDENTIFIER, 7, 0),',') LSTT_IDENTIFIER_AGGR,
-					STRING_AGG(ACTIVE_INACTIVE_FLAG,',') ACTIVE_INACTIVE_FLAG_AGGR,
-					STRING_AGG(CODE_NAME,',') CODE_NAME_AGGR,
-					STRING_AGG(ABBREVIATION,',') ABBREVIATION_AGGR
-					FROM [SIT2015].[dbo].[SIT209_HISTORY_INCIDENT_209_LIFE_SAFETY_MGMTS] LEFT JOIN [SIT2015].[dbo].[SIT209_HISTORY_SIT209_LOOKUP_CODES] ON LSTT_IDENTIFIER = LUCODES_IDENTIFIER
-					GROUP BY INC209R_IDENTIFIER) table2
-					ON table1.INC209R_IDENTIFIER = table2.INC209R_IDENTIFIER
-					
-					
+					SELECT 2015, [INC209R_IDENTIFIER], [INC_IDENTIFIER], [CURRENT_THREAT_48] FROM [SIT2015].[dbo].[SIT209_HISTORY_INCIDENT_209_REPORTS]
 					UNION
-					
-					
-					SELECT 
-					[YEAR], table1.[INC209R_IDENTIFIER], [INC_IDENTIFIER], [LIFE_SAFETY_HEALTH_STATUS_NARR], CODE_NAME_AGGR, ABBREVIATION_AGGR,
-					CASE WHEN CHARINDEX('No Evacuation(s) Imminent', CODE_NAME_AGGR)>0 THEN 1
-						 WHEN CHARINDEX('Planning for Evacuation', CODE_NAME_AGGR)>0 THEN 3
-						 WHEN CHARINDEX('Evacuation(s) in Progress', CODE_NAME_AGGR)>0 THEN 5
-						 ELSE 0 END AS A1_Box34_Points
-					FROM
-					
-					(SELECT 2016 AS [YEAR], [INC209R_IDENTIFIER], [INC_IDENTIFIER],[LIFE_SAFETY_HEALTH_STATUS_NARR] FROM [SIT2016].[dbo].[SIT209_HISTORY_INCIDENT_209_REPORTS]) table1
-					LEFT JOIN
-					(SELECT INC209R_IDENTIFIER,
-					STRING_AGG(STR(INC209RLSM_IDENTIFIER, 7, 0),',') INC209RLSM_IDENTIFIER_AGGR,
-					STRING_AGG(STR(LSTT_IDENTIFIER, 7, 0),',') LSTT_IDENTIFIER_AGGR,
-					STRING_AGG(ACTIVE_INACTIVE_FLAG,',') ACTIVE_INACTIVE_FLAG_AGGR,
-					STRING_AGG(CODE_NAME,',') CODE_NAME_AGGR,
-					STRING_AGG(ABBREVIATION,',') ABBREVIATION_AGGR
-					FROM [SIT2016].[dbo].[SIT209_HISTORY_INCIDENT_209_LIFE_SAFETY_MGMTS] LEFT JOIN [SIT2016].[dbo].[SIT209_LOOKUP_CODES] ON LSTT_IDENTIFIER = LUCODES_IDENTIFIER
-					GROUP BY INC209R_IDENTIFIER) table2
-					ON table1.INC209R_IDENTIFIER = table2.INC209R_IDENTIFIER
-					
-					
-					ORDER BY INC_IDENTIFIER, INC209R_IDENTIFIER
+					SELECT 2016, [INC209R_IDENTIFIER], [INC_IDENTIFIER], [CURRENT_THREAT_48] FROM [SIT2016].[dbo].[SIT209_HISTORY_INCIDENT_209_REPORTS]
+					ORDER BY [INC_IDENTIFIER], [INC209R_IDENTIFIER]
 					""";
 			resultSet = statement.executeQuery(selectSql);
 			while (resultSet.next()) {
 				year.add(resultSet.getString(1));
 				INC209R.add(resultSet.getString(2));
 				INC.add(resultSet.getString(3));
-				box34_point.add(resultSet.getInt(7));
 				String st = resultSet.getString(4);
 				if (st != null) combine_st = combine_st.concat(".").concat(st);		// https://stackoverflow.com/questions/5076740/whats-the-fastest-way-to-concatenate-two-strings-in-java
-				box33_data.add(st);
-				box34_data.add(resultSet.getString(5));
+				box38_48h_data.add(st);
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -157,14 +94,13 @@ public class Calculate_A1 {
 		try {
 			SQL_Utilities utilities = new SQL_Utilities();
 			int records_hit_count = 0;
-			// Note: downgraded to a warning, level i, evacuation center remains open, evacuations to the town of hyampom (300) expected within the next 24 hours, evacuations are expected
-			// Note: trigger points for evacuation have been identified
-			// management action points have been established for evacuations of resid
-			// evacuation trigger point
-			String searh_word = "evac* AND NOT(\"no evac*\"~2 OR \"evac* center*\"~0)";
-			int total_rows = box33_data.size();
+//			String searh_word = "restrict*";
+//			String searh_word = "\"road* clos*\"~0";		// Lucene proximity search: https://lucene.apache.org/core/3_6_0/queryparsersyntax.html#Range%20Searches
+			// discontinued, lifted, removed, open		except for, could be closed, no, none		potential, being developed, being assessed, being signed, issued, been reduced, changed, modified, soft
+			String searh_word = "communit* AND (threat* OR impact* OR risk*) AND NOT(\"no threat*\"~4 OR \"no risk\"~4)";
+			int total_rows = box38_48h_data.size();
 			for (int row = 0; row < total_rows; row++) {
-				String st = box33_data.get(row);
+				String st = box38_48h_data.get(row);
 				int this_caterory_point = 0;
 				if (st != null) {
 					try {
@@ -235,17 +171,20 @@ public class Calculate_A1 {
 								Document d = searcher.doc(docId);
 								String c = d.get("content");
 								if (max_point < 5) {
-									boolean one_point_sentence = (utilities.find_term(new String[] { "evac*lifted" }, c)) ? true : false;
-									boolean two_point_sentence = (utilities.find_term(new String[] { "potential*evac", "evac*expected" }, c)) ? true : false;
-									boolean three_point_sentence = (utilities.find_term(new String[] {  "advisor*evac",  "evac*advisor", "voluntary*evac", "evac*notice", "evacuation not" }, c)) ? true : false;
-									boolean four_point_sentence = (utilities.find_term(new String[] { "evac*warning" }, c)) ? true : false;
-									max_point = 5;	// all the others: mandatory, level 1, , level 2, level 3, level i, level ii, level iii, evac (in general)
-									if (two_point_sentence) max_point = 2;
+									boolean one_point_sentence = (utilities.find_term(new String[] {
+											"potential*threat", "potential*risk", "possible*threat", "possible*risk", "could be*threat", "could be*impact",
+											"minimal*threat", "minimal*risk",
+											"threat*decrease", "low*threat", "low*risk", "low*threat", "limited*threat", "limited*risk",
+											"slight*threat", "slight*risk",
+											}, c)) ? true : false;
+									boolean three_point_sentence = (utilities.find_term(new String[] {  "moderate*threat", "moderate*risk" }, c)) ? true : false;
+									boolean five_point_sentence = false;
+									max_point = 5;
+									if (one_point_sentence) max_point = 1;
 									if (three_point_sentence) max_point = 3;
-									if (four_point_sentence) max_point = 4;
 								}
 							}
-							if (print_message) System.out.println("A2 Points = " + max_point);
+							if (print_message) System.out.println("B2 Points = " + max_point);
 							this_caterory_point = max_point;
 						}
 
@@ -255,10 +194,8 @@ public class Calculate_A1 {
 						e.printStackTrace();
 					}
 				}
-				box33_point.add(this_caterory_point);
-			}
-			for (int i = 0; i < box33_point.size(); i++) {
-				final_point.add(Math.max(box33_point.get(i), box34_point.get(i)));		// final point will the the maximum points between 2 categories
+				box38_48h_point.add(this_caterory_point);
+				final_point.add(Math.max(this_caterory_point, 0));
 			}
 			System.out.println(records_hit_count + " records found by the query using '" + searh_word + "'");
 		} catch (IOException e) {
@@ -266,13 +203,13 @@ public class Calculate_A1 {
 		}
 	}
 	
-	public void show_A1_scroll() {
-		new A1_Scroll();
+	public void show_B2_scroll() {
+		new B2_Scroll();
 	}
 	
-	class A1_Scroll extends JScrollPane {
-		public A1_Scroll() {		
-			String[] header = new String[] { "RECORD", "YEAR", "INC", "INC209R", "Box33", "Box34", "Box33_Point", "Box34_Point", "Final_Point" };
+	class B2_Scroll extends JScrollPane {
+		public B2_Scroll() {		
+			String[] header = new String[] { "RECORD", "YEAR", "INC", "INC209R", "Box33_48h", "Box33_48h_Point", "Final_Point" };
 			TextAreaReadMe textarea = new TextAreaReadMe("icon_tree.png", 75, 75);	// Print to text area
 			textarea.append(String.join("\t", header)  + "\n");
 			int number_of_records = year.size();
@@ -281,10 +218,8 @@ public class Calculate_A1 {
 						+ "\t" + year.get(i) 
 						+ "\t" + INC.get(i) 
 						+ "\t" + INC209R.get(i) 
-						+ "\t" + box33_data.get(i) 
-						+ "\t" + box34_data.get(i) 
-						+ "\t" + box33_point.get(i) 
-						+ "\t" + box34_point.get(i) 
+						+ "\t" + box38_48h_data.get(i) 
+						+ "\t" + box38_48h_point.get(i) 
 						+ "\t" + final_point.get(i) 
 						+ "\n");
 			}
