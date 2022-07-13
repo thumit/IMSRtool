@@ -52,16 +52,16 @@ import convenience_classes.TextAreaReadMe;
 import convenience_classes.TitleScrollPane;
 import root.IMSRmain;
 
-public class Calculate_B2 {
+public class Calculate_C1 {
 	List<String> year = new ArrayList<String>();
 	List<String> INC209R = new ArrayList<String>();
 	List<String> INC = new ArrayList<String>();
-	List<String> box38_48h_data = new ArrayList<String>();
-	List<Integer> box38_48h_point = new ArrayList<Integer>();
+	List<String> box38_12h_data = new ArrayList<String>();
+	List<Integer> box38_12h_point = new ArrayList<Integer>();
 	List<Integer> final_point = new ArrayList<Integer>();
 	boolean print_message = true;
 	
-	public Calculate_B2() {
+	public Calculate_C1() {
 		// Connect to a database. Single connection can work the same as multiple connections (code for multiple connections is deleted)
 		String combine_st = "";
 		ResultSet resultSet = null;
@@ -72,9 +72,9 @@ public class Calculate_B2 {
 			// Create and execute a SELECT SQL statement.
 			String selectSql = 
 					"""
-					SELECT 2015, [INC209R_IDENTIFIER], [INC_IDENTIFIER], [CURRENT_THREAT_48] FROM [SIT2015].[dbo].[SIT209_HISTORY_INCIDENT_209_REPORTS]
+					SELECT 2015, [INC209R_IDENTIFIER], [INC_IDENTIFIER], [CURRENT_THREAT_12] FROM [SIT2015].[dbo].[SIT209_HISTORY_INCIDENT_209_REPORTS]
 					UNION
-					SELECT 2016, [INC209R_IDENTIFIER], [INC_IDENTIFIER], [CURRENT_THREAT_48] FROM [SIT2016].[dbo].[SIT209_HISTORY_INCIDENT_209_REPORTS]
+					SELECT 2016, [INC209R_IDENTIFIER], [INC_IDENTIFIER], [CURRENT_THREAT_12] FROM [SIT2016].[dbo].[SIT209_HISTORY_INCIDENT_209_REPORTS]
 					ORDER BY [INC_IDENTIFIER], [INC209R_IDENTIFIER]
 					""";
 			resultSet = statement.executeQuery(selectSql);
@@ -84,7 +84,7 @@ public class Calculate_B2 {
 				INC.add(resultSet.getString(3));
 				String st = resultSet.getString(4);
 				if (st != null) combine_st = combine_st.concat(".").concat(st);		// https://stackoverflow.com/questions/5076740/whats-the-fastest-way-to-concatenate-two-strings-in-java
-				box38_48h_data.add(st);
+				box38_12h_data.add(st);
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -97,10 +97,10 @@ public class Calculate_B2 {
 //			String searh_word = "restrict*";
 //			String searh_word = "\"road* clos*\"~0";		// Lucene proximity search: https://lucene.apache.org/core/3_6_0/queryparsersyntax.html#Range%20Searches
 			// discontinued, lifted, removed, open		except for, could be closed, no, none		potential, being developed, being assessed, being signed, issued, been reduced, changed, modified, soft
-			String searh_word = "communit* AND (threat* OR impact* OR risk*) AND NOT(\"no threat*\"~4 OR \"no risk\"~4 OR \"no impact\"~4)";
-			int total_rows = box38_48h_data.size();
+			String searh_word = "(histor* OR cultur*) AND (threat* OR impact* OR risk*) AND NOT(\"no threat*\"~4 OR \"no risk\"~4 OR \"no impact\"~4)";
+			int total_rows = box38_12h_data.size();
 			for (int row = 0; row < total_rows; row++) {
-				String st = box38_48h_data.get(row);
+				String st = box38_12h_data.get(row);
 				int this_caterory_point = 0;
 				if (st != null) {
 					try {
@@ -194,7 +194,7 @@ public class Calculate_B2 {
 						e.printStackTrace();
 					}
 				}
-				box38_48h_point.add(this_caterory_point);
+				box38_12h_point.add(this_caterory_point);
 				final_point.add(Math.max(this_caterory_point, 0));
 			}
 			System.out.println(records_hit_count + " records found by the query using '" + searh_word + "'");
@@ -203,13 +203,13 @@ public class Calculate_B2 {
 		}
 	}
 	
-	public void show_B2_scroll() {
+	public void show_C1_scroll() {
 		new B2_Scroll();
 	}
 	
 	class B2_Scroll extends JScrollPane {
 		public B2_Scroll() {		
-			String[] header = new String[] { "RECORD", "YEAR", "INC", "INC209R", "Box38_48h", "Box38_48h_Point", "Final_Point" };
+			String[] header = new String[] { "RECORD", "YEAR", "INC", "INC209R", "Box38_12h", "Box38_12h_Point", "Final_Point" };
 			TextAreaReadMe textarea = new TextAreaReadMe("icon_tree.png", 75, 75);	// Print to text area
 			textarea.append(String.join("\t", header)  + "\n");
 			int number_of_records = year.size();
@@ -218,8 +218,8 @@ public class Calculate_B2 {
 						+ "\t" + year.get(i) 
 						+ "\t" + INC.get(i) 
 						+ "\t" + INC209R.get(i) 
-						+ "\t" + box38_48h_data.get(i) 
-						+ "\t" + box38_48h_point.get(i) 
+						+ "\t" + box38_12h_data.get(i) 
+						+ "\t" + box38_12h_point.get(i) 
 						+ "\t" + final_point.get(i) 
 						+ "\n");
 			}

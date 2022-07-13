@@ -19,6 +19,11 @@ import javax.swing.event.MenuListener;
 import sql.Calculate_A1;
 import sql.Calculate_A2;
 import sql.Calculate_B2;
+import sql.Calculate_B3;
+import sql.Calculate_C1;
+import sql.Calculate_C2;
+import sql.Calculate_C3;
+import sql.Calculate_C4;
 import sql.Calculate_Final_Ranking;
 import sql.Calculate_Keyword_Frequency;
 
@@ -65,7 +70,7 @@ public class IMSRmain extends JFrame {
 				A3 = new JMenuItem("A3 Points");
 				B1 = new JMenuItem("B1 Points");
 				B2 = new JMenuItem("B2 Points");
-				B3 = new JMenuItem("B3 Points");
+				C4 = new JMenuItem("C4 Points");
 				C1 = new JMenuItem("C1 Points");
 				C2 = new JMenuItem("C2 Points");
 				C3 = new JMenuItem("C3 Points");
@@ -87,7 +92,7 @@ public class IMSRmain extends JFrame {
 				menu_SIT_Ranking.add(A3);
 				menu_SIT_Ranking.add(B1);
 				menu_SIT_Ranking.add(B2);
-				menu_SIT_Ranking.add(B3);
+				menu_SIT_Ranking.add(C4);
 				menu_SIT_Ranking.add(C1);
 				menu_SIT_Ranking.add(C2);
 				menu_SIT_Ranking.add(C3);
@@ -186,6 +191,41 @@ public class IMSRmain extends JFrame {
 					public void actionPerformed(ActionEvent event) {
 						Calculate_B2 B2 = new Calculate_B2();
 						B2.show_B2_scroll();
+					}
+				});	
+				
+				B3.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent event) {
+						Calculate_B3 B3 = new Calculate_B3();
+						B3.show_B3_scroll();
+					}
+				});	
+				
+				C1.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent event) {
+						Calculate_C1 C1 = new Calculate_C1();
+						C1.show_C1_scroll();
+					}
+				});	
+				
+				C2.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent event) {
+						Calculate_C2 C2 = new Calculate_C2();
+						C2.show_C2_scroll();
+					}
+				});	
+				
+				C3.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent event) {
+						Calculate_C3 C3 = new Calculate_C3();
+						C3.show_C3_scroll();
+					}
+				});	
+				
+				C4.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent event) {
+						Calculate_C4 C4 = new Calculate_C4();
+						C4.show_C4_scroll();
 					}
 				});	
 			}

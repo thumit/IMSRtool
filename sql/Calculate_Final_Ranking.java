@@ -28,6 +28,11 @@ public class Calculate_Final_Ranking {
 	Calculate_A2 A2;
 	Calculate_B1 B1;
 	Calculate_B2 B2;
+	Calculate_B3 B3;
+	Calculate_C1 C1;
+	Calculate_C2 C2;
+	Calculate_C3 C3;
+	Calculate_C4 C4;
 	Calculate_D1 D1;
 	Calculate_D2 D2;
 	int number_of_records;
@@ -37,6 +42,11 @@ public class Calculate_Final_Ranking {
 		A2 = new Calculate_A2();
 		B1 = new Calculate_B1();
 		B2 = new Calculate_B2();
+		B3 = new Calculate_B3();
+		C1 = new Calculate_C1();
+		C2 = new Calculate_C2();
+		C3 = new Calculate_C3();
+		C4 = new Calculate_C4();
 		D1 = new Calculate_D1();
 		D2 = new Calculate_D2();
 		number_of_records = A2.year.size();
@@ -45,7 +55,7 @@ public class Calculate_Final_Ranking {
 	
 	class Ranking_Points_Scroll extends JScrollPane {
 		public Ranking_Points_Scroll() {		
-			String[] header = new String[] { "RECORD", "YEAR", "INC", "INC209R", "TOTAL" , "A1", "A2", "B1", "B2", "D1", "D2"};
+			String[] header = new String[] { "RECORD", "YEAR", "INC", "INC209R", "TOTAL" , "A1", "A2", "B1", "B2", "B3", "D1", "D2", "C1", "C2", "C3", "C4"};
 			TextAreaReadMe textarea = new TextAreaReadMe("icon_tree.png", 75, 75);	// Print to text area
 			textarea.append(String.join("\t", header)  + "\n");
 			for (int i = 0; i < number_of_records; i++) {
@@ -58,8 +68,13 @@ public class Calculate_Final_Ranking {
 						+ "\t" + A2.final_point.get(i)
 						+ "\t" + B1.final_point.get(i)
 						+ "\t" + B2.final_point.get(i)
+						+ "\t" + B3.final_point.get(i)
 						+ "\t" + D1.final_point.get(i)
 						+ "\t" + D2.final_point.get(i)
+						+ "\t" + C1.final_point.get(i)
+						+ "\t" + C2.final_point.get(i)
+						+ "\t" + C3.final_point.get(i)
+						+ "\t" + C4.final_point.get(i)
 						+ "\n");
 			}
 			textarea.setSelectionStart(0);	// scroll to top
