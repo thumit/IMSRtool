@@ -26,6 +26,7 @@ import root.IMSRmain;
 public class Calculate_Final_Ranking {
 	Calculate_A1 A1;
 	Calculate_A2 A2;
+	Calculate_A3 A3;
 	Calculate_B1 B1;
 	Calculate_B2 B2;
 	Calculate_B3 B3;
@@ -40,6 +41,7 @@ public class Calculate_Final_Ranking {
 	public Calculate_Final_Ranking() {
 		A1 = new Calculate_A1();
 		A2 = new Calculate_A2();
+		A3 = new Calculate_A3();
 		B1 = new Calculate_B1();
 		B2 = new Calculate_B2();
 		B3 = new Calculate_B3();
@@ -55,7 +57,7 @@ public class Calculate_Final_Ranking {
 	
 	class Ranking_Points_Scroll extends JScrollPane {
 		public Ranking_Points_Scroll() {		
-			String[] header = new String[] { "RECORD", "YEAR", "INC", "INC209R", "TOTAL" , "A1", "A2", "B1", "B2", "B3", "D1", "D2", "C1", "C2", "C3", "C4"};
+			String[] header = new String[] { "RECORD", "YEAR", "INC", "INC209R", "A1", "A2", "A3", "B1", "B2", "B3", "C1", "C2", "C3", "C4", "D1", "D2", "TOTAL" };
 			TextAreaReadMe textarea = new TextAreaReadMe("icon_tree.png", 75, 75);	// Print to text area
 			textarea.append(String.join("\t", header)  + "\n");
 			for (int i = 0; i < number_of_records; i++) {
@@ -63,18 +65,22 @@ public class Calculate_Final_Ranking {
 						+ "\t" + A2.year.get(i) 
 						+ "\t" + A2.INC.get(i) 
 						+ "\t" + A2.INC209R.get(i) 
-						+ "\t" + (A1.final_point.get(i) + A2.final_point.get(i) + B1.final_point.get(i) + D1.final_point.get(i) + D2.final_point.get(i))
 						+ "\t" + A1.final_point.get(i) 
 						+ "\t" + A2.final_point.get(i)
+						+ "\t" + A3.final_point.get(i)
 						+ "\t" + B1.final_point.get(i)
 						+ "\t" + B2.final_point.get(i)
 						+ "\t" + B3.final_point.get(i)
-						+ "\t" + D1.final_point.get(i)
-						+ "\t" + D2.final_point.get(i)
 						+ "\t" + C1.final_point.get(i)
 						+ "\t" + C2.final_point.get(i)
 						+ "\t" + C3.final_point.get(i)
 						+ "\t" + C4.final_point.get(i)
+						+ "\t" + D1.final_point.get(i)
+						+ "\t" + D2.final_point.get(i)
+						+ "\t" + (A1.final_point.get(i) + A2.final_point.get(i) + A3.final_point.get(i) + 
+								B1.final_point.get(i) + B2.final_point.get(i) + B3.final_point.get(i) + 
+								C1.final_point.get(i) + C2.final_point.get(i) + C3.final_point.get(i) + C4.final_point.get(i) +
+								D1.final_point.get(i) + D2.final_point.get(i))
 						+ "\n");
 			}
 			textarea.setSelectionStart(0);	// scroll to top
