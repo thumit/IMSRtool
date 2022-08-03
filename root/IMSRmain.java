@@ -18,6 +18,8 @@ import javax.swing.event.MenuListener;
 
 import sql.Calculate_A1;
 import sql.Calculate_A2;
+import sql.Calculate_A3;
+import sql.Calculate_B1;
 import sql.Calculate_B2;
 import sql.Calculate_B3;
 import sql.Calculate_C1;
@@ -70,7 +72,7 @@ public class IMSRmain extends JFrame {
 				A3 = new JMenuItem("A3 Points");
 				B1 = new JMenuItem("B1 Points");
 				B2 = new JMenuItem("B2 Points");
-				C4 = new JMenuItem("C4 Points");
+				B3 = new JMenuItem("B3 Points");
 				C1 = new JMenuItem("C1 Points");
 				C2 = new JMenuItem("C2 Points");
 				C3 = new JMenuItem("C3 Points");
@@ -92,7 +94,7 @@ public class IMSRmain extends JFrame {
 				menu_SIT_Ranking.add(A3);
 				menu_SIT_Ranking.add(B1);
 				menu_SIT_Ranking.add(B2);
-				menu_SIT_Ranking.add(C4);
+				menu_SIT_Ranking.add(B3);
 				menu_SIT_Ranking.add(C1);
 				menu_SIT_Ranking.add(C2);
 				menu_SIT_Ranking.add(C3);
@@ -184,6 +186,20 @@ public class IMSRmain extends JFrame {
 					public void actionPerformed(ActionEvent event) {
 						Calculate_A2 A2 = new Calculate_A2();
 						A2.show_A2_scroll();
+					}
+				});	
+				
+				A3.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent event) {
+						Calculate_A3 A3 = new Calculate_A3();
+						A3.show_A3_scroll();
+					}
+				});	
+				
+				B1.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent event) {
+						Calculate_B1 B1 = new Calculate_B1();
+						B1.show_B1_scroll();
 					}
 				});	
 				
