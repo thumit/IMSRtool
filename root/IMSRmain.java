@@ -15,7 +15,6 @@ import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
-import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
@@ -204,7 +203,7 @@ public class IMSRmain extends JFrame {
 						if (main.get_DesktopPane().getSelectedFrame() != null) {	// Or set the frame near the recently opened JInternalFrame
 							frame.setLocation(main.get_DesktopPane().getSelectedFrame().getX() + 25, main.get_DesktopPane().getSelectedFrame().getY() + 25);
 						}
-						frame.add(new JPanel(), BorderLayout.CENTER);
+						frame.add(new SIT_CUSTOMIZATION_PANE(), BorderLayout.CENTER);
 						frame.setVisible(true); // show internal frame	
 					}
 				});	
