@@ -190,7 +190,7 @@ public class Calculate_A2 {
 //								else if (find(kwords, new Keyword("highway")).getFrequency() > 0) max_point = 5;
 //								else if (find(kwords, new Keyword("hwy")).getFrequency() > 0) max_point = 5;
 								if (max_point < 5) {
-									boolean one_point_sentence = (utilities.find_term(new String[] { "potential*clos", "possible*clos", ", clos*developed", "clos*assessed" }, c)) ? true : false;
+									boolean one_point_sentence = (utilities.find_term(new String[] { "potential*clos", "possible*clos", "clos*developed", "clos*assessed" }, c)) ? true : false;
 									boolean three_point_sentence = (utilities.find_term(new String[] { "area*", "road*", "rd", "route*", "trail*" }, c)) ? true : false;
 									boolean five_point_sentence = (utilities.find_term(new String[] { "motorway*", "highway*", "hwy*" }, c)) ? true : false;
 									if (one_point_sentence) max_point = 1;

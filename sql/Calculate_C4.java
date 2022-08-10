@@ -97,7 +97,7 @@ public class Calculate_C4 {
 //			String searh_word = "restrict*";
 //			String searh_word = "\"road* clos*\"~0";		// Lucene proximity search: https://lucene.apache.org/core/3_6_0/queryparsersyntax.html#Range%20Searches
 			// discontinued, lifted, removed, open		except for, could be closed, no, none		potential, being developed, being assessed, being signed, issued, been reduced, changed, modified, soft
-			String searh_word = "(economic* OR torism* OR fishing OR hunting* OR job*) AND (threat* OR impact* OR risk*) AND NOT(\"no threat*\"~4 OR \"no risk\"~4 OR \"no impact\"~4)";
+			String searh_word = "(economic* OR tourism* OR fishing* OR hunting* OR job*) AND (threat* OR impact* OR risk*) AND NOT(\"no threat*\"~4 OR \"no risk\"~4 OR \"no impact\"~4)";
 			int total_rows = box38_12h_data.size();
 			for (int row = 0; row < total_rows; row++) {
 				String st = box38_12h_data.get(row);
