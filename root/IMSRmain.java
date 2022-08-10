@@ -1,7 +1,9 @@
 package root;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.Font;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Toolkit;
@@ -10,9 +12,15 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 
 import javax.swing.JFrame;
+import javax.swing.JInternalFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JPanel;
 import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.UIManager.LookAndFeelInfo;
+import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 
@@ -35,7 +43,7 @@ public class IMSRmain extends JFrame {
 	private JMenu 						menuUtility, menuHelp, menu_SIT_Ranking, menu_SIT_Keyword;
 	private JMenuItem					extract, explore; 			// For menuUtility
 	private JMenuItem 					content, update, about; 	// For menuHelp
-	private JMenuItem 					total_points, A1, A2, A3, B1, B2, B3, C1, C2, C3, C4, D1, D2; 			// For SIT_Ranking
+	private JMenuItem 					customization, total_points, A1, A2, A3, B1, B2, B3, C1, C2, C3, C4, D1, D2; 			// For SIT_Ranking
 	private static IMSRDesktopPane 		desktopPane;
 	private static IMSRContentPane 		contentPane;
 	private static IMSRmain 			main;
@@ -52,7 +60,22 @@ public class IMSRmain extends JFrame {
 	public IMSRmain() {
 		EventQueue.invokeLater(new Runnable() {
 			@Override
-			public void run() {		
+			public void run() {	
+				for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {	// Set Look & Feel
+					if (info.getName().equals("Nimbus")) {
+						try {
+							UIManager.setLookAndFeel(info.getClassName());
+							String font_name = "Century Schoolbook";
+							int font_size = 12;
+							UIManager.getLookAndFeelDefaults().put("info", new Color(255, 250, 205));		// Change the ugly yellow color of ToolTip --> lemon chiffon
+							UIManager.getLookAndFeelDefaults().put("defaultFont", new Font(font_name, Font.PLAIN, font_size));
+						} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e1) {
+							System.err.println(e1.getClass().getName() + ": " + e1.getMessage());
+						}
+						SwingUtilities.updateComponentTreeUI(main);
+					}
+				}	
+						
 				// Define components: Menubar, Menus, MenuItems----------------------------------
 				desktopPane = new IMSRDesktopPane();
 				menuBar = new IMSRMenuBar();
@@ -66,6 +89,7 @@ public class IMSRmain extends JFrame {
 				content = new JMenuItem("Content");
 				update = new JMenuItem("Update");
 				about = new JMenuItem("About");
+				customization = new JMenuItem("Customization");
 				total_points = new JMenuItem("Total Points");
 				A1 = new JMenuItem("A1 Points");
 				A2 = new JMenuItem("A2 Points");
@@ -88,6 +112,7 @@ public class IMSRmain extends JFrame {
 				menuHelp.add(content);
 				menuHelp.add(update);
 				menuHelp.add(about);
+				menu_SIT_Ranking.add(customization);
 				menu_SIT_Ranking.add(total_points);
 				menu_SIT_Ranking.add(A1);
 				menu_SIT_Ranking.add(A2);
@@ -166,6 +191,23 @@ public class IMSRmain extends JFrame {
 					public void menuCanceled(MenuEvent e) {
 					}
 				});
+				
+				customization.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, Toolkit.getDefaultToolkit ().getMenuShortcutKeyMask()));	// CTRL on Windows, *** on MAC-OS
+				customization.setMnemonic(KeyEvent.VK_C);
+				customization.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent event) {
+						JInternalFrame frame = new JInternalFrame("SIT CUSTOMIZATION", true /*resizable*/, true, /*closable*/true/*maximizable*/, true/*iconifiable*/);	
+						desktopPane.add(frame, BorderLayout.CENTER); // attach internal frame
+						frame.setSize((int) (getWidth()/1.2),(int) (getHeight()/1.2));		
+						frame.setLocation((int) ((getWidth() - frame.getWidth())/2),
+														((int) ((getHeight() - frame.getHeight())/3.5)));	//Set the frame near the center of the Main frame
+						if (main.get_DesktopPane().getSelectedFrame() != null) {	// Or set the frame near the recently opened JInternalFrame
+							frame.setLocation(main.get_DesktopPane().getSelectedFrame().getX() + 25, main.get_DesktopPane().getSelectedFrame().getY() + 25);
+						}
+						frame.add(new JPanel(), BorderLayout.CENTER);
+						frame.setVisible(true); // show internal frame	
+					}
+				});	
 				
 				total_points.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, Toolkit.getDefaultToolkit ().getMenuShortcutKeyMask()));	// CTRL on Windows, *** on MAC-OS
 				total_points.setMnemonic(KeyEvent.VK_T);
@@ -256,12 +298,7 @@ public class IMSRmain extends JFrame {
 		GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
 		int width = gd.getDisplayMode().getWidth();
 		int height = gd.getDisplayMode().getHeight();
-		
-		if (width >= 1600 && height >= 900) {
-			return new Dimension(1600/2, 900/2);
-		} else {
-			return new Dimension((int) (width * 0.85/2), (int) (height * 0.85/2));
-		}
+		return new Dimension((int) (width * 0.8), (int) (height * 0.9));
 	}
 	
 	public static IMSRDesktopPane get_DesktopPane() {
