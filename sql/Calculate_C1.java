@@ -156,12 +156,12 @@ public class Calculate_C1 {
 						// 4. display results
 						int number_of_hits = hits.length;
 						if (number_of_hits > 0) {
-							if (print_message) System.out.println(number_of_hits + " hits.");
-							for (int i = 0; i < hits.length; i++) {		// this is actually sentence hit, this will loop all the hit sentences
-								int docId = hits[i].doc;
-								Document d = searcher.doc(docId);
-								if (print_message) System.out.println(d.get("title") + "\t" + d.get("content"));
-							}
+//							if (print_message) System.out.println(number_of_hits + " hits.");
+//							for (int i = 0; i < hits.length; i++) {		// this is actually sentence hit, this will loop all the hit sentences
+//								int docId = hits[i].doc;
+//								Document d = searcher.doc(docId);
+//								if (print_message) System.out.println(d.get("title") + "\t" + d.get("content"));
+//							}
 							records_hit_count++;
 						}
 						
@@ -190,7 +190,6 @@ public class Calculate_C1 {
 									if (three_point_sentence) max_point = 3;
 								}
 							}
-							if (print_message) System.out.println("B2 Points = " + max_point);
 							this_caterory_point = max_point;
 						}
 

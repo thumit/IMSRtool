@@ -184,12 +184,12 @@ public class Calculate_A3 {
 						// 4. display results
 						int number_of_hits = hits.length;
 						if (number_of_hits > 0) {
-							if (print_message) System.out.println(number_of_hits + " hits.");
-							for (int i = 0; i < hits.length; i++) {		// this is actually sentence hit, this will loop all the hit sentences
-								int docId = hits[i].doc;
-								Document d = searcher.doc(docId);
-								if (print_message) System.out.println(d.get("title") + "\t" + d.get("content"));
-							}
+//							if (print_message) System.out.println(number_of_hits + " hits.");
+//							for (int i = 0; i < hits.length; i++) {		// this is actually sentence hit, this will loop all the hit sentences
+//								int docId = hits[i].doc;
+//								Document d = searcher.doc(docId);
+//								if (print_message) System.out.println(d.get("title") + "\t" + d.get("content"));
+//							}
 							records_hit_count++;
 						}
 						
@@ -212,7 +212,6 @@ public class Calculate_A3 {
 									this_caterory_point = 2;
 								}
 							}
-							if (print_message) System.out.println("12h Points = " + this_caterory_point);
 						}
 
 						// 5. reader can only be closed when there is no need to access the documents any more.
@@ -283,12 +282,12 @@ public class Calculate_A3 {
 						// 4. display results
 						int number_of_hits = hits.length;
 						if (number_of_hits > 0) {
-							if (print_message) System.out.println(number_of_hits + " hits.");
-							for (int i = 0; i < hits.length; i++) {		// this is actually sentence hit, this will loop all the hit sentences
-								int docId = hits[i].doc;
-								Document d = searcher.doc(docId);
-								if (print_message) System.out.println(d.get("title") + "\t" + d.get("content"));
-							}
+//							if (print_message) System.out.println(number_of_hits + " hits.");
+//							for (int i = 0; i < hits.length; i++) {		// this is actually sentence hit, this will loop all the hit sentences
+//								int docId = hits[i].doc;
+//								Document d = searcher.doc(docId);
+//								if (print_message) System.out.println(d.get("title") + "\t" + d.get("content"));
+//							}
 							records_hit_count++;
 						}
 						
@@ -311,7 +310,6 @@ public class Calculate_A3 {
 									this_caterory_point = 2;
 								}
 							}
-							if (print_message) System.out.println("24h Points = " + this_caterory_point);
 						}
 
 						// 5. reader can only be closed when there is no need to access the documents any more.
@@ -381,12 +379,12 @@ public class Calculate_A3 {
 						// 4. display results
 						int number_of_hits = hits.length;
 						if (number_of_hits > 0) {
-							if (print_message) System.out.println(number_of_hits + " hits.");
-							for (int i = 0; i < hits.length; i++) {		// this is actually sentence hit, this will loop all the hit sentences
-								int docId = hits[i].doc;
-								Document d = searcher.doc(docId);
-								if (print_message) System.out.println(d.get("title") + "\t" + d.get("content"));
-							}
+//							if (print_message) System.out.println(number_of_hits + " hits.");
+//							for (int i = 0; i < hits.length; i++) {		// this is actually sentence hit, this will loop all the hit sentences
+//								int docId = hits[i].doc;
+//								Document d = searcher.doc(docId);
+//								if (print_message) System.out.println(d.get("title") + "\t" + d.get("content"));
+//							}
 							records_hit_count++;
 						}
 						
@@ -409,7 +407,6 @@ public class Calculate_A3 {
 									this_caterory_point = 2;
 								}
 							}
-							if (print_message) System.out.println("48h Points = " + this_caterory_point);
 						}
 
 						// 5. reader can only be closed when there is no need to access the documents any more.
@@ -480,12 +477,12 @@ public class Calculate_A3 {
 						// 4. display results
 						int number_of_hits = hits.length;
 						if (number_of_hits > 0) {
-							if (print_message) System.out.println(number_of_hits + " hits.");
-							for (int i = 0; i < hits.length; i++) {		// this is actually sentence hit, this will loop all the hit sentences
-								int docId = hits[i].doc;
-								Document d = searcher.doc(docId);
-								if (print_message) System.out.println(d.get("title") + "\t" + d.get("content"));
-							}
+//							if (print_message) System.out.println(number_of_hits + " hits.");
+//							for (int i = 0; i < hits.length; i++) {		// this is actually sentence hit, this will loop all the hit sentences
+//								int docId = hits[i].doc;
+//								Document d = searcher.doc(docId);
+//								if (print_message) System.out.println(d.get("title") + "\t" + d.get("content"));
+//							}
 							records_hit_count++;
 						}
 						
@@ -508,7 +505,6 @@ public class Calculate_A3 {
 									this_caterory_point = 2;
 								}
 							}
-							if (print_message) System.out.println("72h Points = " + this_caterory_point);
 						}
 
 						// 5. reader can only be closed when there is no need to access the documents any more.
@@ -579,12 +575,12 @@ public class Calculate_A3 {
 						// 4. display results
 						int number_of_hits = hits.length;
 						if (number_of_hits > 0) {
-							if (print_message) System.out.println(number_of_hits + " hits.");
-							for (int i = 0; i < hits.length; i++) {		// this is actually sentence hit, this will loop all the hit sentences
-								int docId = hits[i].doc;
-								Document d = searcher.doc(docId);
-								if (print_message) System.out.println(d.get("title") + "\t" + d.get("content"));
-							}
+//							if (print_message) System.out.println(number_of_hits + " hits.");
+//							for (int i = 0; i < hits.length; i++) {		// this is actually sentence hit, this will loop all the hit sentences
+//								int docId = hits[i].doc;
+//								Document d = searcher.doc(docId);
+//								if (print_message) System.out.println(d.get("title") + "\t" + d.get("content"));
+//							}
 							records_hit_count++;
 						}
 						
@@ -607,7 +603,6 @@ public class Calculate_A3 {
 									this_caterory_point = 2;
 								}
 							}
-							if (print_message) System.out.println("GT72 Points = " + this_caterory_point);
 						}
 
 						// 5. reader can only be closed when there is no need to access the documents any more.
