@@ -217,6 +217,7 @@ public class Calculate_A1 {
 									boolean three_point_sentence = (utilities.find_term(new String[] {  "advisor*evac",  "evac*advisor", "voluntary*evac", "evac*notice", "evacuation not" }, c)) ? true : false;
 									boolean four_point_sentence = (utilities.find_term(new String[] { "evac*warning" }, c)) ? true : false;
 									max_point = 5;	// all the others: mandatory, level 1, , level 2, level 3, level i, level ii, level iii, evac (in general)
+									if (one_point_sentence) max_point = 1;
 									if (two_point_sentence) max_point = 2;
 									if (three_point_sentence) max_point = 3;
 									if (four_point_sentence) max_point = 4;
