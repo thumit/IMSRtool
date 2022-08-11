@@ -120,7 +120,7 @@ public class Calculate_A3 {
 //			String searh_word = "\"road* clos*\"~0";		// Lucene proximity search: https://lucene.apache.org/core/3_6_0/queryparsersyntax.html#Range%20Searches
 			// discontinued, lifted, removed, open		except for, could be closed, no, none		potential, being developed, being assessed, being signed, issued, been reduced, changed, modified, soft
 			String searh_word = 
-					"* AND NOT(none OR contained OR controlled OR \"no spread*\"~1 OR \"no grow*\"~1 OR \"declare* out\"~1 OR \"burn* out\"~1 OR \"no activit\"~1 OR \"no threat*\"~1)";
+					"* AND NOT(none OR contained OR controlled OR \"no spread*\"~1 OR \"no grow*\"~1 OR \"declare* out\"~1 OR \"burn* out\"~1 OR \"no activit*\"~1 OR \"no threat*\"~1)";
 			int total_rows = box36_12h_data.size();
 			for (int row = 0; row < total_rows; row++) {
 				String st = "";
