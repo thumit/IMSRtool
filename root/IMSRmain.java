@@ -10,6 +10,7 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.util.Arrays;
 
 import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
@@ -33,6 +34,8 @@ import sql.Calculate_C1;
 import sql.Calculate_C2;
 import sql.Calculate_C3;
 import sql.Calculate_C4;
+import sql.Calculate_D1;
+import sql.Calculate_D2;
 import sql.Calculate_Final_Ranking;
 import sql.Calculate_Keyword_Frequency;
 
@@ -212,77 +215,89 @@ public class IMSRmain extends JFrame {
 				total_points.setMnemonic(KeyEvent.VK_T);
 				total_points.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent event) {
-						new Calculate_Final_Ranking();
+						new Calculate_Final_Ranking(Arrays.asList("2015", "2016"), Arrays.asList("A1", "D2"));
 					}
 				});	
 				
 				A1.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent event) {
-						Calculate_A1 A1 = new Calculate_A1();
+						Calculate_A1 A1 = new Calculate_A1(Arrays.asList("2015", "2016"));
 						A1.show_A1_scroll();
 					}
 				});
 				
 				A2.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent event) {
-						Calculate_A2 A2 = new Calculate_A2();
+						Calculate_A2 A2 = new Calculate_A2(Arrays.asList("2015", "2016"));
 						A2.show_A2_scroll();
 					}
 				});	
 				
 				A3.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent event) {
-						Calculate_A3 A3 = new Calculate_A3();
+						Calculate_A3 A3 = new Calculate_A3(Arrays.asList("2015", "2016"));
 						A3.show_A3_scroll();
 					}
 				});	
 				
 				B1.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent event) {
-						Calculate_B1 B1 = new Calculate_B1();
+						Calculate_B1 B1 = new Calculate_B1(Arrays.asList("2015", "2016"));
 						B1.show_B1_scroll();
 					}
 				});	
 				
 				B2.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent event) {
-						Calculate_B2 B2 = new Calculate_B2();
+						Calculate_B2 B2 = new Calculate_B2(Arrays.asList("2015", "2016"));
 						B2.show_B2_scroll();
 					}
 				});	
 				
 				B3.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent event) {
-						Calculate_B3 B3 = new Calculate_B3();
+						Calculate_B3 B3 = new Calculate_B3(Arrays.asList("2015", "2016"));
 						B3.show_B3_scroll();
 					}
 				});	
 				
 				C1.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent event) {
-						Calculate_C1 C1 = new Calculate_C1();
+						Calculate_C1 C1 = new Calculate_C1(Arrays.asList("2015", "2016"));
 						C1.show_C1_scroll();
 					}
 				});	
 				
 				C2.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent event) {
-						Calculate_C2 C2 = new Calculate_C2();
+						Calculate_C2 C2 = new Calculate_C2(Arrays.asList("2015", "2016"));
 						C2.show_C2_scroll();
 					}
 				});	
 				
 				C3.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent event) {
-						Calculate_C3 C3 = new Calculate_C3();
+						Calculate_C3 C3 = new Calculate_C3(Arrays.asList("2015", "2016"));
 						C3.show_C3_scroll();
 					}
 				});	
 				
 				C4.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent event) {
-						Calculate_C4 C4 = new Calculate_C4();
+						Calculate_C4 C4 = new Calculate_C4(Arrays.asList("2015", "2016"));
 						C4.show_C4_scroll();
+					}
+				});	
+				
+				D1.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent event) {
+						Calculate_D1 D1 = new Calculate_D1(Arrays.asList("2015", "2016"));
+					}
+				});	
+				
+				D2.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent event) {
+						Calculate_D2 D2 = new Calculate_D2(Arrays.asList("2015", "2016"));
 					}
 				});	
 			}

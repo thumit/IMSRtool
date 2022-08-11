@@ -41,7 +41,7 @@ public class Calculate_B1 {
 	List<Integer> final_point = new ArrayList<Integer>();
 	boolean print_message = true;
 	
-	public Calculate_B1() {
+	public Calculate_B1(List<String> selected_years) {
 		// Connect to a database. Single connection can work the same as multiple connections (code for multiple connections is deleted)
 		ResultSet resultSet = null;
 		String conn_SIT2015 = "jdbc:sqlserver://localhost:1433;databaseName=SIT2015;integratedSecurity=true";
@@ -49,7 +49,7 @@ public class Calculate_B1 {
 				Statement statement = connection.createStatement();
 				) {
 			// Create and execute a SELECT SQL statement.
-			String selectSql = 
+			String sql_2015 = 
 					"""
 					SELECT 2015 AS [YEAR], tablea.INC209R_IDENTIFIER, tablea.INC_IDENTIFIER, TOTAL_STR_DAMAGED, TOTAL_STR_DESTROYED, TOTAL_STR_THREATENED, TOTAL,
 					CASE WHEN TOTAL>=200 THEN 5
@@ -73,38 +73,14 @@ public class Calculate_B1 {
 					ON SST_IDENTIFIER = LUCODES_IDENTIFIER
 					GROUP BY INC209R_IDENTIFIER) tableb				
 					ON tablea.INC209R_IDENTIFIER = tableb.INC209R_IDENTIFIER
-					
-
-					UNION
-
-
-					SELECT 2016 AS [YEAR], tablea.INC209R_IDENTIFIER, tablea.INC_IDENTIFIER, TOTAL_STR_DAMAGED, TOTAL_STR_DESTROYED, TOTAL_STR_THREATENED, TOTAL,
-					CASE WHEN TOTAL>=200 THEN 5
-					WHEN TOTAL>=100 AND TOTAL<200 THEN 4
-					WHEN TOTAL>=25 AND TOTAL<100 THEN 3
-					WHEN TOTAL>=5 AND TOTAL<25 THEN 2
-					WHEN TOTAL>=1 AND TOTAL<5 THEN 1
-					ELSE 0 END AS B1_Points
-					FROM
-					
-					(SELECT INC209R_IDENTIFIER,INC_IDENTIFIER FROM [SIT2016].[dbo].[SIT209_HISTORY_INCIDENT_209_REPORTS]) tablea
-					LEFT JOIN	
-					(SELECT 
-					INC209R_IDENTIFIER,
-					SUM(CAST(QTY_DAMAGED AS INT)) AS TOTAL_STR_DAMAGED,
-					SUM(CAST(QTY_DESTROYED AS INT)) AS TOTAL_STR_DESTROYED,
-					SUM(CAST([QTY_THREATENED_72] AS INT)) AS TOTAL_STR_THREATENED,
-					SUM(CAST(QTY_DAMAGED AS INT) + CAST(QTY_DESTROYED AS INT) + CAST([QTY_THREATENED_72] AS INT)) AS TOTAL
-					FROM [SIT2016].[dbo].[SIT209_HISTORY_INCIDENT_209_AFFECTED_STRUCTS]
-					LEFT JOIN [SIT2016].[dbo].[SIT209_LOOKUP_CODES]
-					ON SST_IDENTIFIER = LUCODES_IDENTIFIER
-					GROUP BY INC209R_IDENTIFIER) tableb			
-					ON tablea.INC209R_IDENTIFIER = tableb.INC209R_IDENTIFIER
-
-				
-					ORDER BY INC_IDENTIFIER, INC209R_IDENTIFIER
 					""";
-			resultSet = statement.executeQuery(selectSql);
+			String[] sql = new String[selected_years.size()];
+			for (int i = 0; i < selected_years.size(); i++) {
+				sql[i] = sql_2015.replaceAll("2015", selected_years.get(i));
+			}
+			String final_sql = String.join(" UNION ", sql) + " ORDER BY INC_IDENTIFIER, INC209R_IDENTIFIER";
+			
+			resultSet = statement.executeQuery(final_sql);
 			while (resultSet.next()) {
 				year.add(resultSet.getString(1));
 				INC209R.add(resultSet.getString(2));

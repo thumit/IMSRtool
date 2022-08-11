@@ -23,7 +23,7 @@ public class Calculate_D1 {
 	List<Integer> final_point = new ArrayList<Integer>();
 	boolean print_message = true;
 	
-	public Calculate_D1() {
+	public Calculate_D1(List<String> selected_years) {
 		// Connect to a database. Single connection can work the same as multiple connections (code for multiple connections is deleted)
 		ResultSet resultSet = null;
 		String conn_SIT2015 = "jdbc:sqlserver://localhost:1433;databaseName=SIT2015;integratedSecurity=true";
@@ -31,7 +31,7 @@ public class Calculate_D1 {
 				Statement statement = connection.createStatement();
 				) {
 			// Create and execute a SELECT SQL statement.
-			String selectSql = 
+			String sql_2015 = 
 					"""
 					SELECT 2015 AS [YEAR], [INC209R_IDENTIFIER], [INC_IDENTIFIER], [CURR_INCIDENT_AREA], [SINGLE_COMPLEX_FLAG], [COMPLEXITY_LEVEL_IDENTIFIER], 
 					CASE WHEN CAST([CURR_INCIDENT_AREA] AS FLOAT)>=25000 THEN 5
@@ -41,21 +41,13 @@ public class Calculate_D1 {
 					WHEN CAST([CURR_INCIDENT_AREA] AS FLOAT)>=1 AND CAST([CURR_INCIDENT_AREA] AS FLOAT)<2500 THEN 1
 					ELSE 0 END AS D1_Points
 					FROM [SIT2015].[dbo].[SIT209_HISTORY_INCIDENT_209_REPORTS]
-
-					UNION
-
-					SELECT 2016 AS [YEAR], [INC209R_IDENTIFIER], [INC_IDENTIFIER], [CURR_INCIDENT_AREA], [SINGLE_COMPLEX_FLAG], [COMPLEXITY_LEVEL_IDENTIFIER], 
-					CASE WHEN CAST([CURR_INCIDENT_AREA] AS FLOAT)>=25000 THEN 5
-					WHEN CAST([CURR_INCIDENT_AREA] AS FLOAT)>=15000 AND CAST([CURR_INCIDENT_AREA] AS FLOAT)<25000 THEN 4
-					WHEN CAST([CURR_INCIDENT_AREA] AS FLOAT)>=5000 AND CAST([CURR_INCIDENT_AREA] AS FLOAT)<15000 THEN 3
-					WHEN CAST([CURR_INCIDENT_AREA] AS FLOAT)>=2500 AND CAST([CURR_INCIDENT_AREA] AS FLOAT)<5000 THEN 2
-					WHEN CAST([CURR_INCIDENT_AREA] AS FLOAT)>=1 AND CAST([CURR_INCIDENT_AREA] AS FLOAT)<2500 THEN 1
-					ELSE 0 END AS D1_Points
-					FROM [SIT2016].[dbo].[SIT209_HISTORY_INCIDENT_209_REPORTS]
-
-					ORDER BY INC_IDENTIFIER, INC209R_IDENTIFIER
 					""";
-			resultSet = statement.executeQuery(selectSql);
+			String[] sql = new String[selected_years.size()];
+			for (int i = 0; i < selected_years.size(); i++) {
+				sql[i] = sql_2015.replaceAll("2015", selected_years.get(i));
+			}
+			String final_sql = String.join(" UNION ", sql) + " ORDER BY INC_IDENTIFIER, INC209R_IDENTIFIER";
+			resultSet = statement.executeQuery(final_sql);
 			while (resultSet.next()) {
 				year.add(resultSet.getString(1));
 				INC209R.add(resultSet.getString(2));

@@ -23,7 +23,7 @@ public class Calculate_D2 {
 	List<Integer> final_point = new ArrayList<Integer>();
 	boolean print_message = true;
 	
-	public Calculate_D2() {
+	public Calculate_D2(List<String> selected_years) {
 		// Connect to a database. Single connection can work the same as multiple connections (code for multiple connections is deleted)
 		ResultSet resultSet = null;
 		String conn_SIT2015 = "jdbc:sqlserver://localhost:1433;databaseName=SIT2015;integratedSecurity=true";
@@ -31,7 +31,7 @@ public class Calculate_D2 {
 				Statement statement = connection.createStatement();
 				) {
 			// Create and execute a SELECT SQL statement.
-			String selectSql = 
+			String sql_2015 = 
 					"""
 					SELECT [YEAR], [INC209R_IDENTIFIER], [INC_IDENTIFIER], [DISCOVERY_DATE], [REPORT_FROM_DATE], [REPORT_TO_DATE], [ANTICIPATED_COMPLETION_DATE],
 					HOURS_TO_CONTAIN, DAYS_TO_CONTAIN, 
@@ -54,7 +54,36 @@ public class Calculate_D2 {
 					
 					ORDER BY INC_IDENTIFIER, INC209R_IDENTIFIER
 					""";
-			resultSet = statement.executeQuery(selectSql);
+			String sql_2015_a = 
+					"""
+					SELECT [YEAR], [INC209R_IDENTIFIER], [INC_IDENTIFIER], [DISCOVERY_DATE], [REPORT_FROM_DATE], [REPORT_TO_DATE], [ANTICIPATED_COMPLETION_DATE],
+					HOURS_TO_CONTAIN, DAYS_TO_CONTAIN, 
+					CASE WHEN HOURS_TO_CONTAIN>=0 AND HOURS_TO_CONTAIN<72 THEN 5
+					WHEN HOURS_TO_CONTAIN>=72 AND DAYS_TO_CONTAIN<8 THEN 4
+					WHEN DAYS_TO_CONTAIN>=8 AND DAYS_TO_CONTAIN<15 THEN 3
+					WHEN DAYS_TO_CONTAIN>=15 AND DAYS_TO_CONTAIN<22 THEN 2
+					ELSE 1 END AS D2_Points
+					FROM
+		
+					(
+					""";
+			String sql_2015_b = 
+					"""
+					SELECT 2015 AS [YEAR], [INC209R_IDENTIFIER], [INC_IDENTIFIER], [DISCOVERY_DATE], [REPORT_FROM_DATE], [REPORT_TO_DATE], [ANTICIPATED_COMPLETION_DATE],
+					DATEDIFF(HOUR, [REPORT_FROM_DATE], [ANTICIPATED_COMPLETION_DATE]) AS HOURS_TO_CONTAIN,
+					DATEDIFF(DAY, [REPORT_FROM_DATE], [ANTICIPATED_COMPLETION_DATE]) AS DAYS_TO_CONTAIN				
+					FROM [SIT2015].[dbo].[SIT209_HISTORY_INCIDENT_209_REPORTS]
+					""";
+			String sql_2015_c = 
+					"""
+					) table1
+					""";
+			String[] sql = new String[selected_years.size()];
+			for (int i = 0; i < selected_years.size(); i++) {
+				sql[i] = sql_2015_b.replaceAll("2015", selected_years.get(i));
+			}
+			String final_sql = sql_2015_a + String.join(" UNION ", sql) + sql_2015_c + " ORDER BY INC_IDENTIFIER, INC209R_IDENTIFIER";
+			resultSet = statement.executeQuery(final_sql);
 			while (resultSet.next()) {
 				year.add(resultSet.getString(1));
 				INC209R.add(resultSet.getString(2));

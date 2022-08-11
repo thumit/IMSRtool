@@ -13,6 +13,9 @@ import java.awt.Dimension;
 import java.awt.Window;
 import java.awt.event.HierarchyEvent;
 import java.awt.event.HierarchyListener;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.JOptionPane;
@@ -36,52 +39,65 @@ public class Calculate_Final_Ranking {
 	Calculate_C4 C4;
 	Calculate_D1 D1;
 	Calculate_D2 D2;
+	List<String> YEAR;
+	List<String> INC;
+	List<String> INC209R;
 	int number_of_records;
 
-	public Calculate_Final_Ranking() {
-		A1 = new Calculate_A1();
-		A2 = new Calculate_A2();
-		A3 = new Calculate_A3();
-		B1 = new Calculate_B1();
-		B2 = new Calculate_B2();
-		B3 = new Calculate_B3();
-		C1 = new Calculate_C1();
-		C2 = new Calculate_C2();
-		C3 = new Calculate_C3();
-		C4 = new Calculate_C4();
-		D1 = new Calculate_D1();
-		D2 = new Calculate_D2();
-		number_of_records = A2.year.size();
-		new Ranking_Points_Scroll();
+	public Calculate_Final_Ranking(List<String> selected_years, List<String> selected_categories) {
+		for (int i = 0; i < selected_categories.size(); i++) {
+			if (selected_categories.get(i).contains("A1")) { A1 = new Calculate_A1(selected_years); YEAR = A1.year; INC = A1.INC; INC209R = A1.INC209R; }
+			if (selected_categories.get(i).contains("A2")) { A2 = new Calculate_A2(selected_years); YEAR = A2.year; INC = A2.INC; INC209R = A2.INC209R; }
+			if (selected_categories.get(i).contains("A3")) { A3 = new Calculate_A3(selected_years); YEAR = A3.year; INC = A3.INC; INC209R = A3.INC209R; }
+			if (selected_categories.get(i).contains("B1")) { B1 = new Calculate_B1(selected_years); YEAR = B1.year; INC = B1.INC; INC209R = B1.INC209R; }
+			if (selected_categories.get(i).contains("B2")) { B2 = new Calculate_B2(selected_years); YEAR = B2.year; INC = B2.INC; INC209R = B2.INC209R; }
+			if (selected_categories.get(i).contains("B3")) { B3 = new Calculate_B3(selected_years); YEAR = B3.year; INC = B3.INC; INC209R = B3.INC209R; }
+			if (selected_categories.get(i).contains("C1")) { C1 = new Calculate_C1(selected_years); YEAR = C1.year; INC = C1.INC; INC209R = C1.INC209R; }
+			if (selected_categories.get(i).contains("C2")) { C2 = new Calculate_C2(selected_years); YEAR = C2.year; INC = C2.INC; INC209R = C2.INC209R; }
+			if (selected_categories.get(i).contains("C3")) { C3 = new Calculate_C3(selected_years); YEAR = C3.year; INC = C3.INC; INC209R = C3.INC209R; }
+			if (selected_categories.get(i).contains("C4")) { C4 = new Calculate_C4(selected_years); YEAR = C4.year; INC = C4.INC; INC209R = C4.INC209R; }
+			if (selected_categories.get(i).contains("D1")) { D1 = new Calculate_D1(selected_years); YEAR = D1.year; INC = D1.INC; INC209R = D1.INC209R; }
+			if (selected_categories.get(i).contains("D2")) { D2 = new Calculate_D2(selected_years); YEAR = D2.year; INC = D2.INC; INC209R = D2.INC209R; }
+		}
+		number_of_records = YEAR.size();
+		new Ranking_Points_Scroll(selected_categories);
 	}
 	
 	class Ranking_Points_Scroll extends JScrollPane {
-		public Ranking_Points_Scroll() {		
-			String[] header = new String[] { "RECORD", "YEAR", "INC", "INC209R", "A1", "A2", "A3", "B1", "B2", "B3", "C1", "C2", "C3", "C4", "D1", "D2", "TOTAL" };
+		public Ranking_Points_Scroll(List<String> selected_categories) {
+			List<String> header = new ArrayList<String>();
+			header.add("RECORD");
+			header.add("YEAR");
+			header.add("INC");
+			header.add("INC209R");
+			for (int i = 0; i < selected_categories.size(); i++) {
+				header.add(selected_categories.get(i));
+			}
+			header.add("TOTAL");
+			
 			TextAreaReadMe textarea = new TextAreaReadMe("icon_tree.png", 75, 75);	// Print to text area
 			textarea.append(String.join("\t", header)  + "\n");
 			for (int i = 0; i < number_of_records; i++) {
-				textarea.append(String.valueOf(i+1)
-						+ "\t" + A2.year.get(i) 
-						+ "\t" + A2.INC.get(i) 
-						+ "\t" + A2.INC209R.get(i) 
-						+ "\t" + A1.final_point.get(i) 
-						+ "\t" + A2.final_point.get(i)
-						+ "\t" + A3.final_point.get(i)
-						+ "\t" + B1.final_point.get(i)
-						+ "\t" + B2.final_point.get(i)
-						+ "\t" + B3.final_point.get(i)
-						+ "\t" + C1.final_point.get(i)
-						+ "\t" + C2.final_point.get(i)
-						+ "\t" + C3.final_point.get(i)
-						+ "\t" + C4.final_point.get(i)
-						+ "\t" + D1.final_point.get(i)
-						+ "\t" + D2.final_point.get(i)
-						+ "\t" + (A1.final_point.get(i) + A2.final_point.get(i) + A3.final_point.get(i) + 
-								B1.final_point.get(i) + B2.final_point.get(i) + B3.final_point.get(i) + 
-								C1.final_point.get(i) + C2.final_point.get(i) + C3.final_point.get(i) + C4.final_point.get(i) +
-								D1.final_point.get(i) + D2.final_point.get(i))
-						+ "\n");
+				textarea.append(String.valueOf(i + 1)
+						+ "\t" + YEAR.get(i) 
+						+ "\t" + new BigDecimal(INC.get(i)).intValue()			// This change is because INC and INC209R printed out as double or as scientific number in its original String value
+						+ "\t" + new BigDecimal(INC209R.get(i)).intValue());	// This change is because INC and INC209R printed out as double or as scientific number in its original String value
+				int total_points = 0;
+				for (int j = 0; j < selected_categories.size(); j++) {
+					if (selected_categories.get(j).contains("A1")) { textarea.append("\t" + A1.final_point.get(i)); total_points = total_points + A1.final_point.get(i); }
+					if (selected_categories.get(j).contains("A2")) { textarea.append("\t" + A2.final_point.get(i)); total_points = total_points + A2.final_point.get(i); }
+					if (selected_categories.get(j).contains("A3")) { textarea.append("\t" + A3.final_point.get(i)); total_points = total_points + A3.final_point.get(i); }
+					if (selected_categories.get(j).contains("B1")) { textarea.append("\t" + B1.final_point.get(i)); total_points = total_points + B1.final_point.get(i); }
+					if (selected_categories.get(j).contains("B2")) { textarea.append("\t" + B2.final_point.get(i)); total_points = total_points + B2.final_point.get(i); }
+					if (selected_categories.get(j).contains("B3")) { textarea.append("\t" + B3.final_point.get(i)); total_points = total_points + B3.final_point.get(i); }
+					if (selected_categories.get(j).contains("C1")) { textarea.append("\t" + C1.final_point.get(i)); total_points = total_points + C1.final_point.get(i); }
+					if (selected_categories.get(j).contains("C2")) { textarea.append("\t" + C2.final_point.get(i)); total_points = total_points + C2.final_point.get(i); }
+					if (selected_categories.get(j).contains("C3")) { textarea.append("\t" + C3.final_point.get(i)); total_points = total_points + C3.final_point.get(i); }
+					if (selected_categories.get(j).contains("C4")) { textarea.append("\t" + C4.final_point.get(i)); total_points = total_points + C4.final_point.get(i); }
+					if (selected_categories.get(j).contains("D1")) { textarea.append("\t" + D1.final_point.get(i)); total_points = total_points + D1.final_point.get(i); }
+					if (selected_categories.get(j).contains("D2")) { textarea.append("\t" + D2.final_point.get(i)); total_points = total_points + D2.final_point.get(i); }
+				}
+				textarea.append("\t" + total_points + "\n");
 			}
 			textarea.setSelectionStart(0);	// scroll to top
 			textarea.setSelectionEnd(0);

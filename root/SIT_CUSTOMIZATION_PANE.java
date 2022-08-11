@@ -20,6 +20,7 @@ import javax.swing.ToolTipManager;
 import javax.swing.border.TitledBorder;
 
 import convenience_classes.ColorUtil;
+import sql.Calculate_Final_Ranking;
 
 public class SIT_CUSTOMIZATION_PANE extends JLayeredPane {
 	private JSplitPane splitPanel;
@@ -108,7 +109,7 @@ class INPUT_PANE extends JLayeredPane {
 		// Button
 		BUTTON_CALCULATE button_calculate = new BUTTON_CALCULATE();
 		button_calculate.addActionListener(e -> {
-			
+			new Calculate_Final_Ranking(get_selected_years(), get_selected_categories());
 		});	
 		
 		// Add to main pane
@@ -132,7 +133,7 @@ class INPUT_PANE extends JLayeredPane {
 		c.gridheight = 1;
 		c.gridx = 0;
 		c.gridy = 1;
-		this.add(new BUTTON_CALCULATE(), c);
+		this.add(button_calculate, c);
 		
 		c.weightx = 0;
 	    c.weighty = 1;

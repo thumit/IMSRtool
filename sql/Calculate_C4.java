@@ -61,7 +61,7 @@ public class Calculate_C4 {
 	List<Integer> final_point = new ArrayList<Integer>();
 	boolean print_message = true;
 	
-	public Calculate_C4() {
+	public Calculate_C4(List<String> selected_years) {
 		// Connect to a database. Single connection can work the same as multiple connections (code for multiple connections is deleted)
 		String combine_st = "";
 		ResultSet resultSet = null;
@@ -70,14 +70,16 @@ public class Calculate_C4 {
 				Statement statement = connection.createStatement();
 				) {
 			// Create and execute a SELECT SQL statement.
-			String selectSql = 
+			String sql_2015 = 
 					"""
 					SELECT 2015, [INC209R_IDENTIFIER], [INC_IDENTIFIER], [CURRENT_THREAT_12] FROM [SIT2015].[dbo].[SIT209_HISTORY_INCIDENT_209_REPORTS]
-					UNION
-					SELECT 2016, [INC209R_IDENTIFIER], [INC_IDENTIFIER], [CURRENT_THREAT_12] FROM [SIT2016].[dbo].[SIT209_HISTORY_INCIDENT_209_REPORTS]
-					ORDER BY [INC_IDENTIFIER], [INC209R_IDENTIFIER]
 					""";
-			resultSet = statement.executeQuery(selectSql);
+			String[] sql = new String[selected_years.size()];
+			for (int i = 0; i < selected_years.size(); i++) {
+				sql[i] = sql_2015.replaceAll("2015", selected_years.get(i));
+			}
+			String final_sql = String.join(" UNION ", sql) + " ORDER BY INC_IDENTIFIER, INC209R_IDENTIFIER";
+			resultSet = statement.executeQuery(final_sql);
 			while (resultSet.next()) {
 				year.add(resultSet.getString(1));
 				INC209R.add(resultSet.getString(2));

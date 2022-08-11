@@ -51,7 +51,6 @@ import org.apache.lucene.store.Directory;
 import convenience_classes.TextAreaReadMe;
 import convenience_classes.TitleScrollPane;
 import root.IMSRmain;
-import sql.Calculate_A2.A2_Scroll;
 
 public class Calculate_A1 {
 	List<String> year = new ArrayList<String>();
@@ -64,7 +63,7 @@ public class Calculate_A1 {
 	List<Integer> final_point = new ArrayList<Integer>();
 	boolean print_message = true;
 	
-	public Calculate_A1() {
+	public Calculate_A1(List<String> selected_years) {
 		// Connect to a database. Single connection can work the same as multiple connections (code for multiple connections is deleted)
 		String combine_st = "";
 		ResultSet resultSet = null;
@@ -73,7 +72,7 @@ public class Calculate_A1 {
 				Statement statement = connection.createStatement();
 				) {
 			// Create and execute a SELECT SQL statement.
-			String selectSql = 
+			String sql_2015 = 
 					"""
 					-- List of Box34 items:
 					--No Likely Threat
@@ -110,35 +109,13 @@ public class Calculate_A1 {
 					FROM [SIT2015].[dbo].[SIT209_HISTORY_INCIDENT_209_LIFE_SAFETY_MGMTS] LEFT JOIN [SIT2015].[dbo].[SIT209_HISTORY_SIT209_LOOKUP_CODES] ON LSTT_IDENTIFIER = LUCODES_IDENTIFIER
 					GROUP BY INC209R_IDENTIFIER) table2
 					ON table1.INC209R_IDENTIFIER = table2.INC209R_IDENTIFIER
-					
-					
-					UNION
-					
-					
-					SELECT 
-					[YEAR], table1.[INC209R_IDENTIFIER], [INC_IDENTIFIER], [LIFE_SAFETY_HEALTH_STATUS_NARR], CODE_NAME_AGGR, ABBREVIATION_AGGR,
-					CASE WHEN CHARINDEX('No Evacuation(s) Imminent', CODE_NAME_AGGR)>0 THEN 1
-						 WHEN CHARINDEX('Planning for Evacuation', CODE_NAME_AGGR)>0 THEN 3
-						 WHEN CHARINDEX('Evacuation(s) in Progress', CODE_NAME_AGGR)>0 THEN 5
-						 ELSE 0 END AS A1_Box34_Points
-					FROM
-					
-					(SELECT 2016 AS [YEAR], [INC209R_IDENTIFIER], [INC_IDENTIFIER],[LIFE_SAFETY_HEALTH_STATUS_NARR] FROM [SIT2016].[dbo].[SIT209_HISTORY_INCIDENT_209_REPORTS]) table1
-					LEFT JOIN
-					(SELECT INC209R_IDENTIFIER,
-					STRING_AGG(STR(INC209RLSM_IDENTIFIER, 7, 0),',') INC209RLSM_IDENTIFIER_AGGR,
-					STRING_AGG(STR(LSTT_IDENTIFIER, 7, 0),',') LSTT_IDENTIFIER_AGGR,
-					STRING_AGG(ACTIVE_INACTIVE_FLAG,',') ACTIVE_INACTIVE_FLAG_AGGR,
-					STRING_AGG(CODE_NAME,',') CODE_NAME_AGGR,
-					STRING_AGG(ABBREVIATION,',') ABBREVIATION_AGGR
-					FROM [SIT2016].[dbo].[SIT209_HISTORY_INCIDENT_209_LIFE_SAFETY_MGMTS] LEFT JOIN [SIT2016].[dbo].[SIT209_LOOKUP_CODES] ON LSTT_IDENTIFIER = LUCODES_IDENTIFIER
-					GROUP BY INC209R_IDENTIFIER) table2
-					ON table1.INC209R_IDENTIFIER = table2.INC209R_IDENTIFIER
-					
-					
-					ORDER BY INC_IDENTIFIER, INC209R_IDENTIFIER
 					""";
-			resultSet = statement.executeQuery(selectSql);
+			String[] sql = new String[selected_years.size()];
+			for (int i = 0; i < selected_years.size(); i++) {
+				sql[i] = sql_2015.replaceAll("2015", selected_years.get(i));
+			}
+			String final_sql = String.join(" UNION ", sql) + " ORDER BY INC_IDENTIFIER, INC209R_IDENTIFIER";
+			resultSet = statement.executeQuery(final_sql);
 			while (resultSet.next()) {
 				year.add(resultSet.getString(1));
 				INC209R.add(resultSet.getString(2));
