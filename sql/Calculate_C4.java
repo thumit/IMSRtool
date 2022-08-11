@@ -174,10 +174,14 @@ public class Calculate_C4 {
 								String c = d.get("content");
 								if (max_point < 5) {
 									boolean one_point_sentence = (utilities.find_term(new String[] {
-											"potential*threat", "potential*risk", "possible*threat", "possible*risk", "could be*threat", "could be*impact",
-											"minimal*threat", "minimal*risk",
-											"threat*decrease", "low*threat", "low*risk", "low*threat", "limited*threat", "limited*risk",
-											"slight*threat", "slight*risk",
+											"potential*threat", "potential*risk", "potential*impact",
+											"possible*threat", "possible*risk", "possible*impact",
+											"could be*threat", "could be*risk", "could be*impact",
+											"minimal*threat", "minimal*risk", "minimal*impact",
+											"low*threat", "low*risk", "low*impact",
+											"limited*threat", "limited*risk", "limited*impact",
+											"slight*threat", "slight*risk", "slight*impact",
+											"threat*decrease" 
 											}, c)) ? true : false;
 									boolean three_point_sentence = (utilities.find_term(new String[] {  "moderate*threat", "moderate*risk" }, c)) ? true : false;
 									boolean five_point_sentence = false;

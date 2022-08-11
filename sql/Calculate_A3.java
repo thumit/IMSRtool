@@ -199,7 +199,7 @@ public class Calculate_A3 {
 								int docId = hits[i].doc;
 								Document d = searcher.doc(docId);
 								String c = d.get("content");
-								if (this_caterory_point < 5 && utilities.find_term(new String[] { "rapid", "continous priority", "more priority" }, c)) {
+								if (this_caterory_point < 5 && utilities.find_term(new String[] { "rapid", "continu* priority", "more priority" }, c)) {
 									this_caterory_point = 5;
 								}
 								if (this_caterory_point < 4 && utilities.find_term(new String[] { "moderate", "varying rates", "increase*activit", "active" }, c)) {
