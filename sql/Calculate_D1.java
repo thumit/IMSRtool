@@ -31,6 +31,8 @@ public class Calculate_D1 {
 				Statement statement = connection.createStatement();
 				) {
 			// Create and execute a SELECT SQL statement.
+			// I have to change type of the [CURR_INCIDENT_AREA] from nvarchar to float in 2015 and 2016 Sit Report table, otherwise it will fail if select 2 years for ranking (1 of them is 2015 or 2016)
+			// This is strange because when I select all 5 years it does not fail. WTF!
 			String sql_2015 = 
 					"""
 					SELECT 2015 AS [YEAR], [INC209R_IDENTIFIER], [INC_IDENTIFIER], [CURR_INCIDENT_AREA], [SINGLE_COMPLEX_FLAG], [COMPLEXITY_LEVEL_IDENTIFIER], 

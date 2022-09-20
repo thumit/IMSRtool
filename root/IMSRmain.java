@@ -198,7 +198,7 @@ public class IMSRmain extends JFrame {
 				customization.setMnemonic(KeyEvent.VK_C);
 				customization.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent event) {
-						JInternalFrame frame = new JInternalFrame("SIT CUSTOMIZATION", true /*resizable*/, true, /*closable*/true/*maximizable*/, true/*iconifiable*/);	
+						JInternalFrame frame = new JInternalFrame("SIT WILDFIRE PRIORITIZATION RANKING POINTS", true /*resizable*/, true, /*closable*/true/*maximizable*/, true/*iconifiable*/);	
 						desktopPane.add(frame, BorderLayout.CENTER); // attach internal frame
 						frame.setSize((int) (getWidth()/1.2),(int) (getHeight()/1.2));		
 						frame.setLocation((int) ((getWidth() - frame.getWidth())/2),

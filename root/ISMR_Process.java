@@ -309,10 +309,9 @@ public class ISMR_Process {
 //		if (gacc_new_fires == null || gacc_new_large_incidents == null || gacc_uncontained_large_fires == null) {	// different recognitions of incorrect output
 			List<String> term = new ArrayList<String>();
 			if (mstr.contains("new fires")) term.add("new fires");
-			if (mstr.contains("new large incidents")) term.add("new large incidents");
-			if (mstr.contains("new large fires")) term.add("new large fires");	// Handle 2014 data which uses "new large fires"
+			if (mstr.contains("new large incidents") || mstr.contains("new large fires")) term.add("new large incidents");	// i.e. 2014 data uses "new large fires"
 			if (mstr.contains("uncontained large fires")) term.add("uncontained large fires");
-			if (mstr.contains("area command teams committed")) term.add("area command teams committed");
+			if (mstr.contains("area command teams committed") || mstr.contains("area command")) term.add("area command teams committed");	// i.e. 20201021 uses Area Command
 			if (mstr.contains("nimos committed")) term.add("nimos committed");
 			if (mstr.contains("type 1 imts committed") || mstr.contains("type 1 teams committed")) term.add("type 1 imts committed");		// i.e. 20180704 uses "type 1 teams committed"
 			if (mstr.contains("type 2 imts committed") || mstr.contains("type 2 teams committed")) term.add("type 2 imts committed");		// i.e. 20180704 uses "type 2 teams committed"
@@ -327,7 +326,6 @@ public class ISMR_Process {
 			for (int j = 0; j < term.size(); j++) {
 				if (term.get(j).equals("new fires")) gacc_new_fires = value.get(j);
 				if (term.get(j).equals("new large incidents")) gacc_new_large_incidents = value.get(j);
-				if (term.get(j).equals("new large fires")) gacc_new_large_incidents = value.get(j);		// Handle 2014 data which uses "new large fires"
 				if (term.get(j).equals("uncontained large fires")) gacc_uncontained_large_fires = value.get(j);
 				if (term.get(j).equals("area command teams committed")) gacc_area_command_teams_committed = value.get(j);
 				if (term.get(j).equals("nimos committed")) gacc_nimos_committed = value.get(j);

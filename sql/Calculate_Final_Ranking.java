@@ -123,7 +123,7 @@ public class Calculate_Final_Ranking {
 			
 			// Add everything to a popup panel
 			String ExitOption[] = {"EXIT" };
-			int response = JOptionPane.showOptionDialog(IMSRmain.get_DesktopPane(), this, "California Priority Points",
+			int response = JOptionPane.showOptionDialog(IMSRmain.get_DesktopPane(), this, "Wildfire ranking points based on California prioritization rules",
 					JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, ExitOption, ExitOption[0]);
 		}
 	}
