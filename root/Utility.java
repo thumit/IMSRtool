@@ -130,7 +130,6 @@ public class Utility {
 	}
 	
 	public void run_command(String folder, File[] file) throws Exception {
-		System.setProperty("user.dir", folder);
 //		String convert_entire_folder_command = "for /r %i in (*.pdf) do \"pdftotext\" -simple2 \"%i\"";
 //		String batch_command = "cd " + folder + " && " + convert_entire_folder_command;
 //		//--------------------------------------------------------------------------------------------------------------------
@@ -153,11 +152,12 @@ public class Utility {
 //			System.out.println(line);
 //		}
 //		//--------------------------------------------------------------------------------------------------------------------
-		String command = "cd " + folder;
+		ProcessBuilder builder;
+		File directory = new File(folder);
 		for (File f : file) {
-			command = "pdftotext -simple2 " + f.getName();
-			ProcessBuilder builder = new ProcessBuilder("cmd.exe", "/c", command);
-			builder = builder.directory(new File(folder));
+			String command = "pdftotext -simple2 " + f.getName();
+			builder = new ProcessBuilder("cmd.exe", "/c", command);
+			builder = builder.directory(directory);
 			builder.redirectErrorStream(true);
 			Process p = builder.start();
 			BufferedReader r = new BufferedReader(new InputStreamReader(p.getInputStream()));
