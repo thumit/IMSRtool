@@ -367,88 +367,7 @@ public class ISMR_Process {
 		}
 	}
 	
-	private void get_fire_data(String[] lines) {
-//		// Check either of the 2 lines right after "Active Incident Resource Summary" to see if information of each fire will be in a single line (i.e. 20180803) or multiple lines
-//		int lineCount = 0;
-//		for (int i = 0; i < lines.length; i++) {
-//			if (lines[i].contains("Active Incident Resource Summary")) {
-//				lineCount = i + 1;
-//			}
-//		}
-//		if (lines[lineCount].split(" ").length > 1 || lines[lineCount + 1].split(" ").length > 1) {	// either line will have at least 2 words
-//			get_fire_infor_from_single_line(lines);
-//		} else {	// both lines have 1 or 0 word
-//			get_fire_infor_from_multiple_lines(lines);
-//		}
-		
-		// Check the first line that contains "GACC" to see if information of each fire will be in a single line (i.e. 20180803) or multiple lines
-		int gacc_line = 0;
-		do {
-			gacc_line = gacc_line + 1;
-		} while (!lines[gacc_line].contains("GACC"));
-
-		if (lines[gacc_line].split(" ").length > 1) { // this line will have at least 2 words
-			get_fire_infor_from_single_line(lines);
-		} else { // both lines have 1 or 0 word
-			get_fire_infor_from_multiple_lines(lines);
-		}
-		// IMPORTANT NOTE NOTE NOTE: 20190902-03-04 ... adobe acrobat failed to convert tables (tables are not recognized and not included in text files)
-	}
-	
-	private void get_fire_infor_from_multiple_lines(String[] lines) {		// Information of a Fire is in 15 lines
-		// Loop all lines
-		String current_area = "";
-		int gacc_priority = 0;
-		int count = 0;
-		for (int i = 0; i < lines.length; i++) {
-			if (lines[i].contains("(PL")) {
-				if (lines[i].startsWith("Alaska")) {
-					current_area = "AICC";
-					gacc_priority = gacc_priority + 1;
-				} else if (lines[i].startsWith("Eastern")) {
-					current_area = "EACC";
-					gacc_priority = gacc_priority + 1;
-				} else if (lines[i].startsWith("Great Basin")) {		// Special case in 20170708. The gacc is Great Basin (does not have "Area")
-					current_area = "GBCC";
-					gacc_priority = gacc_priority + 1;
-				} else if (lines[i].startsWith("Northern California")) {
-					current_area = "ONCC";
-					gacc_priority = gacc_priority + 1;
-				} else if (lines[i].startsWith("Northern Rockies")) {
-					current_area = "NRCC";
-					gacc_priority = gacc_priority + 1;
-				} else if (lines[i].startsWith("Northwest")) {
-					current_area = "NWCC";
-					gacc_priority = gacc_priority + 1;
-				} else if (lines[i].startsWith("Rocky Mountain")) {
-					current_area = "RMCC";
-					gacc_priority = gacc_priority + 1;
-				} else if (lines[i].startsWith("Southern Area")) {
-					current_area = "SACC";
-					gacc_priority = gacc_priority + 1;
-				} else if (lines[i].startsWith("Southern California")) {
-					current_area = "OSCC";
-					gacc_priority = gacc_priority + 1;
-				} else if (lines[i].startsWith("Southwest")) {
-					current_area = "SWCC";
-					gacc_priority = gacc_priority + 1;
-				}
-			}
-			
-			if (lines[i].isEmpty() && count == 15 && lines[i - 14].toUpperCase().equals(lines[i - 14]) && lines[i - 14].contains("-")) {		// this is likely a fire, smart check based on the "unit" column
-				lines[i - 15] = lines[i - 15].replaceAll("\\*", "").trim().toUpperCase();	// This will remove the * (if exist in the name) and change the name to capital (IMPORTANT)
-				String fire_priority = String.valueOf(area_fires(current_area).size() + 1);
-				String this_fire = String.join("\t", date, current_area, String.valueOf(gacc_priority), fire_priority, lines[i - 15], lines[i - 14], lines[i - 13], lines[i - 12], lines[i - 11],
-														lines[i - 10], lines[i - 9], lines[i - 8], lines[i - 7], lines[i - 6],
-														lines[i - 5], lines[i - 4], lines[i - 3], lines[i - 2], lines[i - 1]);
-				all_fires.add(this_fire);
-				area_fires(current_area).add(this_fire);
-			}
-			count = (lines[i].isEmpty()) ? 0 : (count + 1);	// increase count by 1 if not empty line
-		}
-	}
-	
-	private void get_fire_infor_from_single_line(String[] lines) {		// Information of a Fire is in one line		(Note: a special case: 20180803 at page 10 where the table without header if expanding 2 pages) 
+	private void get_fire_data(String[] lines) {		// Information of a Fire is in one line		(Note: a special case: 20180803 at page 10 where the table without header if expanding 2 pages) 
 		// Loop all lines
 		String current_area = "";
 		int gacc_priority = 0;
@@ -491,7 +410,10 @@ public class ISMR_Process {
 			String[] line_split = lines[i].split(" ");
 			int unit_id = 0;	// find the second column of the table
 			int line_length = line_split.length;
-			if (line_length >= 15 && line_split[line_length - 14].toUpperCase().equals(line_split[line_length - 14]) && line_split[line_length - 14].contains("-")) {		// this is likely a fire, smart check based on the "unit" column
+			if (line_length >= 15 
+					&& line_split[line_length - 14].contains("-")    // do not use this for 2014 data, it has a different unit name, also in 20210710IMSR, one fire has wrong unit that cannot be included (Butte Creek: ID- CTS)
+					&& line_split[line_length - 13].matches("-?\\d+(\\,\\d+)?")
+					&& line_split[line_length - 8].matches("-?\\d+(\\,\\d+)?")) {		// this is likely a fire, smart check based on the "acres" and "personnel total" columns.
 				unit_id = line_split.length - 14;
 				String fire_priority = String.valueOf(area_fires(current_area).size() + 1);
 				String this_fire = String.join("\t", date, current_area, String.valueOf(gacc_priority), fire_priority);
@@ -499,6 +421,19 @@ public class ISMR_Process {
 				for (int id = 0; id < unit_id; id++) {
 					fire_name = String.join(" ", fire_name, line_split[id]);	// this is the incident name, join by space
 				}
+				
+				// xpdf (using -table command) may generate the second part of the fire name in the next second line if fire name in the pdf file has 2 lines, we need to add to the name for this special cases:
+				// If the second line has <= 2 terms then it is very likely that it is is the fire name, add it:
+//				// Note that we cannot get the upper term because it will mix with other fire. See the special case: 20210710IMSR where we have 2021 SUF (1st line) West Zone (2nd line) Complex (3rd line)
+//				String[] upper_second_line_name = (i >= 2)? lines[i - 2].replaceAll("\\*", "").split("\\s+") : null;
+//				if (upper_second_line_name.length <= 3) {
+//					fire_name = String.join(" ", upper_second_line_name)+ " "  + fire_name;	// join by space
+//				}
+				String[] lower_second_line_name = lines[i + 2].split("\\s+");
+				if (lower_second_line_name.length <= 2) {
+					fire_name = fire_name + " " + String.join(" ", lower_second_line_name);	// join by space
+				}
+				
 				fire_name = fire_name.replaceAll("\\*", "").trim().toUpperCase();	// This will remove the * (if exist in the name) and change the name to capital (IMPORTANT)
 				this_fire = String.join("\t", this_fire, fire_name);
 				for (int id = unit_id; id < line_split.length; id++) {
