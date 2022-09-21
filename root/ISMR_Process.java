@@ -263,7 +263,13 @@ public class ISMR_Process {
 		String gacc_nimos_committed = null;
 		String gacc_type_1_imts_committed = null;
 		String gacc_type_2_imts_committed = null;
-		gacc_prepareness_level = lines[start_line].substring(lines[start_line].indexOf("(PL") + 3, lines[start_line].indexOf(")"));
+		try {
+			gacc_prepareness_level = lines[start_line].substring(lines[start_line].indexOf("(PL") + 3, lines[start_line].indexOf(")"));
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println("missing information, national level will be used to replace gacc level"); // Example fail: 20111105IMSR
+			gacc_prepareness_level = national_prepareness_level;
+		}
 		
 		int end_line = start_line;
 		do {
