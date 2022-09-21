@@ -112,11 +112,13 @@ public class Utility {
 				String folder = file[0].getParentFile().toString();
 				Path sourceDirectory = pdftotext_exe_source_file.toPath();
 				Path targetDirectory = Paths.get(folder + "/pdftotext.exe");
-				Files.copy(sourceDirectory, targetDirectory);
+				File pdftotext_exe_target_file = targetDirectory.toFile();
+				if (!pdftotext_exe_target_file.exists()) {
+					Files.copy(sourceDirectory, targetDirectory);
+				}
 				// Run command line
 				run_command(folder, file);
-				
-				File pdftotext_exe_target_file = targetDirectory.toFile();
+				// Delete the library file
 				if (pdftotext_exe_target_file.exists()) {
 					pdftotext_exe_target_file.delete();
 				}
@@ -131,22 +133,43 @@ public class Utility {
 		System.setProperty("user.dir", folder);
 //		String convert_entire_folder_command = "for /r %i in (*.pdf) do \"pdftotext\" -simple2 \"%i\"";
 //		String batch_command = "cd " + folder + " && " + convert_entire_folder_command;
-		String batch_command = "cd " + folder;
+//		//--------------------------------------------------------------------------------------------------------------------
+//		// These code work but may cause the error "The command line is too long" when converting too many files in batch
+//		String batch_command = "cd " + folder;
+//		for (File f : file) {
+//			batch_command = String.join(" && ", batch_command, "pdftotext -simple2 " + f.getName());
+//		}
+//		
+//		ProcessBuilder builder = new ProcessBuilder("cmd.exe", "/c", batch_command);
+//		builder.redirectErrorStream(true);
+//		Process p = builder.start();
+//		BufferedReader r = new BufferedReader(new InputStreamReader(p.getInputStream()));
+//		String line;
+//		while (true) {
+//			line = r.readLine();
+//			if (line == null) {
+//				break;
+//			}
+//			System.out.println(line);
+//		}
+//		//--------------------------------------------------------------------------------------------------------------------
+		String command = "cd " + folder;
 		for (File f : file) {
-			batch_command = String.join(" && ", batch_command, "pdftotext -simple2 " + f.getName());
+			command = "pdftotext -simple2 " + f.getName();
+			ProcessBuilder builder = new ProcessBuilder("cmd.exe", "/c", command);
+			builder = builder.directory(new File(folder));
+			builder.redirectErrorStream(true);
+			Process p = builder.start();
+			BufferedReader r = new BufferedReader(new InputStreamReader(p.getInputStream()));
+			String line;
+			while (true) {
+				line = r.readLine();
+				if (line == null) {
+					break;
+				}
+				System.out.println(line);
+			}
 		}
 		
-		ProcessBuilder builder = new ProcessBuilder("cmd.exe", "/c", batch_command);
-		builder.redirectErrorStream(true);
-		Process p = builder.start();
-		BufferedReader r = new BufferedReader(new InputStreamReader(p.getInputStream()));
-		String line;
-		while (true) {
-			line = r.readLine();
-			if (line == null) {
-				break;
-			}
-			System.out.println(line);
-		}
 	}
 }
