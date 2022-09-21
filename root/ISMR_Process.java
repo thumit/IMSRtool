@@ -381,7 +381,7 @@ public class ISMR_Process {
 				} else if (lines[i].startsWith("Eastern")) {
 					current_area = "EACC";
 					gacc_priority = gacc_priority + 1;
-				} else if (lines[i].startsWith("Great Basin")) {		// Special case in 20170708. The gacc is Great Basin (does not have "Area")
+				} else if (lines[i].contains("Great Basin")) {		// Special case in 20170708: The gacc is "Great Basin", does not have "Area"; in 20130706: the gacc is "Western Great Basin Area"
 					current_area = "GBCC";
 					gacc_priority = gacc_priority + 1;
 				} else if (lines[i].startsWith("Northern California")) {
