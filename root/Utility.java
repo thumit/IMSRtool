@@ -1,18 +1,20 @@
 package root;
+import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
 import convenience_classes.FilesChooser;
+import convenience_classes.FilesHandle;
 
 
 public class Utility {
-	public File[] choose_files() {
-		File[] files = FilesChooser.chosenFiles(); // Open File chooser
+	public File[] choose_csv_files() {
+		File[] files = FilesChooser.chosenTextFiles(); // Open File chooser
 		if (files!= null) {
 			// Loop through all files to get extension, match extension with delimited
 			List<String> extentionList = new ArrayList<String>();	//A list contain all extension that have its delimited identified							
@@ -74,8 +76,77 @@ public class Utility {
 		return files;
 	}
 	
-	public void explore_files () {
-		File[] file = choose_files();
+	public File[] choose_pdf_files() {
+		File[] files = FilesChooser.chosenPdfFiles(); // Open File chooser
+		if (files!= null) {
+			// Loop through all files to get extension, match extension with delimited
+			List<String> extentionList = new ArrayList<String>();	//A list contain all extension that have its delimited identified							
+			for (int i = 0; i < files.length; i++) {
+				if (files[i].isFile()) {
+					File currentfile = files[i];
+					String extension = "";
+					int j = currentfile.getName().lastIndexOf('.');
+					if (j > 0) {
+						extension = currentfile.getName().substring(j + 1);
+					}
+					if (extension.equalsIgnoreCase("pdf")) {
+						extentionList.add("pdf");
+					} else if (!extentionList.contains(extension.toUpperCase())) {
+					}
+				}
+			}
+		}
+		return files;
+	}
+	
+	public void explore_files() {
+		File[] file = choose_csv_files();
 		if (file != null) new OptionPane_Explore(file);
+	}
+	
+	public void convert_pdf_to_text_files() {
+		File[] file = choose_pdf_files();
+		if (file != null) {
+			try {
+				File pdftotext_exe_source_file = FilesHandle.get_file_from_resource("pdftotext.exe");
+				String folder = file[0].getParentFile().toString();
+				Path sourceDirectory = pdftotext_exe_source_file.toPath();
+				Path targetDirectory = Paths.get(folder + "/pdftotext.exe");
+				Files.copy(sourceDirectory, targetDirectory);
+				// Run command line
+				run_command(folder, file);
+				
+				File pdftotext_exe_target_file = targetDirectory.toFile();
+				if (pdftotext_exe_target_file.exists()) {
+					pdftotext_exe_target_file.delete();
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+			}
+		}
+	}
+	
+	public void run_command(String folder, File[] file) throws Exception {
+		System.setProperty("user.dir", folder);
+//		String convert_entire_folder_command = "for /r %i in (*.pdf) do \"pdftotext\" -simple2 \"%i\"";
+//		String batch_command = "cd " + folder + " && " + convert_entire_folder_command;
+		String batch_command = "cd " + folder;
+		for (File f : file) {
+			batch_command = String.join(" && ", batch_command, "pdftotext -simple2 " + f.getName());
+		}
+		
+		ProcessBuilder builder = new ProcessBuilder("cmd.exe", "/c", batch_command);
+		builder.redirectErrorStream(true);
+		Process p = builder.start();
+		BufferedReader r = new BufferedReader(new InputStreamReader(p.getInputStream()));
+		String line;
+		while (true) {
+			line = r.readLine();
+			if (line == null) {
+				break;
+			}
+			System.out.println(line);
+		}
 	}
 }

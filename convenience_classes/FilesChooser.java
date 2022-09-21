@@ -10,8 +10,9 @@ import root.IMSRmain;
 
 public class FilesChooser {
 	
-	public static File[] chosenFiles() {
-		JFileChooser chooser = new JFileChooser("Select files to explore");
+	public static File[] chosenTextFiles() {
+		JFileChooser chooser = new JFileChooser();
+		chooser.setDialogTitle("Select text files to explore");
 		chooser.setPreferredSize(new Dimension(800, 500));
 //		chooser.setCurrentDirectory(new File(FilesHandle.get_workingLocation()));
 		chooser.setCurrentDirectory(FileSystemView.getFileSystemView().getHomeDirectory().getAbsoluteFile());	// Desktop Path
@@ -31,8 +32,31 @@ public class FilesChooser {
 		return files;
 	}
 	
+	public static File[] chosenPdfFiles() {
+		JFileChooser chooser = new JFileChooser();
+		chooser.setDialogTitle("Select pdf files for conversion to text files");
+		chooser.setPreferredSize(new Dimension(800, 500));
+//		chooser.setCurrentDirectory(new File(FilesHandle.get_workingLocation()));
+		chooser.setCurrentDirectory(FileSystemView.getFileSystemView().getHomeDirectory().getAbsoluteFile());	// Desktop Path
+		chooser.setMultiSelectionEnabled(true);
+		chooser.setApproveButtonText("Convert");
+		chooser.setApproveButtonToolTipText("Convert files");
+		FileNameExtensionFilter filter = new FileNameExtensionFilter("pdf file", "pdf");
+		chooser.setFileFilter(filter);
+		chooser.setAcceptAllFileFilterUsed(false);
+		
+		int returnValue = chooser.showOpenDialog(IMSRmain.get_DesktopPane());
+		File[] files = null;
+		if (returnValue == JFileChooser.APPROVE_OPTION) {
+
+			files = chooser.getSelectedFiles();
+		}
+		return files;
+	}
+	
 	public static File[] chosenDatabases() {
-		JFileChooser chooser = new JFileChooser("Select .db files to be imported as databasses");
+		JFileChooser chooser = new JFileChooser();
+		chooser.setDialogTitle("Select .db files to be imported as databases");
 		chooser.setPreferredSize(new Dimension(800, 500));
 		chooser.setCurrentDirectory(new File(FilesHandle.get_workingLocation()));
 		chooser.setMultiSelectionEnabled(true);

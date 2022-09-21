@@ -43,7 +43,7 @@ public class IMSRmain extends JFrame {
 	// Define variables------------------------------------------------------------------------
 	private static IMSRMenuBar 			menuBar;
 	private JMenu 						menuUtility, menuHelp, menu_SIT_Ranking, menu_SIT_Keyword;
-	private JMenuItem					extract, explore; 			// For menuUtility
+	private JMenuItem					pdftotext, explore, extract; 			// For menuUtility
 	private JMenuItem 					content, update, about; 	// For menuHelp
 	private JMenuItem 					customization, total_points, A1, A2, A3, B1, B2, B3, C1, C2, C3, C4, D1, D2; 			// For SIT_Ranking
 	private static IMSRDesktopPane 		desktopPane;
@@ -86,6 +86,7 @@ public class IMSRmain extends JFrame {
 				menu_SIT_Keyword = new JMenu("SIT Keyword");
 				menu_SIT_Ranking = new JMenu("SIT Ranking");
 				
+				pdftotext = new JMenuItem("IMSR Pdf to Text ");
 				explore = new JMenuItem("IMSR Explore ");
 				extract = new JMenuItem("IMSR Extract");
 				content = new JMenuItem("Content");
@@ -107,6 +108,7 @@ public class IMSRmain extends JFrame {
 				D2 = new JMenuItem("D2 Points");
 				
 				// Add components: Menubar, Menus, MenuItems----------------------------------
+				menuUtility.add(pdftotext);
 				menuUtility.add(explore);
 				menuUtility.add(extract);	
 				menuUtility.add(menu_SIT_Keyword);
@@ -143,7 +145,16 @@ public class IMSRmain extends JFrame {
 				setVisible(true);
 				
 				// Add listeners "New"------------------------------------------------
-				explore.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, Toolkit.getDefaultToolkit ().getMenuShortcutKeyMask()));	// CTRL on Windows, *** on MAC-OS
+				pdftotext.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, Toolkit.getDefaultToolkit ().getMenuShortcutKeyMask()));	// CTRL on Windows, *** on MAC-OS
+				pdftotext.setMnemonic(KeyEvent.VK_E);
+				pdftotext.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent event) {
+						Utility u = new Utility();
+						u.convert_pdf_to_text_files();
+					}
+				});	
+				
+				explore.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_2, Toolkit.getDefaultToolkit ().getMenuShortcutKeyMask()));	// CTRL on Windows, *** on MAC-OS
 				explore.setMnemonic(KeyEvent.VK_O);
 				explore.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent event) {
@@ -152,7 +163,7 @@ public class IMSRmain extends JFrame {
 					}
 				});	
 				
-				extract.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_2, Toolkit.getDefaultToolkit ().getMenuShortcutKeyMask()));	// CTRL on Windows, *** on MAC-OS
+				extract.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_3, Toolkit.getDefaultToolkit ().getMenuShortcutKeyMask()));	// CTRL on Windows, *** on MAC-OS
 				extract.setMnemonic(KeyEvent.VK_A);
 				extract.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent event) {

@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.net.URLDecoder;
 
 import root.IMSRmain;
@@ -146,5 +148,15 @@ public class FilesHandle {
 			System.err.println(e2.getClass().getName() + ": " + e2.getMessage());
 		} 
 		return file_maequee;
+	}
+	
+	public static File get_file_from_resource(String file_name) {
+		URL url = IMSRmain.get_main().getClass().getResource("/" + file_name);
+		try {
+			return new File(url.toURI());
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 }
