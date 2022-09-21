@@ -442,9 +442,9 @@ public class ISMR_Process {
 						String fire_name_4 = String.join(" ", upper_second_line_name) + " " + fire_name_2; // join by space
 						optional_fire_names.add(fire_name_3);
 						optional_fire_names.add(fire_name_4);
-						OptionPane_ConfirmFireName op_name = new OptionPane_ConfirmFireName(date, current_area, optional_fire_names.stream().toArray(String[]::new));
-						fire_name = optional_fire_names.get(op_name.response);
 					}
+					OptionPane_ConfirmFireName op_name = new OptionPane_ConfirmFireName(date, current_area, optional_fire_names.stream().toArray(String[]::new));
+					fire_name = optional_fire_names.get(op_name.response);
 				}
 				
 				fire_name = fire_name.replaceAll("\\*", "").trim().toUpperCase();	// This will remove the * (if exist in the name) and change the name to capital (IMPORTANT)
