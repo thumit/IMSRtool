@@ -69,7 +69,7 @@ public class ISMR_Process {
 		int mergeCount = 0;
 		for (int i = 0; i < lines.length; i++) {
 			lines[i] = lines[i].replaceAll("\\s{2,}", " ").trim(); // 2 or more spaces will be replaced by one space, then leading and ending spaces will be removed
-			if (lines[i].contains("Active Incident Resource Summary") || lines[i].contains("GACC")) {		// Special case 20200110: "Active Incident Resource Summary" is not written correctly --> Use GACC
+			if (lines[i].contains("Active Incident Resource Summary") || lines[i].contains("GACC") || lines[i].contains("Geographic Area daily reports")) {		// Special case 20200110: "Active Incident Resource Summary" is not written correctly --> Use GACC
 				for (int j = 0; j < i; j++) {
 					if (lines[j].contains("Type 2 IMTs")) {
 						// Merge up to this mergeline. Some special cases are j+3 or j+2, usually j+1 or j in most cases)
