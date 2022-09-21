@@ -152,8 +152,10 @@ public class Utility {
 //			System.out.println(line);
 //		}
 //		//--------------------------------------------------------------------------------------------------------------------
-		ProcessBuilder builder;
 		File directory = new File(folder);
+		ProcessBuilder builder = new ProcessBuilder("cmd.exe", "/c", "cd " + folder);	// we probably do not need these 2 lies, but sometimes it does not  convert 1 file in below loop so I add these
+		builder = builder.directory(directory);
+		
 		for (File f : file) {
 			String command = "pdftotext -simple2 " + f.getName();
 			builder = new ProcessBuilder("cmd.exe", "/c", command);
