@@ -422,16 +422,26 @@ public class ISMR_Process {
 					fire_name = String.join(" ", fire_name, line_split[id]);	// this is the incident name, join by space
 				}
 				
+				// This is the list of optinal names of the fire, users need to select the correct fire name (the request only show up when a fire name associated with 3 lines)
+				List<String> optional_fire_names = new ArrayList<String>();
+				optional_fire_names.add(fire_name);
+				
 				// xpdf (using -table command) may generate the second part of the fire name in the next second line if fire name in the pdf file has 2 lines, we need to add to the name for this special cases:
-				// If the second line has <= 2 terms then it is very likely that it is is the fire name, add it:
-//				// Note that we cannot get the upper term because it will mix with other fire. See the special case: 20210710IMSR where we have 2021 SUF (1st line) West Zone (2nd line) Complex (3rd line)
-//				String[] upper_second_line_name = (i >= 2)? lines[i - 2].replaceAll("\\*", "").split("\\s+") : null;
-//				if (upper_second_line_name.length <= 3) {
-//					fire_name = String.join(" ", upper_second_line_name)+ " "  + fire_name;	// join by space
-//				}
+				// If the second line has <= 2 terms then it is very likely that it belongs to the fire name, add it:
 				String[] lower_second_line_name = lines[i + 2].split("\\s+");
 				if (lower_second_line_name.length <= 2) {
 					fire_name = fire_name + " " + String.join(" ", lower_second_line_name);	// join by space
+					optional_fire_names.add(fire_name);
+					// xpdf (using -table command) will often generate 2 lines fire name where 1st line associate with all other information of the fire, the lower second line is the rest of the name
+					// In case we spot 2 lines, the upper second line may belong to the fire name as well, and we need to check it and ask users to confirm the name
+					// Note: see the special case: 20210710IMSR where we have 2021 SUF (1st line) West Zone (2nd line) Complex (3rd line)
+					String[] upper_second_line_name = (i >= 2)? lines[i - 2].replaceAll("\\*", "").trim().split("\\s+") : null;
+					if (upper_second_line_name.length <= 2) {
+						fire_name = String.join(" ", upper_second_line_name) + " " + fire_name; // join by space
+						optional_fire_names.add(fire_name);
+						OptionPane_ConfirmFireName op_name = new OptionPane_ConfirmFireName(date, current_area, optional_fire_names.stream().toArray(String[]::new));
+						fire_name = optional_fire_names.get(op_name.response);
+					}
 				}
 				
 				fire_name = fire_name.replaceAll("\\*", "").trim().toUpperCase();	// This will remove the * (if exist in the name) and change the name to capital (IMPORTANT)
