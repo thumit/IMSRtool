@@ -410,77 +410,119 @@ public class ISMR_Process {
 			
 			int unit_id = 0;	// find the second column of the table
 			int line_length = line_split.get(i).length;
-			if (line_length >= 15 
-					&& line_split.get(i)[line_length - 14].contains("-")    // do not use this for 2014 data, it has a different unit name, also in 20210710IMSR, one fire has wrong unit that cannot be included (Butte Creek: ID- CTS)
-					&& line_split.get(i)[line_length - 13].matches("-?\\d+(\\,\\d+)?")
-					&& line_split.get(i)[line_length - 8].matches("-?\\d+(\\,\\d+)?")) {		// this is likely a fire, smart check based on the "acres" and "personnel total" columns.
-				unit_id = line_split.get(i).length - 14;
-				String fire_priority = String.valueOf(area_fires(current_area).size() + 1);
-				String this_fire = String.join("\t", date, current_area, String.valueOf(gacc_priority), fire_priority);
-				
-				// Since it is very rare that fire name is in 3 lines (example 20210710IMSR), we disable the options for users to choose names, but assign the default fire name (3rd line will always be ignored)
-				// Check only the above line, if length <=3 then add to fire name
-				String fire_name = "";
-				for (int id = 0; id < unit_id; id++) {
-					fire_name = String.join(" ", fire_name, line_split.get(i)[id]);	// this is the incident name (or part of the name that is in the same line with other fire information), join by space
+			
+			boolean year_before_2015 = Integer.valueOf(date.substring(0, 4)) < 2015;	// first 4 letters
+			if (year_before_2015) { // before 2015 we use this to process data (Note unit is split by 2 columns and we need to merge, also we do not have the "Ctn/Comp" and we need to assign Ctn for it)
+				if (line_length >= 15 
+//						&& line_split.get(i)[line_length - 14].contains("-")    // do not use this for 2014 data
+						&& line_split.get(i)[line_length - 12].matches("-?\\d+(\\,\\d+)?")
+						&& line_split.get(i)[line_length - 8].matches("-?\\d+(\\,\\d+)?")) {		// this is likely a fire, smart check based on the "acres" and "personnel total" columns.
+					unit_id = line_split.get(i).length - 14;
+					String fire_priority = String.valueOf(area_fires(current_area).size() + 1);
+					String this_fire = String.join("\t", date, current_area, String.valueOf(gacc_priority), fire_priority);
+					
+					// Since it is very rare that fire name is in 3 lines (example 20210710IMSR), we disable the options for users to choose names, but assign the default fire name (3rd line will always be ignored)
+					// Check only the above line, if length <=3 then add to fire name
+					// Note the special case (20140808IMSR - Devils Elbow Complex) where -simple2 command do not have expected order of fire name in 2 lines.
+					String fire_name = "";
+					for (int id = 0; id < unit_id; id++) {
+						fire_name = String.join(" ", fire_name, line_split.get(i)[id]);	// this is the incident name (or part of the name that is in the same line with other fire information), join by space
+					}
+					if (line_split.get(i - 1).length <= 2 || (line_split.get(i - 1).length <= 3 && line_split.get(i - 1)[0].contains("\\*"))) {
+						if (!lines[i - 1].startsWith("24 Hrs")) {	// this special check is needed for years < 2015
+							fire_name = String.join(" ", line_split.get(i - 1)) + " " + fire_name;	// join by space
+						}
+					}
+					
+					fire_name = fire_name.replaceAll("\\*", "").trim().toUpperCase();	// This will remove the * (if exist in the name) and change the name to capital (IMPORTANT)
+					this_fire = String.join("\t", this_fire, fire_name);
+					for (int id = unit_id; id < line_split.get(i).length; id++) {
+						if (id == line_split.get(i).length - 9) {	// add a column that exists in 2015 and later (Ctn/Comp) but not exist in 2014 and earlier
+							this_fire = this_fire + "\t" + "Ctn";
+						}
+						if (id == line_split.get(i).length - 13) {	// this is "unit", we need to connect to "st" column with a "-"
+							this_fire = this_fire + "-" + line_split.get(i)[id];
+						} else {
+							this_fire = String.join("\t", this_fire, line_split.get(i)[id]);	// this is all information in one whole line of this fire
+						}
+					}
+					all_fires.add(this_fire);
+					area_fires(current_area).add(this_fire);
 				}
-				if (line_split.get(i - 1).length <= 2 || (line_split.get(i - 1).length <= 3 && line_split.get(i - 1)[0].contains("\\*"))) {
-					fire_name = String.join(" ", line_split.get(i - 1)) + " " + fire_name;	// join by space
-				}
-//				-------------------------------------------------------------------------------------------------------------------------------------		
-//				String fire_name = "";
-//				String fire_name_1 = "";
-//				for (int id = 0; id < unit_id; id++) {
-//					fire_name_1 = String.join(" ", fire_name_1, line_split.get(i)[id]);	// this is the incident name (or part of the name that is in the same line with other fire information), join by space
-//				}
-//				
-//				// This is the list of optional names of the fire, users need to select the correct fire name (the request only show up when a fire name associated with 3 lines)
-//				List<String> optional_fire_names = new ArrayList<String>();
-//				
-//				// xpdf (using -simple2 command) may generate fire name in 2 or 3 lines, we need to ask users to correct fire name for these special cases.
-//				// An example special case: 20210710IMSR where we have 2021 SUF (1st line) West Zone (2nd line) Complex (3rd line)
-//				// Note that fire name in 2 lines often has the last line (second line) associated with other fire infor, while 3 lines would have the middle line (also second line) associated with the fire infor.
-//				// If the line above has <= 3 terms then it is very likely that it belongs to the fire name
-//				// Only if the line above has <= 3 terms, we will need to check the below line as well
-//				if (line_split.get(i - 1).length <= 3) {
-//					String fire_name_2 = String.join(" ", line_split.get(i - 1)) + " " + fire_name_1;	// join by space
-//					if (line_split.get(i - 3).length <= 3) {	// check previous fire
-//						optional_fire_names.add(fire_name_1);
-//						optional_fire_names.add(fire_name_2);
-//						// In case we spot 2 lines (line above has <=3 words), we need to check it and also the below line
-//						if (line_split.get(i + 1).length <= 3) {
-//							String fire_name_3 = fire_name_1 + " " + String.join(" ", line_split.get(i + 1)); // join by space
-//							String fire_name_4 = fire_name_2 + " " + String.join(" ", line_split.get(i + 1)); // join by space
-//							optional_fire_names.add(fire_name_3);
-//							optional_fire_names.add(fire_name_4);
-//						}
-//						OptionPane_ConfirmFireName op_name = new OptionPane_ConfirmFireName(date, current_area, optional_fire_names.stream().toArray(String[]::new));
-//						fire_name = optional_fire_names.get(op_name.response);
-//					} else { // if previous fire does not have qualified above line with <=3 words, then this current file name definitely has 2 terms in 2 lines, need to check the line below as well
-//						optional_fire_names.add(fire_name_2);
-//						// In case we spot 2 lines (line above has <=3 words), we need to check it and also the below line
-//						if (line_split.get(i + 1).length <= 3) {
-//							String fire_name_4 = fire_name_2 + " " + String.join(" ", line_split.get(i + 1)); // join by space
-//							optional_fire_names.add(fire_name_4);
+			} else { // from 2015 we use this to process data
+				if (line_length >= 15 
+						&& line_split.get(i)[line_length - 14].contains("-")    // do not use this for 2014 data, it has a different unit name, also in 20210710IMSR, one fire has wrong unit that cannot be included (Butte Creek: ID- CTS)
+						&& line_split.get(i)[line_length - 13].matches("-?\\d+(\\,\\d+)?")
+						&& line_split.get(i)[line_length - 8].matches("-?\\d+(\\,\\d+)?")) {		// this is likely a fire, smart check based on the "acres" and "personnel total" columns.
+					unit_id = line_split.get(i).length - 14;
+					String fire_priority = String.valueOf(area_fires(current_area).size() + 1);
+					String this_fire = String.join("\t", date, current_area, String.valueOf(gacc_priority), fire_priority);
+					
+					// Since it is very rare that fire name is in 3 lines (example 20210710IMSR), we disable the options for users to choose names, but assign the default fire name (3rd line will always be ignored)
+					// Check only the above line, if length <=3 then add to fire name
+					String fire_name = "";
+					for (int id = 0; id < unit_id; id++) {
+						fire_name = String.join(" ", fire_name, line_split.get(i)[id]);	// this is the incident name (or part of the name that is in the same line with other fire information), join by space
+					}
+					if (line_split.get(i - 1).length <= 2 || (line_split.get(i - 1).length <= 3 && line_split.get(i - 1)[0].contains("\\*"))) {
+						fire_name = String.join(" ", line_split.get(i - 1)) + " " + fire_name;	// join by space
+					}
+//					-------------------------------------------------------------------------------------------------------------------------------------		
+//					String fire_name = "";
+//					String fire_name_1 = "";
+//					for (int id = 0; id < unit_id; id++) {
+//						fire_name_1 = String.join(" ", fire_name_1, line_split.get(i)[id]);	// this is the incident name (or part of the name that is in the same line with other fire information), join by space
+//					}
+//					
+//					// This is the list of optional names of the fire, users need to select the correct fire name (the request only show up when a fire name associated with 3 lines)
+//					List<String> optional_fire_names = new ArrayList<String>();
+//					
+//					// xpdf (using -simple2 command) may generate fire name in 2 or 3 lines, we need to ask users to correct fire name for these special cases.
+//					// An example special case: 20210710IMSR where we have 2021 SUF (1st line) West Zone (2nd line) Complex (3rd line)
+//					// Note that fire name in 2 lines often has the last line (second line) associated with other fire infor, while 3 lines would have the middle line (also second line) associated with the fire infor.
+//					// If the line above has <= 3 terms then it is very likely that it belongs to the fire name
+//					// Only if the line above has <= 3 terms, we will need to check the below line as well
+//					if (line_split.get(i - 1).length <= 3) {
+//						String fire_name_2 = String.join(" ", line_split.get(i - 1)) + " " + fire_name_1;	// join by space
+//						if (line_split.get(i - 3).length <= 3) {	// check previous fire
+//							optional_fire_names.add(fire_name_1);
+//							optional_fire_names.add(fire_name_2);
+//							// In case we spot 2 lines (line above has <=3 words), we need to check it and also the below line
+//							if (line_split.get(i + 1).length <= 3) {
+//								String fire_name_3 = fire_name_1 + " " + String.join(" ", line_split.get(i + 1)); // join by space
+//								String fire_name_4 = fire_name_2 + " " + String.join(" ", line_split.get(i + 1)); // join by space
+//								optional_fire_names.add(fire_name_3);
+//								optional_fire_names.add(fire_name_4);
+//							}
 //							OptionPane_ConfirmFireName op_name = new OptionPane_ConfirmFireName(date, current_area, optional_fire_names.stream().toArray(String[]::new));
 //							fire_name = optional_fire_names.get(op_name.response);
-//						} else { // the line below is not qualified, so stop checking, we know that the fire name has 2 term from 2 lines.
-//							fire_name = fire_name_2;
+//						} else { // if previous fire does not have qualified above line with <=3 words, then this current file name definitely has 2 terms in 2 lines, need to check the line below as well
+//							optional_fire_names.add(fire_name_2);
+//							// In case we spot 2 lines (line above has <=3 words), we need to check it and also the below line
+//							if (line_split.get(i + 1).length <= 3) {
+//								String fire_name_4 = fire_name_2 + " " + String.join(" ", line_split.get(i + 1)); // join by space
+//								optional_fire_names.add(fire_name_4);
+//								OptionPane_ConfirmFireName op_name = new OptionPane_ConfirmFireName(date, current_area, optional_fire_names.stream().toArray(String[]::new));
+//								fire_name = optional_fire_names.get(op_name.response);
+//							} else { // the line below is not qualified, so stop checking, we know that the fire name has 2 term from 2 lines.
+//								fire_name = fire_name_2;
+//							}
 //						}
+//					} else { // If there is no qualified above line then fire name is in a single line 
+//						fire_name = fire_name_1;
 //					}
-//				} else { // If there is no qualified above line then fire name is in a single line 
-//					fire_name = fire_name_1;
-//				}
-//				-------------------------------------------------------------------------------------------------------------------------------------
-				
-				fire_name = fire_name.replaceAll("\\*", "").trim().toUpperCase();	// This will remove the * (if exist in the name) and change the name to capital (IMPORTANT)
-				this_fire = String.join("\t", this_fire, fire_name);
-				for (int id = unit_id; id < line_split.get(i).length; id++) {
-					this_fire = String.join("\t", this_fire, line_split.get(i)[id]);	// this is all information in one whole line of this fire
+//					-------------------------------------------------------------------------------------------------------------------------------------
+					
+					fire_name = fire_name.replaceAll("\\*", "").trim().toUpperCase();	// This will remove the * (if exist in the name) and change the name to capital (IMPORTANT)
+					this_fire = String.join("\t", this_fire, fire_name);
+					for (int id = unit_id; id < line_split.get(i).length; id++) {
+						this_fire = String.join("\t", this_fire, line_split.get(i)[id]);	// this is all information in one whole line of this fire
+					}
+					all_fires.add(this_fire);
+					area_fires(current_area).add(this_fire);
 				}
-				all_fires.add(this_fire);
-				area_fires(current_area).add(this_fire);
 			}
+			
 			i = i + 1;
 		} while (i < lines.length);
 	}
