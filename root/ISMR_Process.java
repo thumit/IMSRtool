@@ -209,31 +209,31 @@ public class ISMR_Process {
 		// Loop all lines, whenever found a gacc area, stop and process data
 		for (int i = 0; i < lines.length; i++) {
 			if (lines[i].contains("(PL")) {
-				if (lines[i].startsWith("Alaska Area")) {
+				if (lines[i].startsWith("Alaska")) {
 					current_area = "AICC";
 					gacc_priority = gacc_priority + 1;
 					process_area_data(lines, i, current_area, gacc_priority);
-				} else if (lines[i].startsWith("Eastern")) {
+				} else if (lines[i].startsWith("Eastern Area")) {
 					current_area = "EACC";
 					gacc_priority = gacc_priority + 1;
 					process_area_data(lines, i, current_area, gacc_priority);
-				} else if (lines[i].startsWith("Great Basin Area")) {
+				} else if (lines[i].contains("Great Basin")) {
 					current_area = "GBCC";
 					gacc_priority = gacc_priority + 1;
 					process_area_data(lines, i, current_area, gacc_priority);
-				} else if (lines[i].startsWith("Northern California Area")) {
+				} else if (lines[i].startsWith("Northern California")) {
 					current_area = "ONCC";
 					gacc_priority = gacc_priority + 1;
 					process_area_data(lines, i, current_area, gacc_priority);
-				} else if (lines[i].startsWith("Northern Rockies Area")) {
+				} else if (lines[i].startsWith("Northern Rockies")) {
 					current_area = "NRCC";
 					gacc_priority = gacc_priority + 1;
 					process_area_data(lines, i, current_area, gacc_priority);
-				} else if (lines[i].startsWith("Northwest Area")) {
+				} else if (lines[i].startsWith("Northwest")) {
 					current_area = "NWCC";
 					gacc_priority = gacc_priority + 1;
 					process_area_data(lines, i, current_area, gacc_priority);
-				} else if (lines[i].startsWith("Rocky Mountain Area")) {
+				} else if (lines[i].startsWith("Rocky Mountain")) {
 					current_area = "RMCC";
 					gacc_priority = gacc_priority + 1;
 					process_area_data(lines, i, current_area, gacc_priority);
@@ -241,11 +241,11 @@ public class ISMR_Process {
 					current_area = "SACC";
 					gacc_priority = gacc_priority + 1;
 					process_area_data(lines, i, current_area, gacc_priority);
-				} else if (lines[i].startsWith("Southern California Area")) {
+				} else if (lines[i].startsWith("Southern California")) {
 					current_area = "OSCC";
 					gacc_priority = gacc_priority + 1;
 					process_area_data(lines, i, current_area, gacc_priority);
-				} else if (lines[i].startsWith("Southwest Area")) {
+				} else if (lines[i].startsWith("Southwest")) {
 					current_area = "SWCC";
 					gacc_priority = gacc_priority + 1;
 					process_area_data(lines, i, current_area, gacc_priority);
@@ -378,7 +378,7 @@ public class ISMR_Process {
 				if (lines[i].startsWith("Alaska")) {
 					current_area = "AICC";
 					gacc_priority = gacc_priority + 1;
-				} else if (lines[i].startsWith("Eastern")) {
+				} else if (lines[i].startsWith("Eastern Area")) {
 					current_area = "EACC";
 					gacc_priority = gacc_priority + 1;
 				} else if (lines[i].contains("Great Basin")) {		// Special case in 20170708: The gacc is "Great Basin", does not have "Area"; in 20130706: the gacc is "Western Great Basin Area"
