@@ -2,7 +2,6 @@ package root;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -108,13 +107,14 @@ public class Utility {
 		File[] file = choose_pdf_files();
 		if (file != null) {
 			try {
-				File pdftotext_exe_source_file = FilesHandle.get_file_from_resource("pdftotext.exe");
 				String folder = file[0].getParentFile().toString();
-				Path sourceDirectory = pdftotext_exe_source_file.toPath();
 				Path targetDirectory = Paths.get(folder + "/pdftotext.exe");
 				File pdftotext_exe_target_file = targetDirectory.toFile();
 				if (!pdftotext_exe_target_file.exists()) {
-					Files.copy(sourceDirectory, targetDirectory);
+//					File pdftotext_exe_source_file = FilesHandle.get_file_from_resource("pdftotext.exe");
+//					Path sourceDirectory = pdftotext_exe_source_file.toPath();
+//					Files.copy(sourceDirectory, targetDirectory);
+					FilesHandle.getResourceFile("pdftotext.exe", pdftotext_exe_target_file);	// This replaces the above 3 lines that will not work in the jar application of IMSRTool
 				}
 				// Run command line
 				run_command(folder, file);
@@ -153,7 +153,7 @@ public class Utility {
 //		}
 //		//--------------------------------------------------------------------------------------------------------------------
 		File directory = new File(folder);
-		ProcessBuilder builder = new ProcessBuilder("cmd.exe", "/c", "cd " + folder);	// we probably do not need these 2 lies, but sometimes it does not  convert 1 file in below loop so I add these
+		ProcessBuilder builder = new ProcessBuilder("cmd.exe", "/c", "cd " + folder);	// we probably do not need these 2 lines, but sometimes it does not convert 1 file in below loop so I add these
 		builder = builder.directory(directory);
 		
 		for (File f : file) {

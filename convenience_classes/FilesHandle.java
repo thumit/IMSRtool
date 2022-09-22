@@ -159,4 +159,25 @@ public class FilesHandle {
 			return null;
 		}
 	}
+	
+	public static File getResourceFile(String fileName, File output) {
+//		File output = new File(FilesHandle.get_temporaryFolder().getAbsolutePath() + "/" + fileName);
+//		output.deleteOnExit();
+		try {
+			InputStream initialStream = IMSRmain.get_main().getClass().getResourceAsStream("/" + fileName);
+			byte[] buffer = new byte[initialStream.available()];
+			initialStream.read(buffer);
+
+			OutputStream outStream = new FileOutputStream(output);
+			outStream.write(buffer);
+
+			initialStream.close();
+			outStream.close();
+		} catch (FileNotFoundException e1) {
+			System.err.println(e1.getClass().getName() + ": " + e1.getMessage());
+		} catch (IOException e2) {
+			System.err.println(e2.getClass().getName() + ": " + e2.getMessage());
+		}
+		return output;
+	}
 }
