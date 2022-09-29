@@ -181,6 +181,19 @@ public class ISMR_Process {
 		temp = (mstr.substring(mstr.indexOf(st) + 22)).trim();		// Note: different from above, not use sub string between
 		if (temp != null) type_2_imts_committed = temp.split(" ")[0];
 		
+		// If no data then make it null
+		if (date == null || date.isBlank()) date = null;
+		if (national_prepareness_level == null || national_prepareness_level.isBlank()) national_prepareness_level = null;
+		if (initial_attack_activity == null || initial_attack_activity.isBlank()) initial_attack_activity = null;
+		if (initial_attack_new_fires == null || initial_attack_new_fires.isBlank()) initial_attack_new_fires = null;
+		if (new_large_incidents == null || new_large_incidents.isBlank()) new_large_incidents = null;
+		if (large_fires_contained == null || large_fires_contained.isBlank()) large_fires_contained = null;
+		if (uncontained_large_fires == null || uncontained_large_fires.isBlank()) uncontained_large_fires = null;
+		if (area_command_teams_committed == null || area_command_teams_committed.isBlank()) area_command_teams_committed = null;
+		if (nimos_committed == null || nimos_committed.isBlank()) nimos_committed = null;
+		if (type_1_imts_committed == null || type_1_imts_committed.isBlank()) type_1_imts_committed = null;
+		if (type_2_imts_committed == null || type_2_imts_committed.isBlank()) type_2_imts_committed = null;
+		
 		national_fire_activity.add(date);
 		national_fire_activity.add(national_prepareness_level);
 		national_fire_activity.add(initial_attack_activity);
@@ -285,28 +298,6 @@ public class ISMR_Process {
 		} while (!lines[end_line].contains("(PL") && (end_line < lines.length - 1));
 		String[] merge_lines = Arrays.copyOfRange(lines, start_line, end_line);
 		String mstr = String.join(" ", merge_lines).toLowerCase().replaceAll("\\s{2,}", " ").trim();	// 2 or more spaces will be replaced by one space, then leading and ending spaces will be removed
-		
-//		int i = mstr.indexOf("new fires") + 9;
-//		if (i > -1) gacc_new_fires = (mstr.substring(i + 1)).trim().split(" ")[0];
-//		if (!gacc_new_fires.matches("-?(0|[1-9]\\d*)"))	gacc_new_fires = null;
-//		i = mstr.indexOf("new large incidents") + 19;
-//		if (i > -1) gacc_new_large_incidents = (mstr.substring(i + 1)).trim().split(" ")[0];
-//		if (!gacc_new_large_incidents.matches("-?(0|[1-9]\\d*)")) gacc_new_large_incidents = null;
-//		i = mstr.indexOf("uncontained large fires") + 23;
-//		if (i > -1) gacc_uncontained_large_fires = (mstr.substring(i + 1)).trim().split(" ")[0];
-//		if (!gacc_uncontained_large_fires.matches("-?(0|[1-9]\\d*)")) gacc_uncontained_large_fires = null;
-//		i = mstr.indexOf("area command teams committed") + 28;
-//		if (i > -1) gacc_area_command_teams_committed = (mstr.substring(i + 1)).trim().split(" ")[0];
-//		if (!gacc_area_command_teams_committed.matches("-?(0|[1-9]\\d*)")) gacc_area_command_teams_committed = null;
-//		i = mstr.indexOf("nimos committed") + 15;
-//		if (i > -1) gacc_nimos_committed = (mstr.substring(i + 1)).trim().split(" ")[0];
-//		if (!gacc_nimos_committed.matches("-?(0|[1-9]\\d*)")) gacc_nimos_committed = null;
-//		i = mstr.indexOf("type 1 imts committed") + 21;
-//		if (i > -1) gacc_type_1_imts_committed = (mstr.substring(i + 1)).trim().split(" ")[0];
-//		if (!gacc_type_1_imts_committed.matches("-?(0|[1-9]\\d*)"))	gacc_type_1_imts_committed = null;
-//		i = mstr.indexOf("type 2 imts committed") + 21;
-//		if (i > -1) gacc_type_2_imts_committed = (mstr.substring(i + 1)).trim().split(" ")[0];
-//		if (!gacc_type_2_imts_committed.matches("-?(0|[1-9]\\d*)"))	gacc_type_2_imts_committed = null;
 		
 		String info = null;
 		// Match term and value (a very smart matching) that works for both normal cases and special cases (i.e. 20180620, 20180622, 20180804, ...)
@@ -446,7 +437,7 @@ public class ISMR_Process {
 					this_fire = String.join("\t", this_fire, fire_name);
 					for (int id = unit_id; id < line_split.get(i).length; id++) {
 						if (id == line_split.get(i).length - 9) {	// add a column that exists in 2015 and later (Ctn/Comp) but not exist in 2014 and earlier
-							this_fire = this_fire + "\t" + "Ctn";
+							this_fire = this_fire + "\t" + "null";
 						}
 						if (id == line_split.get(i).length - 13) {	// this is "unit", we need to connect to "st" column with a "-"
 							this_fire = this_fire + "-" + line_split.get(i)[id];
