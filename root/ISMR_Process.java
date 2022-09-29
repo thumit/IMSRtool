@@ -84,6 +84,8 @@ public class ISMR_Process {
 							mergeCount = j + 2;		// 20200110
 						} else if (lines[j + 3].substring(lines[j + 3].lastIndexOf(" ") + 1).matches("-?(0|[1-9]\\d*)")) {
 							mergeCount = j + 3;		// 20200518
+						} else {	// Type 2 IMTs may have nothing, no space as well, such as in 20070417
+							mergeCount = j;
 						}
 					}
 				}
@@ -153,6 +155,9 @@ public class ISMR_Process {
 //		if (temp != null) type_1_IMTs_committed = temp.split(" ")[0];
 //		temp = (mstr.substring(mstr.indexOf("type 2 imts committed") + 22)).trim();
 //		if (temp != null) type_2_IMTs_committed = temp.split(" ")[0];
+		
+		if (Integer.valueOf(date.replaceAll("-", "")) < 20070425) mstr = mstr.replaceAll("area command teams", "area command teams committed");	// Test
+		if (Integer.valueOf(date.replaceAll("-", "")) == 20070423) mstr = mstr.replaceAll("national incident management 1 organization", "");	// Fix special case
 		
 		st = "new large incidents"; if (Integer.valueOf(date.substring(0, 4)) < 2015) st = "new large fires";
 		temp = sb.substringBetween(mstr, st, get_national_next_term(mstr, st)); 
@@ -414,7 +419,7 @@ public class ISMR_Process {
 			int unit_id = 0;	// find the second column of the table
 			int line_length = line_split.get(i).length;
 			
-			boolean year_before_2015 = Integer.valueOf(date.substring(0, 4)) < 2015;	// first 4 letters
+			boolean year_before_2015 = Integer.valueOf(date.substring(0, 4)) < 2015;	// first 4 letters   (Note that from 2007-05-28 to the end of 2014, there are 15 columns for each fire)
 			if (year_before_2015) { // before 2015 we use this to process data (Note unit is split by 2 columns and we need to merge, also we do not have the "Ctn/Comp" and we need to assign Ctn for it)
 				if (line_length >= 15 
 						&& line_split.get(i)[line_length - 14].length() == 2    // This is State "St" for 2014 and earlier year. It must have only 2 characters
