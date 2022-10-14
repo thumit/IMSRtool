@@ -560,13 +560,28 @@ public class ISMR_Process {
 			for (int i = start_line; i <= end_line; i++) {
 				lines[i] = lines[i].replaceAll("\\s{2,}", " ").trim(); // 2 or more spaces will be replaced by one space, then leading and ending spaces will be removed
 				String[] line_split = lines[i].split("\\s+");
-				if (line_split.length == 7) { // address issues where table title split into 5 lines such as 20150501
+				if (date.startsWith("2015")) {	// change GACC name because it show only 2 characters such as in the first 5 months of 2015
+					if (line_split[0].equals("AK")) line_split[0] = "AICC";
+					if (line_split[0].equals("NW")) line_split[0] = "NWCC";
+					if (line_split[0].equals("NO")) line_split[0] = "ONCC";
+					if (line_split[0].equals("SO")) line_split[0] = "OSCC";
+					if (line_split[0].equals("NR")) line_split[0] = "NRCC";
+					if (line_split[0].equals("GB")) line_split[0] = "GBCC";
+					if (line_split[0].equals("SW")) line_split[0] = "SWCC";
+					if (line_split[0].equals("RM")) line_split[0] = "RMCC";
+					if (line_split[0].equals("EA")) line_split[0] = "EACC";
+					if (line_split[0].equals("SA")) line_split[0] = "SACC";
+				}
+				// Very important note: Up until 20150102. GB still include EB and WB. AFter this time, they are merged.
+				// This is to address the single special case 20150102 where GB still include EB and WB. Since all values in the two areas are zero, we keep EB and change it to GBCC, and remove WB
+				if (line_split[0].equals("EB")) line_split[0] = "GBCC";	
+				if (line_split.length == 7 && !line_split[0].equals("WB")) { // address issues where table title split into 5 lines such as 20150501
 					resource_summary.add(date + "\t" + String.join("\t", line_split));
 				}
 			}
 		}
-		// NOTE NOTE NOTE: We might want to change GACC name because it show on ly 2 characters such as in 20150501. Also note the case NO and SO mean ONCC and OSCC
 		// NOTE NOTE NOTE: 2022 have 8 columns
+		
 	}
 	
 }
