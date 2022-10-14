@@ -35,6 +35,8 @@ public class ISMR_Process {
 //	String gacc_type_2_IMTs_committed;
 	List<String> gacc_fire_activity = new ArrayList<String>();	// almost the same information structure as national activity, but the level is gacc area
 	
+	List<String> resource_summary = new ArrayList<String>();	// store all active incident resource summary information
+	
 	List<String> all_fires = new ArrayList<String>();	// All fires with priority order as in the ISMR file
 	List<String> AICC = new ArrayList<String>();	// Alaska
 	List<String> EACC = new ArrayList<String>();	// Eastern
@@ -57,6 +59,7 @@ public class ISMR_Process {
 			get_national_data(lines);
 			get_area_data(lines);
 			get_fire_data(lines);
+			get__reource_summary_data(lines);
 			lines_list = null; 	// free memory
 			lines = null;		// free memory
 		} catch (IOException e) {
@@ -524,6 +527,46 @@ public class ISMR_Process {
 			
 			i = i + 1;
 		} while (i < lines.length);
+	}
+	
+	private void get__reource_summary_data(String[] lines) {
+		int start_line = 0;
+		int end_line = 0;
+		
+		boolean table_start = false;
+		int l = 0;
+		do {
+			if (lines[l].contains("Active Incident Resource Summary"))  {
+				table_start = true;
+				start_line = l + 3;
+			}
+			l = l + 1;
+		} while (l < lines.length && !table_start);
+		
+		if (table_start) {
+			l = start_line;
+			boolean table_end = false;
+			do {
+				if (lines[l].contains("Total"))  {
+					table_end = true;
+					end_line = l;
+				}
+				l = l + 1;
+			} while (l < lines.length && !table_end);
+		}
+		
+		// Extract data
+		if (table_start) {	// if summary table exists
+			for (int i = start_line; i <= end_line; i++) {
+				lines[i] = lines[i].replaceAll("\\s{2,}", " ").trim(); // 2 or more spaces will be replaced by one space, then leading and ending spaces will be removed
+				String[] line_split = lines[i].split("\\s+");
+				if (line_split.length == 7) { // address issues where table title split into 5 lines such as 20150501
+					resource_summary.add(date + "\t" + String.join("\t", line_split));
+				}
+			}
+		}
+		// NOTE NOTE NOTE: We might want to change GACC name because it show on ly 2 characters such as in 20150501. Also note the case NO and SO mean ONCC and OSCC
+		// NOTE NOTE NOTE: 2022 have 8 columns
 	}
 	
 }

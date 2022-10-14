@@ -62,6 +62,7 @@ class Aggregate_Scroll extends JScrollPane {
 		String[] header3 = new String[] { "date", "gacc", "gacc_priority", "fire_priority", "incident_name", "unit", "size_acres",
 				"size_chge", "percentage", "ctn_comp", "est", "personnel_total", "personnel_chge", "resources_crw",
 				"resources_eng", "resources_heli", "strc_lost", "ctd", "origin_own" };
+		String[] header4 = new String[] { "date", "gacc_name", "incidents", "cumulative_acres", "crews", "engines", "helicopters", "total_personnel" };
 		
 		ISMR_Process[] ismr_process = new ISMR_Process[file.length];
 		for (int i = 0; i < file.length; i++) {
@@ -96,6 +97,15 @@ class Aggregate_Scroll extends JScrollPane {
 		for (ISMR_Process ismr : ismr_process) {
 			if (ismr.all_fires.isEmpty()) {
 				textarea.append(ismr.date + " has no fire" + "\n");
+			}
+		}
+		textarea.append("--------------------------------------------------------------------" + "\n");
+		textarea.append("--------------------------------------------------------------------" + "\n");
+		textarea.append("--------------------------------------------------------------------" + "\n");
+		textarea.append(String.join("\t", header4)  + "\n");
+		for (ISMR_Process ismr : ismr_process) {
+			for (String st : ismr.resource_summary) {
+				textarea.append(st + "\n");
 			}
 		}
 		
@@ -249,6 +259,7 @@ class ScrollPane_FinalFile extends JScrollPane {
 		String[] header3 = new String[] { "date", "gacc", "gacc_priority", "fire_priority", "incident_name", "unit", "size_acres",
 				"size_chge", "percentage", "ctn_comp", "est", "personnel_total", "personnel_chge", "resources_crw",
 				"resources_eng", "resources_heli", "strc_lost", "ctd", "origin_own" };
+		String[] header4 = new String[] { "date", "gacc_name", "incidents", "cumulative_acres", "crews", "engines", "helicopters", "total_personnel" };
 		
 		TextAreaReadMe textarea = new TextAreaReadMe("icon_tree.png", 75, 75);	// Print to text area
 		ISMR_Process ismr = new ISMR_Process(file);
@@ -272,6 +283,11 @@ class ScrollPane_FinalFile extends JScrollPane {
 		textarea.append(String.join("\t", header3)  + "\n");
 		for (String fire : ismr.all_fires) {
 			textarea.append(fire + "\n");
+		}
+		textarea.append("--------------------------------------------------------------------" + "\n");
+		textarea.append(String.join("\t", header4)  + "\n");
+		for (String st : ismr.resource_summary) {
+			textarea.append(st + "\n");
 		}
 		textarea.setSelectionStart(0);	// scroll to top
 		textarea.setSelectionEnd(0);
