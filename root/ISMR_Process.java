@@ -39,8 +39,10 @@ public class ISMR_Process {
 	
 	List<String> all_fires = new ArrayList<String>();	// All fires with priority order as in the ISMR file
 	List<String> AICC = new ArrayList<String>();	// Alaska
-	List<String> EACC = new ArrayList<String>();	// Eastern
-	List<String> GBCC = new ArrayList<String>();	// Great Basin
+	List<String> EACC = new ArrayList<String>();	// Eastern Area
+	List<String> EBCC = new ArrayList<String>();	// Eastern Great Basin (Before 2015)
+	List<String> WBCC = new ArrayList<String>();	// Western Great Basin (Before 2015)
+	List<String> GBCC = new ArrayList<String>();	// Great Basin (2015 and after)
 	List<String> ONCC = new ArrayList<String>();	// Northern California
 	List<String> NRCC = new ArrayList<String>();	// Northern Rockies
 	List<String> NWCC = new ArrayList<String>();	// Northwest
@@ -144,21 +146,6 @@ public class ISMR_Process {
 			}
 		}
 		
-//		temp = (mstr.substring(mstr.indexOf("new large incidents") + 20)).trim();
-//		if (temp != null) new_large_incidents = temp.split(" ")[0];
-//		temp = (mstr.substring(mstr.indexOf("large fires contained") + 22)).trim();
-//		if (temp != null) large_fires_contained = temp.split(" ")[0];
-//		temp = (mstr.substring(mstr.indexOf("uncontained large fires") + 24)).trim();
-//		if (temp != null) uncontained_large_fires = temp.split(" ")[0];
-//		temp = (mstr.substring(mstr.indexOf("area command teams committed") + 29)).trim();		// special case with null value i.e. 20170922  (area command teams committed does not exist)
-//		if (temp != null) area_command_teams_committed = temp.split(" ")[0];
-//		temp = (mstr.substring(mstr.indexOf("nimos committed") + 24)).trim();
-//		if (temp != null) NIMOs_committed = temp.split(" ")[0];
-//		temp = (mstr.substring(mstr.indexOf("type 1 imts committed") + 24)).trim();
-//		if (temp != null) type_1_IMTs_committed = temp.split(" ")[0];
-//		temp = (mstr.substring(mstr.indexOf("type 2 imts committed") + 22)).trim();
-//		if (temp != null) type_2_IMTs_committed = temp.split(" ")[0];
-		
 		if (Integer.valueOf(date.replaceAll("-", "")) < 20070425) mstr = mstr.replaceAll("area command teams", "area command teams committed");	// Test
 		if (Integer.valueOf(date.replaceAll("-", "")) == 20070423) mstr = mstr.replaceAll("national incident management 1 organization", "");	// Fix special case
 		
@@ -241,7 +228,15 @@ public class ISMR_Process {
 					current_area = "EACC";
 					gacc_priority = gacc_priority + 1;
 					process_area_data(lines, i, current_area, gacc_priority);
-				} else if (lines[i].contains("Great Basin")) {
+				} else if (lines[i].startsWith("Eastern Great Basin")) {	// before 2015
+					current_area = "EBCC";
+					gacc_priority = gacc_priority + 1;
+					process_area_data(lines, i, current_area, gacc_priority);
+				}  else if (lines[i].startsWith("Western Great Basin")) {	// before 2015
+					current_area = "WBCC";
+					gacc_priority = gacc_priority + 1;
+					process_area_data(lines, i, current_area, gacc_priority);
+				} else if (lines[i].startsWith("Great Basin")) {	// 2015 and after
 					current_area = "GBCC";
 					gacc_priority = gacc_priority + 1;
 					process_area_data(lines, i, current_area, gacc_priority);
@@ -344,7 +339,11 @@ public class ISMR_Process {
 			return AICC;
 		} else if (area_name.equals("EACC")) {
 			return EACC;
-		} else if (area_name.equals("GBCC")) {
+		} else if (area_name.equals("EBCC")) {	// before 2015
+			return EBCC;
+		} else if (area_name.equals("WBCC")) {	// before 2015
+			return WBCC;
+		} else if (area_name.equals("GBCC")) {	// 2015 and after
 			return GBCC;
 		} else if (area_name.equals("ONCC")) {
 			return ONCC;
@@ -383,7 +382,13 @@ public class ISMR_Process {
 				} else if (lines[i].startsWith("Eastern Area")) {
 					current_area = "EACC";
 					gacc_priority = gacc_priority + 1;
-				} else if (lines[i].contains("Great Basin")) {		// Special case in 20170708: The gacc is "Great Basin", does not have "Area"; in 20130706: the gacc is "Western Great Basin Area"
+				} else if (lines[i].contains("Eastern Great Basin")) {		// before 2015
+					current_area = "EBCC";
+					gacc_priority = gacc_priority + 1;
+				} else if (lines[i].contains("Western Great Basin")) {		// before 2015
+					current_area = "WBCC";
+					gacc_priority = gacc_priority + 1;
+				} else if (lines[i].contains("Great Basin")) {		// 2015 and after. Special case in 20170708: The gacc is "Great Basin", does not have "Area"
 					current_area = "GBCC";
 					gacc_priority = gacc_priority + 1;
 				} else if (lines[i].startsWith("Northern California")) {
@@ -469,51 +474,6 @@ public class ISMR_Process {
 					if (line_split.get(i - 1).length <= 4 || (line_split.get(i - 1).length <= 5 && line_split.get(i - 1)[0].contains("\\*"))) {
 						fire_name = String.join(" ", line_split.get(i - 1)) + " " + fire_name;	// join by space
 					}
-//					-------------------------------------------------------------------------------------------------------------------------------------		
-//					String fire_name = "";
-//					String fire_name_1 = "";
-//					for (int id = 0; id < unit_id; id++) {
-//						fire_name_1 = String.join(" ", fire_name_1, line_split.get(i)[id]);	// this is the incident name (or part of the name that is in the same line with other fire information), join by space
-//					}
-//					
-//					// This is the list of optional names of the fire, users need to select the correct fire name (the request only show up when a fire name associated with 3 lines)
-//					List<String> optional_fire_names = new ArrayList<String>();
-//					
-//					// xpdf (using -simple2 command) may generate fire name in 2 or 3 lines, we need to ask users to correct fire name for these special cases.
-//					// An example special case: 20210710IMSR where we have 2021 SUF (1st line) West Zone (2nd line) Complex (3rd line)
-//					// Note that fire name in 2 lines often has the last line (second line) associated with other fire infor, while 3 lines would have the middle line (also second line) associated with the fire infor.
-//					// If the line above has <= 3 terms then it is very likely that it belongs to the fire name
-//					// Only if the line above has <= 3 terms, we will need to check the below line as well
-//					if (line_split.get(i - 1).length <= 3) {
-//						String fire_name_2 = String.join(" ", line_split.get(i - 1)) + " " + fire_name_1;	// join by space
-//						if (line_split.get(i - 3).length <= 3) {	// check previous fire
-//							optional_fire_names.add(fire_name_1);
-//							optional_fire_names.add(fire_name_2);
-//							// In case we spot 2 lines (line above has <=3 words), we need to check it and also the below line
-//							if (line_split.get(i + 1).length <= 3) {
-//								String fire_name_3 = fire_name_1 + " " + String.join(" ", line_split.get(i + 1)); // join by space
-//								String fire_name_4 = fire_name_2 + " " + String.join(" ", line_split.get(i + 1)); // join by space
-//								optional_fire_names.add(fire_name_3);
-//								optional_fire_names.add(fire_name_4);
-//							}
-//							OptionPane_ConfirmFireName op_name = new OptionPane_ConfirmFireName(date, current_area, optional_fire_names.stream().toArray(String[]::new));
-//							fire_name = optional_fire_names.get(op_name.response);
-//						} else { // if previous fire does not have qualified above line with <=3 words, then this current file name definitely has 2 terms in 2 lines, need to check the line below as well
-//							optional_fire_names.add(fire_name_2);
-//							// In case we spot 2 lines (line above has <=3 words), we need to check it and also the below line
-//							if (line_split.get(i + 1).length <= 3) {
-//								String fire_name_4 = fire_name_2 + " " + String.join(" ", line_split.get(i + 1)); // join by space
-//								optional_fire_names.add(fire_name_4);
-//								OptionPane_ConfirmFireName op_name = new OptionPane_ConfirmFireName(date, current_area, optional_fire_names.stream().toArray(String[]::new));
-//								fire_name = optional_fire_names.get(op_name.response);
-//							} else { // the line below is not qualified, so stop checking, we know that the fire name has 2 term from 2 lines.
-//								fire_name = fire_name_2;
-//							}
-//						}
-//					} else { // If there is no qualified above line then fire name is in a single line 
-//						fire_name = fire_name_1;
-//					}
-//					-------------------------------------------------------------------------------------------------------------------------------------
 					
 					fire_name = fire_name.replaceAll("\\*", "").trim().toUpperCase();	// This will remove the * (if exist in the name) and change the name to capital (IMPORTANT)
 					this_fire = String.join("\t", this_fire, fire_name);
