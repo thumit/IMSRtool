@@ -496,9 +496,9 @@ public class ISMR_Process {
 		boolean table_start = false;
 		int l = 0;
 		do {
-			if (lines[l].contains("Active Incident Resource Summary"))  {
+			if (lines[l].contains("Active Incident Resource Summary") || lines[l].contains("Active Fire Resource Summary"))  {
 				table_start = true;
-				start_line = l + 3;
+				start_line = l;
 			}
 			l = l + 1;
 		} while (l < lines.length && !table_start);
@@ -507,7 +507,7 @@ public class ISMR_Process {
 			l = start_line;
 			boolean table_end = false;
 			do {
-				if (lines[l].contains("Total"))  {
+				if (lines[l].startsWith("Total") && !lines[l + 1].startsWith("Personnel"))  {  // Total (without Personnel in next line) is indicator of ending line. Note that There may be Total (Personnel) without space before.
 					table_end = true;
 					end_line = l;
 				}
@@ -515,33 +515,45 @@ public class ISMR_Process {
 			} while (l < lines.length && !table_end);
 		}
 		
+		for (int i = start_line; i <= end_line; i++) {	// final the actual start line with first row (Alaska) we need to get data
+			if (lines[i].startsWith("AK") || lines[i].startsWith("AICC")) {
+				start_line = i;
+			}
+		}
+		
 		// Extract data
 		if (table_start) {	// if summary table exists
+			String join_st = "";
 			for (int i = start_line; i <= end_line; i++) {
 				lines[i] = lines[i].replaceAll("\\s{2,}", " ").trim(); // 2 or more spaces will be replaced by one space, then leading and ending spaces will be removed
 				String[] line_split = lines[i].split("\\s+");
-				if (date.startsWith("2015")) {	// change GACC name because it show only 2 characters such as in the first 5 months of 2015
-					if (line_split[0].equals("AK")) line_split[0] = "AICC";
-					if (line_split[0].equals("NW")) line_split[0] = "NWCC";
-					if (line_split[0].equals("NO")) line_split[0] = "ONCC";
-					if (line_split[0].equals("SO")) line_split[0] = "OSCC";
-					if (line_split[0].equals("NR")) line_split[0] = "NRCC";
-					if (line_split[0].equals("GB")) line_split[0] = "GBCC";
-					if (line_split[0].equals("SW")) line_split[0] = "SWCC";
-					if (line_split[0].equals("RM")) line_split[0] = "RMCC";
-					if (line_split[0].equals("EA")) line_split[0] = "EACC";
-					if (line_split[0].equals("SA")) line_split[0] = "SACC";
-				}
-				// Very important note: Up until 20150102. GB still include EB and WB. AFter this time, they are merged.
-				// This is to address the single special case 20150102 where GB still include EB and WB. Since all values in the two areas are zero, we keep EB and change it to GBCC, and remove WB
-				if (line_split[0].equals("EB")) line_split[0] = "GBCC";	
-				if (line_split.length == 7 && !line_split[0].equals("WB")) { // address issues where table title split into 5 lines such as 20150501
-					resource_summary.add(date + "\t" + String.join("\t", line_split));
+				// change GACC name because it show only 2 characters such as in the first 5 months of 2015, occasionally in 2016
+				if (line_split[0].equals("AK")) line_split[0] = "AICC"; 	if (line_split[0].equals("AKCC")) line_split[0] = "AICC";	// special case 20150601
+				if (line_split[0].equals("NW")) line_split[0] = "NWCC";
+				if (line_split[0].equals("NO")) line_split[0] = "ONCC"; 	if (line_split[0].equals("ON")) line_split[0] = "ONCC";		// special case 20150515
+				if (line_split[0].equals("SO")) line_split[0] = "OSCC"; 	if (line_split[0].equals("OS")) line_split[0] = "OSCC";		// special case 20150515
+				if (line_split[0].equals("NR")) line_split[0] = "NRCC";
+				if (line_split[0].equals("GB")) line_split[0] = "GBCC";
+				// Very important note: Up until 20150102. GB still include EB and WB. AFter this time, they are merge
+				// This is to address the single special case 20150102 where GB still include EB and WB. Since all values in the two areas are zero, we keep EB and change it to GBCC, and ignore WB
+				if (line_split[0].equals("EB")) line_split[0] = "GBCC";
+				if (line_split[0].equals("SW")) line_split[0] = "SWCC";
+				if (line_split[0].equals("RM")) line_split[0] = "RMCC";
+				if (line_split[0].equals("EA")) line_split[0] = "EACC";
+				if (line_split[0].equals("SA")) line_split[0] = "SACC";
+				
+				List<String> gacc_list = List.of("AICC", "NWCC", "ONCC", "OSCC", "NRCC", "GBCC", "SWCC", "RMCC", "EACC", "SACC", "Total");	// Note we do not add total information
+				if (gacc_list.contains(line_split[0])) {
+					if (!line_split[0].equals("AICC")) {
+						resource_summary.add(join_st);
+					}
+					join_st = date + "\t" + String.join("\t", line_split);
+				} else {
+					if (!line_split[0].equals("WB")) join_st = join_st + "\t" + String.join("\t", line_split);		// Add while ignoring WB
 				}
 			}
 		}
 		// NOTE NOTE NOTE: 2022 have 8 columns
-		
 	}
 	
 }

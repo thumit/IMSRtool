@@ -62,7 +62,7 @@ class Aggregate_Scroll extends JScrollPane {
 		String[] header3 = new String[] { "date", "gacc", "gacc_priority", "fire_priority", "incident_name", "unit", "size_acres",
 				"size_chge", "percentage", "ctn_comp", "est", "personnel_total", "personnel_chge", "resources_crw",
 				"resources_eng", "resources_heli", "strc_lost", "ctd", "origin_own" };
-		String[] header4 = new String[] { "date", "gacc_name", "incidents", "cumulative_acres", "crews", "engines", "helicopters", "total_personnel" };
+		String[] header4 = new String[] { "date", "gacc_name", "incidents", "cumulative_acres", "crews", "engines", "helicopters", "total_personnel", "change_in_personnel" };
 		
 		ISMR_Process[] ismr_process = new ISMR_Process[file.length];
 		for (int i = 0; i < file.length; i++) {
@@ -259,7 +259,7 @@ class ScrollPane_FinalFile extends JScrollPane {
 		String[] header3 = new String[] { "date", "gacc", "gacc_priority", "fire_priority", "incident_name", "unit", "size_acres",
 				"size_chge", "percentage", "ctn_comp", "est", "personnel_total", "personnel_chge", "resources_crw",
 				"resources_eng", "resources_heli", "strc_lost", "ctd", "origin_own" };
-		String[] header4 = new String[] { "date", "gacc_name", "incidents", "cumulative_acres", "crews", "engines", "helicopters", "total_personnel" };
+		String[] header4 = new String[] { "date", "gacc_name", "incidents", "cumulative_acres", "crews", "engines", "helicopters", "total_personnel", "change_in_personnel" };
 		
 		TextAreaReadMe textarea = new TextAreaReadMe("icon_tree.png", 75, 75);	// Print to text area
 		ISMR_Process ismr = new ISMR_Process(file);
