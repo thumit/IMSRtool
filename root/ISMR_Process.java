@@ -454,8 +454,8 @@ public class ISMR_Process {
 			} else { // from 2015 we use this to process data
 				if (line_length >= 15 
 						&& line_split.get(i)[line_length - 14].contains("-")    // do not use this for 2014 data, it has a different unit name, also in 20210710IMSR, one fire has wrong unit that cannot be included (Butte Creek: ID- CTS)
-						&& line_split.get(i)[line_length - 13].matches("-?\\d+(\\,\\d+)?")
-						&& line_split.get(i)[line_length - 8].matches("-?\\d+(\\,\\d+)?")) {		// this is likely a fire, smart check based on the "acres" and "personnel total" columns.
+						&& line_split.get(i)[line_length - 13].matches("^\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$")
+						&& line_split.get(i)[line_length - 8].matches("^\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$")) {		// this is likely a fire, smart check based on the "acres" and "personnel total" columns.
 					unit_id = line_split.get(i).length - 14;
 					String fire_priority = String.valueOf(area_fires(current_area).size() + 1);
 					String this_fire = String.join("\t", date, current_area, String.valueOf(gacc_priority), fire_priority);
