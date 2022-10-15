@@ -110,6 +110,7 @@ public class Utility {
 				String folder = file[0].getParentFile().toString();
 				Path targetDirectory = Paths.get(folder + "/pdftotext.exe");
 				File pdftotext_exe_target_file = targetDirectory.toFile();
+				pdftotext_exe_target_file.deleteOnExit();
 				if (!pdftotext_exe_target_file.exists()) {
 //					File pdftotext_exe_source_file = FilesHandle.get_file_from_resource("pdftotext.exe");
 //					Path sourceDirectory = pdftotext_exe_source_file.toPath();
