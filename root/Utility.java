@@ -157,7 +157,7 @@ public class Utility {
 		builder = builder.directory(directory);
 		
 		for (File f : file) {
-			String command = "pdftotext -simple2 " + f.getName();
+			String command = "pdftotext -raw " + f.getName();
 			builder = new ProcessBuilder("cmd.exe", "/c", command);
 			builder = builder.directory(directory);
 			builder.redirectErrorStream(true);
