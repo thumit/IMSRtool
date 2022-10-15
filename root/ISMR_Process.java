@@ -430,7 +430,7 @@ public class ISMR_Process {
 					for (int id = 0; id < unit_id; id++) {
 						fire_name = String.join(" ", fire_name, line_split.get(i)[id]);	// this is the incident name (or part of the name that is in the same line with other fire information), join by space
 					}
-					if (line_split.get(i - 1).length <= 2 || (line_split.get(i - 1).length <= 3 && line_split.get(i - 1)[0].contains("\\*"))) {
+					if (line_split.get(i - 1).length <= 4 || (line_split.get(i - 1).length <= 5 && line_split.get(i - 1)[0].contains("\\*"))) {
 						if (!lines[i - 1].startsWith("24 Hrs") && !lines[i - 1].startsWith("Hrs")) {	// this special check is needed for years < 2015. Note: (2013,2014: 24 Hrs) (2012: Hrs)
 							fire_name = String.join(" ", line_split.get(i - 1)) + " " + fire_name;	// join by space
 						}
@@ -466,7 +466,7 @@ public class ISMR_Process {
 					for (int id = 0; id < unit_id; id++) {
 						fire_name = String.join(" ", fire_name, line_split.get(i)[id]);	// this is the incident name (or part of the name that is in the same line with other fire information), join by space
 					}
-					if (line_split.get(i - 1).length <= 2 || (line_split.get(i - 1).length <= 3 && line_split.get(i - 1)[0].contains("\\*"))) {
+					if (line_split.get(i - 1).length <= 4 || (line_split.get(i - 1).length <= 5 && line_split.get(i - 1)[0].contains("\\*"))) {
 						fire_name = String.join(" ", line_split.get(i - 1)) + " " + fire_name;	// join by space
 					}
 //					-------------------------------------------------------------------------------------------------------------------------------------		
