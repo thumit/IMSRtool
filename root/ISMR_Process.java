@@ -417,8 +417,8 @@ public class ISMR_Process {
 			if (year_before_2015) { // before 2015 we use this to process data (Note unit is split by 2 columns and we need to merge, also we do not have the "Ctn/Comp" and we need to assign Ctn for it)
 				if (line_length >= 15 
 						&& line_split.get(i)[line_length - 14].length() == 2    // This is State "St" for 2014 and earlier year. It must have only 2 characters
-						&& line_split.get(i)[line_length - 12].matches("-?\\d+(\\,\\d+)?")
-						&& line_split.get(i)[line_length - 8].matches("-?\\d+(\\,\\d+)?")) {		// this is likely a fire, smart check based on the "acres" and "personnel total" columns.
+						&& line_split.get(i)[line_length - 12].matches("^\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$")
+						&& line_split.get(i)[line_length - 8].matches("^\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$")) {		// this is likely a fire, smart check based on the "acres" and "personnel total" columns.
 					unit_id = line_split.get(i).length - 14;
 					String fire_priority = String.valueOf(area_fires(current_area).size() + 1);
 					String this_fire = String.join("\t", date, current_area, String.valueOf(gacc_priority), fire_priority);
