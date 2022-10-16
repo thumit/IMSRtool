@@ -1,7 +1,6 @@
 package root;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.InputStreamReader;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -157,22 +156,118 @@ public class Utility {
 		ProcessBuilder builder = new ProcessBuilder("cmd.exe", "/c", "cd " + folder);	// we probably do not need these 2 lines, but sometimes it does not convert 1 file in below loop so I add these
 		builder = builder.directory(directory);
 		
-		for (File f : file) {
-			String command = "pdftotext -raw " + f.getName();
-			builder = new ProcessBuilder("cmd.exe", "/c", command);
-			builder = builder.directory(directory);
-			builder.redirectErrorStream(true);
-			Process p = builder.start();
-			BufferedReader r = new BufferedReader(new InputStreamReader(p.getInputStream()));
-			String line;
-			while (true) {
-				line = r.readLine();
-				if (line == null) {
-					break;
-				}
-				System.out.println(line);
-			}
+//		for (File f : file) {
+//			String command = "pdftotext -raw " + f.getName();
+//			builder = new ProcessBuilder("cmd.exe", "/c", command);
+//			builder = builder.directory(directory);
+//			builder.redirectErrorStream(true);
+//			Process p = builder.start();
+//			BufferedReader r = new BufferedReader(new InputStreamReader(p.getInputStream()));
+//			String line;
+//			while (true) {
+//				line = r.readLine();
+//				if (line == null) {
+//					break;
+//				}
+//				System.out.println(line);
+//			}
+//		}
+
+		
+//		List<Thread> threads = new ArrayList<Thread>();
+//		for (File f : file) {
+//			Thread t = new Thread() {
+//				public void run() {
+//					ProcessBuilder builder = new ProcessBuilder("cmd.exe", "/c", "cd " + folder);	// we probably do not need these 2 lines, but sometimes it does not convert 1 file in below loop so I add these
+//					builder = builder.directory(directory);
+//					String command = "pdftotext -raw " + f.getName();
+//					builder = new ProcessBuilder("cmd.exe", "/c", command);
+//					builder = builder.directory(directory);
+//					builder.redirectErrorStream(true);
+//					try {
+//						Process p = builder.start();
+//					} catch (IOException e) {
+//						// TODO Auto-generated catch block
+//						e.printStackTrace();
+//					}
+//				}
+//			};
+//			threads.add(t);
+//		}
+//		
+//		for (Thread t : threads) {
+//			t.start();
+//		}
+		
+		
+		// Instead of using too many threads as above (50 sec), used 4 threads combined with batch command with be faster (30 sec)
+		String batch_command_1 = "cd " + folder;
+		String batch_command_2 = "cd " + folder;
+		String batch_command_3 = "cd " + folder;
+		String batch_command_4 = "cd " + folder;
+		for (int i = 0; i < file.length; i++) {
+			if (i % 3 == 0) batch_command_1 = String.join(" && ", batch_command_1, "pdftotext -raw " + file[i].getName());
+			if (i % 3 == 1) batch_command_2 = String.join(" && ", batch_command_2, "pdftotext -raw " + file[i].getName());
+			if (i % 3 == 2) batch_command_3 = String.join(" && ", batch_command_3, "pdftotext -raw " + file[i].getName());
+			if (i % 3 == 3) batch_command_4 = String.join(" && ", batch_command_4, "pdftotext -raw " + file[i].getName());
 		}
 		
+		final String cmd1 = batch_command_1;
+		final String cmd2 = batch_command_2;
+		final String cmd3 = batch_command_3;
+		final String cmd4 = batch_command_4;
+		
+		Thread t1 = new Thread() {
+		public void run() {
+			ProcessBuilder builder = new ProcessBuilder("cmd.exe", "/c", cmd1);
+			builder.redirectErrorStream(true);
+			try {
+				Process p = builder.start();
+			} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		};
+		
+		Thread t2 = new Thread() {
+			public void run() {
+				ProcessBuilder builder = new ProcessBuilder("cmd.exe", "/c", cmd2);
+				builder.redirectErrorStream(true);
+				try {
+					Process p = builder.start();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		};
+			
+		Thread t3 = new Thread() {
+			public void run() {
+				ProcessBuilder builder = new ProcessBuilder("cmd.exe", "/c", cmd3);
+				builder.redirectErrorStream(true);
+				try {
+					Process p = builder.start();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		};
+
+		Thread t4 = new Thread() {
+			public void run() {
+				ProcessBuilder builder = new ProcessBuilder("cmd.exe", "/c", cmd4);
+				builder.redirectErrorStream(true);
+				try {
+					Process p = builder.start();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		};
+		
+		t1.start();
+		t2.start();
+		t3.start();
+		t4.start();
 	}
 }
