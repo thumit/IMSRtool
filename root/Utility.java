@@ -172,102 +172,34 @@ public class Utility {
 //				System.out.println(line);
 //			}
 //		}
-
 		
-//		List<Thread> threads = new ArrayList<Thread>();
-//		for (File f : file) {
-//			Thread t = new Thread() {
-//				public void run() {
-//					ProcessBuilder builder = new ProcessBuilder("cmd.exe", "/c", "cd " + folder);	// we probably do not need these 2 lines, but sometimes it does not convert 1 file in below loop so I add these
-//					builder = builder.directory(directory);
-//					String command = "pdftotext -raw " + f.getName();
-//					builder = new ProcessBuilder("cmd.exe", "/c", command);
-//					builder = builder.directory(directory);
-//					builder.redirectErrorStream(true);
-//					try {
-//						Process p = builder.start();
-//					} catch (IOException e) {
-//						// TODO Auto-generated catch block
-//						e.printStackTrace();
-//					}
-//				}
-//			};
-//			threads.add(t);
-//		}
-//		
-//		for (Thread t : threads) {
-//			t.start();
-//		}
-		
-		
-		// Instead of using too many threads as above (50 sec), used 4 threads combined with batch command with be faster (30 sec)
-		String batch_command_1 = "cd " + folder;
-		String batch_command_2 = "cd " + folder;
-		String batch_command_3 = "cd " + folder;
-		String batch_command_4 = "cd " + folder;
-		for (int i = 0; i < file.length; i++) {
-			if (i % 3 == 0) batch_command_1 = String.join(" && ", batch_command_1, "pdftotext -raw " + file[i].getName());
-			if (i % 3 == 1) batch_command_2 = String.join(" && ", batch_command_2, "pdftotext -raw " + file[i].getName());
-			if (i % 3 == 2) batch_command_3 = String.join(" && ", batch_command_3, "pdftotext -raw " + file[i].getName());
-			if (i % 3 == 3) batch_command_4 = String.join(" && ", batch_command_4, "pdftotext -raw " + file[i].getName());
+		// Same as above but using both batch command and multiple threads
+		List<Thread> threads = new ArrayList<Thread>();
+		int number_files_per_thread = 30;	 // simultaneously convert each * files
+		int number_of_splits = file.length / number_files_per_thread;
+		for (int i = 0; i <= number_of_splits; i++) {
+			String batch_command = "cd " + folder;
+			for (int j = 0; j < number_files_per_thread; j++) {
+				if (number_files_per_thread * i + j < file.length) {
+					batch_command = String.join(" && ", batch_command, "pdftotext -raw " + file[number_files_per_thread * i + j].getName());
+				}
+			}
+			final String cmd = batch_command;
+			Thread t = new Thread() {
+			public void run() {
+				ProcessBuilder builder = new ProcessBuilder("cmd.exe", "/c", cmd);
+				builder.redirectErrorStream(true);
+				try {
+					Process p = builder.start();
+				} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+			};
+			threads.add(t);
 		}
-		
-		final String cmd1 = batch_command_1;
-		final String cmd2 = batch_command_2;
-		final String cmd3 = batch_command_3;
-		final String cmd4 = batch_command_4;
-		
-		Thread t1 = new Thread() {
-		public void run() {
-			ProcessBuilder builder = new ProcessBuilder("cmd.exe", "/c", cmd1);
-			builder.redirectErrorStream(true);
-			try {
-				Process p = builder.start();
-			} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		};
-		
-		Thread t2 = new Thread() {
-			public void run() {
-				ProcessBuilder builder = new ProcessBuilder("cmd.exe", "/c", cmd2);
-				builder.redirectErrorStream(true);
-				try {
-					Process p = builder.start();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		};
-			
-		Thread t3 = new Thread() {
-			public void run() {
-				ProcessBuilder builder = new ProcessBuilder("cmd.exe", "/c", cmd3);
-				builder.redirectErrorStream(true);
-				try {
-					Process p = builder.start();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		};
-
-		Thread t4 = new Thread() {
-			public void run() {
-				ProcessBuilder builder = new ProcessBuilder("cmd.exe", "/c", cmd4);
-				builder.redirectErrorStream(true);
-				try {
-					Process p = builder.start();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		};
-		
-		t1.start();
-		t2.start();
-		t3.start();
-		t4.start();
+		for (Thread t : threads) {
+			t.start();
+		}
 	}
 }
