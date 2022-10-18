@@ -9,6 +9,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.nio.file.Files;
 
 import root.IMSRmain;
 
@@ -165,14 +166,16 @@ public class FilesHandle {
 //		output.deleteOnExit();
 		try {
 			InputStream initialStream = IMSRmain.get_main().getClass().getResourceAsStream("/" + fileName);
-			byte[] buffer = new byte[initialStream.available()];
-			initialStream.read(buffer);
-
-			OutputStream outStream = new FileOutputStream(output);
-			outStream.write(buffer);
-
-			initialStream.close();
-			outStream.close();
+			Files.copy(initialStream, output.toPath());
+			
+//			byte[] buffer = new byte[initialStream.available()];
+//			initialStream.read(buffer);
+//
+//			OutputStream outStream = new FileOutputStream(output);
+//			outStream.write(buffer);
+//
+//			initialStream.close();
+//			outStream.close();
 		} catch (FileNotFoundException e1) {
 			System.err.println(e1.getClass().getName() + ": " + e1.getMessage());
 		} catch (IOException e2) {
