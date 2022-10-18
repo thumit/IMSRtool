@@ -56,12 +56,15 @@ public class ISMR_Process {
 //			List<String> lines_list = Files.readAllLines(Paths.get(file.getAbsolutePath()), StandardCharsets.UTF_8);		// Not sure why this UTF_8 fail
 			List<String> lines_list = Files.readAllLines(Paths.get(file.getAbsolutePath()), Charset.defaultCharset());		// Therefore I use default
 			String[] lines = lines_list.stream().toArray(String[] ::new);
+			for (int i = 0; i < lines.length; i++) {
+				lines[i] = lines[i].replaceAll("\\s{2,}", " ").trim(); // 2 or more spaces will be replaced by one space, then leading and ending spaces will be removed
+			}
 //			date = file.getName().substring(0, 8);
 			date = String.join("-", file.getName().substring(0, 4), file.getName().substring(4, 6), file.getName().substring(6, 8));	// use this data format yyyy-mm-dd to join easily with Ross data
 			get_national_data(lines);
 			get_area_data(lines);
 			get_fire_data(lines);
-			get__reource_summary_data(lines);
+			get_reource_summary_data(lines);
 			lines_list = null; 	// free memory
 			lines = null;		// free memory
 		} catch (IOException e) {
@@ -73,7 +76,6 @@ public class ISMR_Process {
 	private void get_national_data(String[] lines) {
 		int mergeCount = 0;
 		for (int i = 0; i < lines.length; i++) {
-			lines[i] = lines[i].replaceAll("\\s{2,}", " ").trim(); // 2 or more spaces will be replaced by one space, then leading and ending spaces will be removed
 			if (lines[i].contains("Active Incident Resource Summary")
 					|| lines[i].contains("GACC")		// Special case 20200110: "Active Incident Resource Summary" is not written correctly --> Use GACC
 					|| lines[i].contains("Geographic Area daily reports")		// Special case 2012
@@ -295,7 +297,7 @@ public class ISMR_Process {
 			end_line = end_line + 1;
 		} while (!lines[end_line].contains("(PL") && (end_line < lines.length - 1));
 		String[] merge_lines = Arrays.copyOfRange(lines, start_line, end_line);
-		String mstr = String.join(" ", merge_lines).toLowerCase().replaceAll("\\s{2,}", " ").trim();	// 2 or more spaces will be replaced by one space, then leading and ending spaces will be removed
+		String mstr = String.join(" ", merge_lines).toLowerCase();
 		
 		String info = null;
 		// Match term and value (a very smart matching) that works for both normal cases and special cases (i.e. 20180620, 20180622, 20180804, ...)
@@ -309,7 +311,7 @@ public class ISMR_Process {
 		if (mstr.contains("type 1 imts committed") || mstr.contains("type 1 teams committed")) term.add("type 1 imts committed");		// i.e. 20180704 uses "type 1 teams committed"
 		if (mstr.contains("type 2 imts committed") || mstr.contains("type 2 teams committed")) term.add("type 2 imts committed");		// i.e. 20180704 uses "type 2 teams committed"
 		List<String> value = new ArrayList<String>();
-		String[] split_value = (mstr.replaceAll("type 1", "").replaceAll("type 2", "").replaceAll("\\s{2,}", " ")).split(" ");	// remove the number 1 and 2
+		String[] split_value = (mstr.replaceAll("type 1", "").replaceAll("type 2", "")).split(" ");	// remove the number 1 and 2
 		for (String st : split_value) {
 			if (st.matches("-?(0|[1-9]\\d*)")) {	// if this is numeric
 				value.add(st);
@@ -367,7 +369,7 @@ public class ISMR_Process {
 	private void get_fire_data(String[] lines) {		// Information of a Fire is in one line		(Note: a special case: 20180803 at page 10 where the table without header if expanding 2 pages) 
 		List<String[]> line_split = new ArrayList<String[]>();
 		for (String st : lines) {
-			line_split.add(st.replaceAll("\\s{2,}", " ").trim().split("\\s+"));	// 2 or more spaces will be replaced by one space, then leading and ending spaces will be removed
+			line_split.add(st.split("\\s+"));
 		} 
 		
 		// Loop all lines
@@ -489,7 +491,7 @@ public class ISMR_Process {
 		} while (i < lines.length);
 	}
 	
-	private void get__reource_summary_data(String[] lines) {
+	private void get_reource_summary_data(String[] lines) {
 		int start_line = 0;
 		int end_line = 0;
 		
@@ -525,7 +527,6 @@ public class ISMR_Process {
 		if (table_start) {	// if summary table exists
 			String join_st = "";
 			for (int i = start_line; i <= end_line; i++) {
-				lines[i] = lines[i].replaceAll("\\s{2,}", " ").trim(); // 2 or more spaces will be replaced by one space, then leading and ending spaces will be removed
 				String[] line_split = lines[i].split("\\s+");
 				// change GACC name because it show only 2 characters such as in the first 5 months of 2015, occasionally in 2016
 				if (line_split[0].equals("AK")) line_split[0] = "AICC"; 	if (line_split[0].equals("AKCC")) line_split[0] = "AICC";	// special case 20150601
