@@ -38,13 +38,13 @@ public class OptionPane_Explore extends JOptionPane {
 			String ExitOption[] = { "PREVIOUS", "NEXT", "AGGREGATE", "EXIT" };
 			int response = JOptionPane.showOptionDialog(IMSRmain.get_DesktopPane(), scroll, "EXPLORE",
 					JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, ExitOption, ExitOption[0]);
-			if (response == 0) { // Next
+			if (response == 0) { // Previous
 				if (id > 0) id = id - 1;
 			} else if (response == 1) { // Next
 				if (id < file.length - 1) id = id + 1;
 			} else if (response == 2) {
 				exit_exploration = true;
-				new Aggregate_Scroll(file);
+				new Aggregate_Scroll(file); // Aggregate
 			} else {
 				exit_exploration = true;
 			}
@@ -134,9 +134,15 @@ class Aggregate_Scroll extends JScrollPane {
 		setViewportView(explore_scrollpane);
 		
 		// Add everything to a popup panel
-		String ExitOption[] = {"EXIT" };
-		int response = JOptionPane.showOptionDialog(IMSRmain.get_DesktopPane(), this, "EXPLORE",
+		String ExitOption[] = { "EXTRACT TO TEXT", "EXTRACT TO DATABASE", "EXIT" };
+		int response = JOptionPane.showOptionDialog(IMSRmain.get_DesktopPane(), this, "AGRREGATION RESULT PREVIEW",
 				JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, ExitOption, ExitOption[0]);
+		if (response == 0) {
+			
+		} else if (response == 1) {
+			
+		} else {
+		}
 	}
 }
 
