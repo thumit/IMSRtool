@@ -15,8 +15,13 @@ import convenience_classes.FilesHandle;
 public class Utility {
 	
 	public void explore_files() {
-		File[] file = FilesChooser.chosenTextFiles(); // Open File chooser
-		if (file != null) new OptionPane_Explore(file);
+		File[] s_files = FilesChooser.chosenTextFiles("Select simple2 text files"); // Open File chooser
+		File[] r_files = FilesChooser.chosenTextFiles("Select raw text files"); // Open File chooser
+		if (s_files != null && r_files != null) {
+			new OptionPane_Explore(s_files, r_files);
+		} else {
+			JOptionPane.showMessageDialog(null, "Both simple2 text files and raw text files must be selected");
+		}
 	}
 	
 	public void convert_pdf_to_text_files() {

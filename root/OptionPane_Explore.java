@@ -27,11 +27,11 @@ import convenience_classes.TextAreaReadMe;
 import convenience_classes.TitleScrollPane;
 
 public class OptionPane_Explore extends JOptionPane {
-	public OptionPane_Explore(File[] file) {
+	public OptionPane_Explore(File[] s_files, File[] r_files) {
 		int id = 0;
 		boolean exit_exploration = false;
 		do {
-			Explore_Panel explore_panel = new Explore_Panel(file[id]);
+			Explore_Panel explore_panel = new Explore_Panel(s_files[id], r_files[id]);
 			JScrollPane scroll = new JScrollPane();
 			scroll.setViewportView(explore_panel);
 
@@ -41,19 +41,19 @@ public class OptionPane_Explore extends JOptionPane {
 			if (response == 0) { // Previous
 				if (id > 0) id = id - 1;
 			} else if (response == 1) { // Next
-				if (id < file.length - 1) id = id + 1;
+				if (id < s_files.length - 1) id = id + 1;
 			} else if (response == 2) {
 				exit_exploration = true;
-				new Aggregate_Scroll(file); // Aggregate
+				new Aggregate_Scroll(s_files, r_files); // Aggregate
 			} else {
 				exit_exploration = true;
 			}
-		} while (exit_exploration == false && id < file.length);
+		} while (exit_exploration == false && id < s_files.length);
 	}
 }
 
 class Aggregate_Scroll extends JScrollPane {
-	public Aggregate_Scroll(File[] file) {		
+	public Aggregate_Scroll(File[] s_files, File[] r_files) {		
 		String[] header1 = new String[] { "date", "national_prepareness_level", "initial_attack_activity",
 				"initial_attack_new_fires", "new_large_incidents", "large_fires_contained",
 				"uncontained_large_fires", "area_command_teams_committed", "nimos_committed", "type_1_imts_committed",
@@ -66,9 +66,9 @@ class Aggregate_Scroll extends JScrollPane {
 				"resources_eng", "resources_heli", "strc_lost", "ctd", "origin_own" };
 		String[] header4 = new String[] { "date", "gacc_name", "incidents", "cumulative_acres", "crews", "engines", "helicopters", "total_personnel", "change_in_personnel" };
 		
-		ISMR_Process[] ismr_process = new ISMR_Process[file.length];
-		for (int i = 0; i < file.length; i++) {
-			ismr_process[i] = new ISMR_Process(file[i]);
+		ISMR_Process[] ismr_process = new ISMR_Process[s_files.length];
+		for (int i = 0; i < s_files.length; i++) {
+			ismr_process[i] = new ISMR_Process(s_files[i], r_files[i]);
 		}
 		TextAreaReadMe textarea = new TextAreaReadMe("icon_tree.png", 75, 75);	// Print to text area
 		textarea.append(String.join("\t", header1)  + "\n");
@@ -147,14 +147,14 @@ class Aggregate_Scroll extends JScrollPane {
 }
 
 class Explore_Panel extends JPanel{
-	public Explore_Panel(File file) {	
-		ScrollPane_TrimFile trim = new ScrollPane_TrimFile(file);
-		TitledBorder border = new TitledBorder(file.getName().toString() + " - SIMPLE2 CONVERSION");
+	public Explore_Panel(File s_file, File r_file) {	
+		ScrollPane_TrimFile trim = new ScrollPane_TrimFile(s_file);
+		TitledBorder border = new TitledBorder(s_file.getName().toString() + " - SIMPLE2 CONVERSION");
 		border.setTitleJustification(TitledBorder.CENTER);
 		trim.setBorder(border);
 		
-		ScrollPane_FinalFile result = new ScrollPane_FinalFile(file);
-		border = new TitledBorder(file.getName().toString() + " - EXTRACTION PREVIEW");
+		ScrollPane_FinalFile result = new ScrollPane_FinalFile(s_file, r_file);
+		border = new TitledBorder(s_file.getName().toString() + " - EXTRACTION PREVIEW");
 		border.setTitleJustification(TitledBorder.CENTER);
 		result.setBorder(border);		
 		
@@ -170,13 +170,13 @@ class Explore_Panel extends JPanel{
 }
 
 class ScrollPane_OriginalFile extends JScrollPane {
-	public ScrollPane_OriginalFile(File file) {	
+	public ScrollPane_OriginalFile(File s_file) {	
 		// Print to text area------------------	
 		TextAreaReadMe textarea = new TextAreaReadMe("icon_tree.png", 75, 75);
 		textarea.setEditable(false);
 		BufferedReader buff = null;
 		try {
-			buff = new BufferedReader(new FileReader(file));
+			buff = new BufferedReader(new FileReader(s_file));
 			String str;
 			while ((str = buff.readLine()) != null) {
 				textarea.append("\n" + str);
@@ -215,14 +215,14 @@ class ScrollPane_OriginalFile extends JScrollPane {
 }
 
 class ScrollPane_TrimFile extends JScrollPane {
-	public ScrollPane_TrimFile(File file) {	
+	public ScrollPane_TrimFile(File s_file) {	
 		// Print to text area--------------------	
 		TextAreaReadMe textarea = new TextAreaReadMe("icon_tree.png", 75, 75);
 		textarea.setEditable(false);
 
 		try {
 //			List<String> lines_list = Files.readAllLines(Paths.get(file.getAbsolutePath()), StandardCharsets.UTF_8);		// Not sure why this UTF_8 fail
-			List<String> lines_list = Files.readAllLines(Paths.get(file.getAbsolutePath()), Charset.defaultCharset());
+			List<String> lines_list = Files.readAllLines(Paths.get(s_file.getAbsolutePath()), Charset.defaultCharset());
 			for (String line : lines_list) {
 				textarea.append(line.replaceAll("\\s{2,}", " ").trim() + "\n");		// 2 or more spaces will be replaced by one space, then leading and ending spaces will be removed
 			}
@@ -256,7 +256,7 @@ class ScrollPane_TrimFile extends JScrollPane {
 }
 
 class ScrollPane_FinalFile extends JScrollPane {
-	public ScrollPane_FinalFile(File file) {
+	public ScrollPane_FinalFile(File s_file, File r_file) {
 		String[] header1 = new String[] { "date", "national_prepareness_level", "initial_attack_activity",
 				"initial_attack_new_fires", "new_large_incidents", "large_fires_contained",
 				"uncontained_large_fires", "area_command_teams_committed", "nimos_committed", "type_1_imts_committed",
@@ -270,7 +270,7 @@ class ScrollPane_FinalFile extends JScrollPane {
 		String[] header4 = new String[] { "date", "gacc_name", "incidents", "cumulative_acres", "crews", "engines", "helicopters", "total_personnel", "change_in_personnel" };
 		
 		TextAreaReadMe textarea = new TextAreaReadMe("icon_tree.png", 75, 75);	// Print to text area
-		ISMR_Process ismr = new ISMR_Process(file);
+		ISMR_Process ismr = new ISMR_Process(s_file, r_file);
 		textarea.append(ismr.date + "\n");
 		textarea.append(ismr.national_prepareness_level + "\n");
 		textarea.append(ismr.initial_attack_activity + "\n");

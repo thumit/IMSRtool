@@ -12,7 +12,7 @@ import java.util.List;
 import convenience_classes.SubstringBetween;
 
 public class ISMR_Process {
-	String date;
+	String date, s_date, r_date;
 	String national_prepareness_level;
 	String initial_attack_activity;
 	String initial_attack_new_fires;
@@ -37,7 +37,8 @@ public class ISMR_Process {
 	
 	List<String> resource_summary = new ArrayList<String>();	// store all active incident resource summary information
 	
-	List<String> all_fires = new ArrayList<String>();	// All fires with priority order as in the ISMR file
+	List<String> all_fires = new ArrayList<String>();				// All fires extracted from simple2 files
+	List<String> all_fires_validation = new ArrayList<String>();	// All fires extracted from raw files, used to validate fire name from simple2 files
 	List<String> AICC = new ArrayList<String>();	// Alaska
 	List<String> EACC = new ArrayList<String>();	// Eastern Area
 	List<String> EBCC = new ArrayList<String>();	// Eastern Great Basin (Before 2015)
@@ -51,45 +52,58 @@ public class ISMR_Process {
 	List<String> OSCC = new ArrayList<String>();	// Southern California
 	List<String> SWCC = new ArrayList<String>();	// Southwest
 
-	public ISMR_Process(File file) {
+	public ISMR_Process(File s_file, File r_file) {
 		try {
 //			List<String> lines_list = Files.readAllLines(Paths.get(file.getAbsolutePath()), StandardCharsets.UTF_8);		// Not sure why this UTF_8 fail
-			List<String> lines_list = Files.readAllLines(Paths.get(file.getAbsolutePath()), Charset.defaultCharset());		// Therefore I use default
-			String[] lines = lines_list.stream().toArray(String[] ::new);
-			for (int i = 0; i < lines.length; i++) {
-				lines[i] = lines[i].replaceAll("\\s{2,}", " ").trim(); // 2 or more spaces will be replaced by one space, then leading and ending spaces will be removed
+			List<String> s_lines_list = Files.readAllLines(Paths.get(s_file.getAbsolutePath()), Charset.defaultCharset());		// Therefore I use default
+			String[] s_lines = s_lines_list.stream().toArray(String[] ::new);
+			for (int i = 0; i < s_lines.length; i++) {
+				s_lines[i] = s_lines[i].replaceAll("\\s{2,}", " ").trim(); // 2 or more spaces will be replaced by one space, then leading and ending spaces will be removed
 			}
 //			date = file.getName().substring(0, 8);
-			date = String.join("-", file.getName().substring(0, 4), file.getName().substring(4, 6), file.getName().substring(6, 8));	// use this data format yyyy-mm-dd to join easily with Ross data
-			get_national_data(lines);
-			get_area_data(lines);
-			get_reource_summary_data(lines);
-			get_fire_data(lines);
-			lines_list = null; 	// free memory
-			lines = null;		// free memory
+			s_date = String.join("-", s_file.getName().substring(0, 4), s_file.getName().substring(4, 6), s_file.getName().substring(6, 8));	// use this data format yyyy-mm-dd to join easily with Ross data
+			
+			List<String> r_lines_list = Files.readAllLines(Paths.get(r_file.getAbsolutePath()), Charset.defaultCharset());
+			String[] r_lines = r_lines_list.stream().toArray(String[] ::new);
+			for (int i = 0; i < r_lines.length; i++) {
+				r_lines[i] = r_lines[i].replaceAll("\\s{2,}", " ").trim(); // 2 or more spaces will be replaced by one space, then leading and ending spaces will be removed
+			}
+			r_date = String.join("-", r_file.getName().substring(0, 4), r_file.getName().substring(4, 6), r_file.getName().substring(6, 8));	// use this data format yyyy-mm-dd to join easily with Ross data
+			
+			date = s_date;
+			get_national_data(s_lines);
+			get_area_data(s_lines);
+			get_reource_summary_data(s_lines);
+			get_fire_data_simple2_method(s_lines);
+			get_fire_data_raw_method(r_lines);
+			fire_name_validation();
+			s_lines_list = null; 	// free memory
+			s_lines = null;			// free memory
+			r_lines_list = null; 	// free memory
+			r_lines = null;			// free memory
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.err.println(e.getClass().getName() + ": " + e.getMessage());
 		}
 	}
 	
-	private void get_national_data(String[] lines) {
+	private void get_national_data(String[] s_lines) {
 		int mergeCount = 0;
-		for (int i = 0; i < lines.length; i++) {
-			if (lines[i].contains("Active Incident Resource Summary")
-					|| lines[i].contains("GACC")		// Special case 20200110: "Active Incident Resource Summary" is not written correctly --> Use GACC
-					|| lines[i].contains("Geographic Area daily reports")		// Special case 2012
-					|| lines[i].contains("WFU")) {		// Special case 2008 first 4 months
+		for (int i = 0; i < s_lines.length; i++) {
+			if (s_lines[i].contains("Active Incident Resource Summary")
+					|| s_lines[i].contains("GACC")		// Special case 20200110: "Active Incident Resource Summary" is not written correctly --> Use GACC
+					|| s_lines[i].contains("Geographic Area daily reports")		// Special case 2012
+					|| s_lines[i].contains("WFU")) {		// Special case 2008 first 4 months
 				for (int j = 0; j < i; j++) {
-					if (lines[j].contains("Type 2 IMTs")) {
+					if (s_lines[j].contains("Type 2 IMTs")) {
 						// Merge up to this mergeline. Some special cases are j+3 or j+2, usually j+1 or j in most cases)
-						if (lines[j].substring(lines[j].lastIndexOf(" ") + 1).matches("-?(0|[1-9]\\d*)")) {
+						if (s_lines[j].substring(s_lines[j].lastIndexOf(" ") + 1).matches("-?(0|[1-9]\\d*)")) {
 							mergeCount = j;			// many cases
-						} else if (lines[j + 1].substring(lines[j + 1].lastIndexOf(" ") + 1).matches("-?(0|[1-9]\\d*)")) {
+						} else if (s_lines[j + 1].substring(s_lines[j + 1].lastIndexOf(" ") + 1).matches("-?(0|[1-9]\\d*)")) {
 							mergeCount = j + 1;		// many cases
-						} else if (lines[j + 2].substring(lines[j + 2].lastIndexOf(" ") + 1).matches("-?(0|[1-9]\\d*)")) {
+						} else if (s_lines[j + 2].substring(s_lines[j + 2].lastIndexOf(" ") + 1).matches("-?(0|[1-9]\\d*)")) {
 							mergeCount = j + 2;		// 20200110
-						} else if (lines[j + 3].substring(lines[j + 3].lastIndexOf(" ") + 1).matches("-?(0|[1-9]\\d*)")) {
+						} else if (s_lines[j + 3].substring(s_lines[j + 3].lastIndexOf(" ") + 1).matches("-?(0|[1-9]\\d*)")) {
 							mergeCount = j + 3;		// 20200518
 						} else {	// Type 2 IMTs may have nothing, no space as well, such as in 20070417
 							mergeCount = j;
@@ -98,7 +112,7 @@ public class ISMR_Process {
 				}
 			}
 		}
-		String[] merge_lines = Arrays.copyOfRange(lines, 0, mergeCount + 1);
+		String[] merge_lines = Arrays.copyOfRange(s_lines, 0, mergeCount + 1);
 		String mstr = String.join(" ", merge_lines).toLowerCase().trim();
 		SubstringBetween sb = new SubstringBetween();
 		
@@ -216,66 +230,66 @@ public class ISMR_Process {
 		return null; // should never happen
 	}
 	
-	private void get_area_data(String[] lines) {
+	private void get_area_data(String[] s_lines) {
 		String current_area = "";
 		int gacc_priority = 0;
 		// Loop all lines, whenever found a gacc area, stop and process data
-		for (int i = 0; i < lines.length; i++) {
-			if (lines[i].contains("(PL")) {
-				if (lines[i].startsWith("Alaska")) {
+		for (int i = 0; i < s_lines.length; i++) {
+			if (s_lines[i].contains("(PL")) {
+				if (s_lines[i].startsWith("Alaska")) {
 					current_area = "AICC";
 					gacc_priority = gacc_priority + 1;
-					process_area_data(lines, i, current_area, gacc_priority);
-				} else if (lines[i].startsWith("Eastern Area")) {
+					process_area_data(s_lines, i, current_area, gacc_priority);
+				} else if (s_lines[i].startsWith("Eastern Area")) {
 					current_area = "EACC";
 					gacc_priority = gacc_priority + 1;
-					process_area_data(lines, i, current_area, gacc_priority);
-				} else if (lines[i].startsWith("Eastern Great Basin")) {	// before 2015
+					process_area_data(s_lines, i, current_area, gacc_priority);
+				} else if (s_lines[i].startsWith("Eastern Great Basin")) {	// before 2015
 					current_area = "EBCC";
 					gacc_priority = gacc_priority + 1;
-					process_area_data(lines, i, current_area, gacc_priority);
-				}  else if (lines[i].startsWith("Western Great Basin")) {	// before 2015
+					process_area_data(s_lines, i, current_area, gacc_priority);
+				}  else if (s_lines[i].startsWith("Western Great Basin")) {	// before 2015
 					current_area = "WBCC";
 					gacc_priority = gacc_priority + 1;
-					process_area_data(lines, i, current_area, gacc_priority);
-				} else if (lines[i].startsWith("Great Basin")) {	// 2015 and after
+					process_area_data(s_lines, i, current_area, gacc_priority);
+				} else if (s_lines[i].startsWith("Great Basin")) {	// 2015 and after
 					current_area = "GBCC";
 					gacc_priority = gacc_priority + 1;
-					process_area_data(lines, i, current_area, gacc_priority);
-				} else if (lines[i].startsWith("Northern California")) {
+					process_area_data(s_lines, i, current_area, gacc_priority);
+				} else if (s_lines[i].startsWith("Northern California")) {
 					current_area = "ONCC";
 					gacc_priority = gacc_priority + 1;
-					process_area_data(lines, i, current_area, gacc_priority);
-				} else if (lines[i].startsWith("Northern Rockies")) {
+					process_area_data(s_lines, i, current_area, gacc_priority);
+				} else if (s_lines[i].startsWith("Northern Rockies")) {
 					current_area = "NRCC";
 					gacc_priority = gacc_priority + 1;
-					process_area_data(lines, i, current_area, gacc_priority);
-				} else if (lines[i].startsWith("Northwest")) {
+					process_area_data(s_lines, i, current_area, gacc_priority);
+				} else if (s_lines[i].startsWith("Northwest")) {
 					current_area = "NWCC";
 					gacc_priority = gacc_priority + 1;
-					process_area_data(lines, i, current_area, gacc_priority);
-				} else if (lines[i].startsWith("Rocky Mountain")) {
+					process_area_data(s_lines, i, current_area, gacc_priority);
+				} else if (s_lines[i].startsWith("Rocky Mountain")) {
 					current_area = "RMCC";
 					gacc_priority = gacc_priority + 1;
-					process_area_data(lines, i, current_area, gacc_priority);
-				} else if (lines[i].startsWith("Southern Area")) {
+					process_area_data(s_lines, i, current_area, gacc_priority);
+				} else if (s_lines[i].startsWith("Southern Area")) {
 					current_area = "SACC";
 					gacc_priority = gacc_priority + 1;
-					process_area_data(lines, i, current_area, gacc_priority);
-				} else if (lines[i].startsWith("Southern California")) {
+					process_area_data(s_lines, i, current_area, gacc_priority);
+				} else if (s_lines[i].startsWith("Southern California")) {
 					current_area = "OSCC";
 					gacc_priority = gacc_priority + 1;
-					process_area_data(lines, i, current_area, gacc_priority);
-				} else if (lines[i].startsWith("Southwest")) {
+					process_area_data(s_lines, i, current_area, gacc_priority);
+				} else if (s_lines[i].startsWith("Southwest")) {
 					current_area = "SWCC";
 					gacc_priority = gacc_priority + 1;
-					process_area_data(lines, i, current_area, gacc_priority);
+					process_area_data(s_lines, i, current_area, gacc_priority);
 				}
 			}
 		}
 	}
 	
-	private void process_area_data(String[] lines, int start_line, String current_area, int gacc_priority) {
+	private void process_area_data(String[] s_lines, int start_line, String current_area, int gacc_priority) {
 		String gacc_prepareness_level = null;
 		String gacc_new_fires = null;
 		String gacc_new_large_incidents = null;
@@ -285,7 +299,7 @@ public class ISMR_Process {
 		String gacc_type_1_imts_committed = null;
 		String gacc_type_2_imts_committed = null;
 		try {
-			gacc_prepareness_level = lines[start_line].substring(lines[start_line].indexOf("(PL") + 3, lines[start_line].indexOf(")"));
+			gacc_prepareness_level = s_lines[start_line].substring(s_lines[start_line].indexOf("(PL") + 3, s_lines[start_line].indexOf(")"));
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.out.println("missing information, national level will be used to replace gacc level"); // Example fail: 20111105IMSR
@@ -295,8 +309,8 @@ public class ISMR_Process {
 		int end_line = start_line;
 		do {
 			end_line = end_line + 1;
-		} while (!lines[end_line].contains("(PL") && (end_line < lines.length - 1));
-		String[] merge_lines = Arrays.copyOfRange(lines, start_line, end_line);
+		} while (!s_lines[end_line].contains("(PL") && (end_line < s_lines.length - 1));
+		String[] merge_lines = Arrays.copyOfRange(s_lines, start_line, end_line);
 		String mstr = String.join(" ", merge_lines).toLowerCase();
 		
 		String info = null;
@@ -336,34 +350,34 @@ public class ISMR_Process {
 		// IMPORTANT NOTE NOTE NOTE: 20180619: Rocky Mountain Area has uncontained large files but do not printed in pdf file (Erin's excel file got the right number of 4 uncontained)
 	}
 	
-	private void get_reource_summary_data(String[] lines) {
+	private void get_reource_summary_data(String[] s_lines) {
 		int start_line = 0;
 		int end_line = 0;
 		
 		boolean table_start = false;
 		int l = 0;
 		do {
-			if (lines[l].contains("Active Incident Resource Summary") || lines[l].contains("Active Fire Resource Summary"))  {
+			if (s_lines[l].contains("Active Incident Resource Summary") || s_lines[l].contains("Active Fire Resource Summary"))  {
 				table_start = true;
 				start_line = l;
 			}
 			l = l + 1;
-		} while (l < lines.length && !table_start);
+		} while (l < s_lines.length && !table_start);
 		
 		if (table_start) {
 			l = start_line;
 			boolean table_end = false;
 			do {
-				if (lines[l].startsWith("Total") && !lines[l + 1].startsWith("Personnel"))  {  // Total (without Personnel in next line) is indicator of ending line. Note that There may be Total (Personnel) without space before.
+				if (s_lines[l].startsWith("Total") && !s_lines[l + 1].startsWith("Personnel"))  {  // Total (without Personnel in next line) is indicator of ending line. Note that There may be Total (Personnel) without space before.
 					table_end = true;
 					end_line = l;
 				}
 				l = l + 1;
-			} while (l < lines.length && !table_end);
+			} while (l < s_lines.length && !table_end);
 		}
 		
 		for (int i = start_line; i <= end_line; i++) {	// final the actual start line with first row (Alaska) we need to get data
-			if (lines[i].startsWith("AK") || lines[i].startsWith("AICC")) {
+			if (s_lines[i].startsWith("AK") || s_lines[i].startsWith("AICC")) {
 				start_line = i;
 			}
 		}
@@ -372,7 +386,7 @@ public class ISMR_Process {
 		if (table_start) {	// if summary table exists
 			String join_st = "";
 			for (int i = start_line; i <= end_line; i++) {
-				String[] line_split = lines[i].split("\\s+");
+				String[] line_split = s_lines[i].split("\\s+");
 				// change GACC name because it show only 2 characters such as in the first 5 months of 2015, occasionally in 2016
 				if (line_split[0].equals("AK")) line_split[0] = "AICC"; 	if (line_split[0].equals("AKCC")) line_split[0] = "AICC";	// special case 20150601
 				if (line_split[0].equals("NW")) line_split[0] = "NWCC";
@@ -432,9 +446,9 @@ public class ISMR_Process {
 		}
 	}
 	
-	private void get_fire_data(String[] lines) {		// Information of a Fire is in one line		(Note: a special case: 20180803 at page 10 where the table without header if expanding 2 pages) 
+	private void get_fire_data_simple2_method(String[] s_lines) {		// Information of a Fire is in one line		(Note: a special case: 20180803 at page 10 where the table without header if expanding 2 pages) 
 		List<String[]> line_split = new ArrayList<String[]>();
-		for (String st : lines) {
+		for (String st : s_lines) {
 			line_split.add(st.split("\\s+"));
 		} 
 		
@@ -443,41 +457,41 @@ public class ISMR_Process {
 		int gacc_priority = 0;
 		int i = 0;
 		do {
-			if (lines[i].contains("(PL")) {
-				if (lines[i].startsWith("Alaska")) {
+			if (s_lines[i].contains("(PL")) {
+				if (s_lines[i].startsWith("Alaska")) {
 					current_area = "AICC";
 					gacc_priority = gacc_priority + 1;
-				} else if (lines[i].startsWith("Eastern Area")) {
+				} else if (s_lines[i].startsWith("Eastern Area")) {
 					current_area = "EACC";
 					gacc_priority = gacc_priority + 1;
-				} else if (lines[i].contains("Eastern Great Basin")) {		// before 2015
+				} else if (s_lines[i].contains("Eastern Great Basin")) {		// before 2015
 					current_area = "EBCC";
 					gacc_priority = gacc_priority + 1;
-				} else if (lines[i].contains("Western Great Basin")) {		// before 2015
+				} else if (s_lines[i].contains("Western Great Basin")) {		// before 2015
 					current_area = "WBCC";
 					gacc_priority = gacc_priority + 1;
-				} else if (lines[i].contains("Great Basin")) {		// 2015 and after. Special case in 20170708: The gacc is "Great Basin", does not have "Area"
+				} else if (s_lines[i].contains("Great Basin")) {		// 2015 and after. Special case in 20170708: The gacc is "Great Basin", does not have "Area"
 					current_area = "GBCC";
 					gacc_priority = gacc_priority + 1;
-				} else if (lines[i].startsWith("Northern California")) {
+				} else if (s_lines[i].startsWith("Northern California")) {
 					current_area = "ONCC";
 					gacc_priority = gacc_priority + 1;
-				} else if (lines[i].startsWith("Northern Rockies")) {
+				} else if (s_lines[i].startsWith("Northern Rockies")) {
 					current_area = "NRCC";
 					gacc_priority = gacc_priority + 1;
-				} else if (lines[i].startsWith("Northwest")) {
+				} else if (s_lines[i].startsWith("Northwest")) {
 					current_area = "NWCC";
 					gacc_priority = gacc_priority + 1;
-				} else if (lines[i].startsWith("Rocky Mountain")) {
+				} else if (s_lines[i].startsWith("Rocky Mountain")) {
 					current_area = "RMCC";
 					gacc_priority = gacc_priority + 1;
-				} else if (lines[i].startsWith("Southern Area")) {
+				} else if (s_lines[i].startsWith("Southern Area")) {
 					current_area = "SACC";
 					gacc_priority = gacc_priority + 1;
-				} else if (lines[i].startsWith("Southern California")) {
+				} else if (s_lines[i].startsWith("Southern California")) {
 					current_area = "OSCC";
 					gacc_priority = gacc_priority + 1;
-				} else if (lines[i].startsWith("Southwest")) {
+				} else if (s_lines[i].startsWith("Southwest")) {
 					current_area = "SWCC";
 					gacc_priority = gacc_priority + 1;
 				}
@@ -496,20 +510,20 @@ public class ISMR_Process {
 					String fire_priority = String.valueOf(area_fires(current_area).size() + 1);
 					String this_fire = String.join("\t", date, current_area, String.valueOf(gacc_priority), fire_priority);
 					
-					// Since it is very rare that fire name is in 3 lines (example 20210710IMSR), we disable the options for users to choose names, but assign the default fire name (3rd line will always be ignored)
-					// Check only the above line, if length <=3 then add to fire name
+					// Since it is very rare that fire name is in 3 lines (example 20210710IMSR), we assign the default fire name (3rd line will always be ignored)
+					// Check only the above line, if length <=5 then add to fire name
 					// Note the special case (20140808IMSR - Devils Elbow Complex) where -simple2 command do not have expected order of fire name in 2 lines.
 					String fire_name = "";
 					for (int id = 0; id < unit_id; id++) {
 						fire_name = String.join(" ", fire_name, line_split.get(i)[id]);	// this is the incident name (or part of the name that is in the same line with other fire information), join by space
 					}
-					if (line_split.get(i - 1).length <= 4 || (line_split.get(i - 1).length <= 5 && line_split.get(i - 1)[0].contains("\\*"))) {
-						if (!lines[i - 1].startsWith("24 Hrs") && !lines[i - 1].startsWith("Hrs")) {	// this special check is needed for years < 2015. Note: (2013,2014: 24 Hrs) (2012: Hrs)
+					if (line_split.get(i - 1).length <= 5 && !s_lines[i - 1].toUpperCase().endsWith("COMP LOST OWN")) {		// such as special case 20150606
+						if (!s_lines[i - 1].startsWith("24 Hrs") && !s_lines[i - 1].startsWith("Hrs")) {	// this special check is needed for years < 2015. Note: (2013,2014: 24 Hrs) (2012: Hrs)
 							fire_name = String.join(" ", line_split.get(i - 1)) + " " + fire_name;	// join by space
 						}
 					}
 					
-					fire_name = fire_name.replaceAll("\\*", "").trim().toUpperCase();	// This will remove the * (if exist in the name) and change the name to capital (IMPORTANT)
+					fire_name = fire_name.replaceAll("\\*", "").replaceAll("\\s{2,}", " ").trim().toUpperCase();	// This will remove the * (if exist in the name) and change the name to capital (IMPORTANT)
 					this_fire = String.join("\t", this_fire, fire_name);
 					for (int id = unit_id; id < line_split.get(i).length; id++) {
 						if (id == line_split.get(i).length - 9) {	// add a column that exists in 2015 and later (Ctn/Comp) but not exist in 2014 and earlier
@@ -533,17 +547,17 @@ public class ISMR_Process {
 					String fire_priority = String.valueOf(area_fires(current_area).size() + 1);
 					String this_fire = String.join("\t", date, current_area, String.valueOf(gacc_priority), fire_priority);
 					
-					// Since it is very rare that fire name is in 3 lines (example 20210710IMSR), we disable the options for users to choose names, but assign the default fire name (3rd line will always be ignored)
-					// Check only the above line, if length <=3 then add to fire name
+					// Since it is very rare that fire name is in 3 lines (example 20210710IMSR), we assign the default fire name (3rd line will always be ignored)
+					// Check only the above line, if length <=5 then add to fire name
 					String fire_name = "";
 					for (int id = 0; id < unit_id; id++) {
 						fire_name = String.join(" ", fire_name, line_split.get(i)[id]);	// this is the incident name (or part of the name that is in the same line with other fire information), join by space
 					}
-					if (line_split.get(i - 1).length <= 4 || (line_split.get(i - 1).length <= 5 && line_split.get(i - 1)[0].contains("\\*"))) {
+					if (line_split.get(i - 1).length <= 5 && !s_lines[i - 1].toUpperCase().endsWith("COMP LOST OWN")) {		// such as special case 20150606
 						fire_name = String.join(" ", line_split.get(i - 1)) + " " + fire_name;	// join by space
 					}
 					
-					fire_name = fire_name.replaceAll("\\*", "").trim().toUpperCase();	// This will remove the * (if exist in the name) and change the name to capital (IMPORTANT)
+					fire_name = fire_name.replaceAll("\\*", "").replaceAll("\\s{2,}", " ").trim().toUpperCase();	// This will remove the * (if exist in the name) and change the name to capital (IMPORTANT)
 					this_fire = String.join("\t", this_fire, fire_name);
 					for (int id = unit_id; id < line_split.get(i).length; id++) {
 						this_fire = String.join("\t", this_fire, line_split.get(i)[id]);	// this is all information in one whole line of this fire
@@ -554,8 +568,130 @@ public class ISMR_Process {
 			}
 			
 			i = i + 1;
-		} while (i < lines.length);
+		} while (i < s_lines.length);
 	}
 
+	private void get_fire_data_raw_method(String[] r_lines) {		// Information of a Fire is in one line		(Note: a special case: 20180803 at page 10 where the table without header if expanding 2 pages) 
+		List<String[]> line_split = new ArrayList<String[]>();
+		for (String st : r_lines) {
+			line_split.add(st.split("\\s+"));
+		} 
+		
+		// Loop all lines
+		String current_area = "NA";
+		String gacc_priority = "NA";
+		String fire_priority = "NA";
+		
+		int i = 0;
+		do {
+			int unit_id = 0;	// find the second column of the table
+			int line_length = line_split.get(i).length;
+			
+			boolean year_before_2015 = Integer.valueOf(r_date.substring(0, 4)) < 2015;	// first 4 letters   (Note that from 2007-05-28 to the end of 2014, there are 15 columns for each fire)
+			if (year_before_2015) { // before 2015 we use this to process data (Note unit is split by 2 columns and we need to merge, also we do not have the "Ctn/Comp" and we need to assign Ctn for it)
+				if (line_length >= 14 
+						&& line_split.get(i)[line_length - 14].length() == 2    // This is State "St" for 2014 and earlier year. It must have only 2 characters
+						&& line_split.get(i)[line_length - 12].matches("^\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$")
+						&& line_split.get(i)[line_length - 8].matches("^\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$")) {		// this is likely a fire, smart check based on the "acres" and "personnel total" columns.
+					unit_id = line_split.get(i).length - 14;
+					String this_fire = String.join("\t", r_date, current_area, gacc_priority, fire_priority);
+					
+					// Check above lines, if length <=5 etc, then add to fire name
+					// Note the special case (20140808IMSR - Devils Elbow Complex) where -simple2 command do not have expected order of fire name in 2 lines.
+					String fire_name = "";
+					for (int id = 0; id < unit_id; id++) {
+						fire_name = String.join(" ", fire_name, line_split.get(i)[id]);	// this is the incident name (or part of the name that is in the same line with other fire information), join by space
+					}
+					// loop back previous lines to get the full fire name
+					boolean continue_loop = true;
+					int l = i;
+					do {
+						l = l - 1;
+						if (line_split.get(l).length <= 5 && !r_lines[l].toUpperCase().endsWith("OWN") && !r_lines[l].toUpperCase().endsWith("HELI")) {		// HELI is special case for 20150102
+							fire_name = String.join(" ", r_lines[l], fire_name);	// join by space
+						} else {
+							continue_loop = false;
+						}
+					} while (continue_loop);
+					fire_name = fire_name.replaceAll("\\*", "").replaceAll("\\s{2,}", " ").trim().toUpperCase();	// This will remove the * (if exist in the name) and change the name to capital (IMPORTANT)
+					
+					this_fire = String.join("\t", this_fire, fire_name);
+					for (int id = unit_id; id < line_split.get(i).length; id++) {
+						if (id == line_split.get(i).length - 9) {	// add a column that exists in 2015 and later (Ctn/Comp) but not exist in 2014 and earlier
+							this_fire = this_fire + "\t" + "null";
+						}
+						if (id == line_split.get(i).length - 13) {	// this is "unit", we need to connect to "st" column with a "-"
+							this_fire = this_fire + "-" + line_split.get(i)[id];
+						} else {
+							this_fire = String.join("\t", this_fire, line_split.get(i)[id]);	// this is all information in one whole line of this fire
+						}
+					}
+					all_fires_validation.add(this_fire);
+				}
+			} else { // from 2015 we use this to process data
+				if ((line_length >= 14 
+						&& line_split.get(i)[line_length - 14].contains("-")    // do not use this for 2014 data, it has a different unit name, also in 20210710IMSR, one fire has wrong unit that cannot be included (Butte Creek: ID- CTS)
+						&& line_split.get(i)[line_length - 13].matches("^\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$")
+						&& line_split.get(i)[line_length - 8].matches("^\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$"))		// this is likely a fire, smart check based on the "acres" and "personnel total" columns.
+					||
+				    (line_length >= 13 
+							&& r_lines[i - 1].contains("-")    // do not use this for 2014 data, it has a different unit name, also in 20210710IMSR, one fire has wrong unit that cannot be included (Butte Creek: ID- CTS)
+							&& line_split.get(i)[line_length - 13].matches("^\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$")
+							&& line_split.get(i)[line_length - 8].matches("^\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$"))		// this is likely a fire, smart check based on the "acres" and "personnel total" columns.
+				) {
+					unit_id = line_split.get(i).length - 14;
+					String this_fire = String.join("\t", r_date, current_area, gacc_priority, fire_priority);
+					
+					// Check above lines, if length <=5 etc, then add to fire name
+					String fire_name = "";
+					for (int id = 0; id < unit_id; id++) {
+						fire_name = String.join(" ", fire_name, line_split.get(i)[id]);	// this is the incident name (or part of the name that is in the same line with other fire information), join by space
+					}
+					// loop back previous lines to get the full fire name
+					boolean continue_loop = true;
+					int l = i;
+					do {
+						l = l - 1;
+						if (line_split.get(l).length <= 5 && !r_lines[l].toUpperCase().endsWith("OWN") && !r_lines[l].toUpperCase().endsWith("HELI")) {		// HELI is special case for 20150102
+							fire_name = String.join(" ", r_lines[l], fire_name);	// join by space
+						} else {
+							continue_loop = false;
+						}
+					} while (continue_loop);
+					fire_name = fire_name.replaceAll("\\*", "").replaceAll("\\s{2,}", " ").trim().toUpperCase();	// This will remove the * (if exist in the name) and change the name to capital (IMPORTANT)
+					
+					this_fire = String.join("\t", this_fire, fire_name);
+					for (int id = unit_id; id < line_split.get(i).length; id++) {
+						this_fire = String.join("\t", this_fire, line_split.get(i)[id]);	// this is all information in one whole line of this fire
+					}
+					all_fires_validation.add(this_fire);
+				}
+			}
+			
+			i = i + 1;
+		} while (i < r_lines.length);
+	}
 	
+	private void fire_name_validation() {
+		int count = 0;
+		if (all_fires.size() != all_fires_validation.size()) {
+			System.out.println("simple2 date: " + s_date + " " + all_fires.size());
+			System.out.println("raw date: " + r_date + " " + all_fires_validation.size());
+		} else {
+			for (int i = 0; i < all_fires.size(); i++) {
+				String[] s_fire_info = all_fires.get(i).split("\t");
+				String[] r_fire_info = all_fires_validation.get(i).split("\t");
+				// Compare date, fire name, unit, fire size, size change
+				if (!s_fire_info[0].equals(r_fire_info[0])		// date
+					|| !s_fire_info[4].equals(r_fire_info[4])	// name
+					|| !s_fire_info[5].equals(r_fire_info[5])	// unit
+					|| !s_fire_info[6].equals(r_fire_info[6])	// size
+					|| !s_fire_info[7].equals(r_fire_info[7])	// size change
+				) {
+					count++;
+					System.out.println(s_date + ". No " + count + ". " + s_fire_info[4] + ": " + r_fire_info[4]);
+				}
+			}
+		}
+	}
 }

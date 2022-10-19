@@ -10,15 +10,15 @@ import root.IMSRmain;
 
 public class FilesChooser {
 	
-	public static File[] chosenTextFiles() {
+	public static File[] chosenTextFiles(String dialog_title) {
 		JFileChooser chooser = new JFileChooser();
-		chooser.setDialogTitle("Select text files to explore");
+		chooser.setDialogTitle(dialog_title);
 		chooser.setPreferredSize(new Dimension(800, 500));
 //		chooser.setCurrentDirectory(new File(FilesHandle.get_workingLocation()));
 		chooser.setCurrentDirectory(FileSystemView.getFileSystemView().getHomeDirectory().getAbsoluteFile());	// Desktop Path
 		chooser.setMultiSelectionEnabled(true);
-		chooser.setApproveButtonText("Explore");
-		chooser.setApproveButtonToolTipText("Explore files");
+		chooser.setApproveButtonText("Select");
+//		chooser.setApproveButtonToolTipText("");
 		FileNameExtensionFilter filter = new FileNameExtensionFilter("text file", "txt", "csv");
 		chooser.setFileFilter(filter);
 		chooser.setAcceptAllFileFilterUsed(false);
