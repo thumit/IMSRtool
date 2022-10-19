@@ -10,6 +10,8 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 
 import root.IMSRmain;
 
@@ -161,26 +163,15 @@ public class FilesHandle {
 		}
 	}
 	
-	public static File getResourceFile(String fileName, File output) {
+	public static File getResourceFile(String fileName, Path targetDirectory) {
 //		File output = new File(FilesHandle.get_temporaryFolder().getAbsolutePath() + "/" + fileName);
-//		output.deleteOnExit();
 		try {
 			InputStream initialStream = IMSRmain.get_main().getClass().getResourceAsStream("/" + fileName);
-			Files.copy(initialStream, output.toPath());
-			
-//			byte[] buffer = new byte[initialStream.available()];
-//			initialStream.read(buffer);
-//
-//			OutputStream outStream = new FileOutputStream(output);
-//			outStream.write(buffer);
-//
-//			initialStream.close();
-//			outStream.close();
-		} catch (FileNotFoundException e1) {
-			System.err.println(e1.getClass().getName() + ": " + e1.getMessage());
-		} catch (IOException e2) {
-			System.err.println(e2.getClass().getName() + ": " + e2.getMessage());
+			Files.copy(initialStream, targetDirectory, StandardCopyOption.REPLACE_EXISTING);
+			initialStream.close();
+		} catch (IOException e) {
+			System.err.println(e.getClass().getName() + ": " + e.getMessage());
 		}
-		return output;
+		return targetDirectory.toFile();
 	}
 }

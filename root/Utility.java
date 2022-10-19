@@ -6,6 +6,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JOptionPane;
+
 import convenience_classes.FilesChooser;
 import convenience_classes.FilesHandle;
 
@@ -108,17 +110,10 @@ public class Utility {
 			try {
 				String folder = file[0].getParentFile().toString();
 				Path targetDirectory = Paths.get(folder + "/pdftotext.exe");
-				File pdftotext_exe_target_file = targetDirectory.toFile();
-				pdftotext_exe_target_file.deleteOnExit();
-				if (!pdftotext_exe_target_file.exists()) {
-//					File pdftotext_exe_source_file = FilesHandle.get_file_from_resource("pdftotext.exe");
-//					Path sourceDirectory = pdftotext_exe_source_file.toPath();
-//					Files.copy(sourceDirectory, targetDirectory);
-					FilesHandle.getResourceFile("pdftotext.exe", pdftotext_exe_target_file);	// This replaces the above 3 lines that will not work in the jar application of IMSRTool
-				}
-				// Run command line
-				run_command(folder, file);
+				File pdftotext_exe_target_file = FilesHandle.getResourceFile("pdftotext.exe", targetDirectory);
+				run_command(folder, file);	// Run command line
 				// Delete the library file
+				pdftotext_exe_target_file.deleteOnExit();
 				if (pdftotext_exe_target_file.exists()) {
 					pdftotext_exe_target_file.delete();
 				}
@@ -129,7 +124,7 @@ public class Utility {
 		}
 	}
 	
-	public void run_command(String folder, File[] file) throws Exception {
+	public void run_command(String folder, File[] file) {
 //		String convert_entire_folder_command = "for /r %i in (*.pdf) do \"pdftotext\" -simple2 \"%i\"";
 //		String batch_command = "cd " + folder + " && " + convert_entire_folder_command;
 //		//--------------------------------------------------------------------------------------------------------------------
@@ -185,15 +180,18 @@ public class Utility {
 				}
 			}
 			final String cmd = batch_command;
+			// JOptionPane.showMessageDialog(null, cmd);
 			Thread t = new Thread() {
-			public void run() {
-				ProcessBuilder builder = new ProcessBuilder("cmd.exe", "/c", cmd);
-				builder.redirectErrorStream(true);
-				try {
-					Process p = builder.start();
-				} catch (IOException e) {
-						e.printStackTrace();
-					}
+				public void run() {
+					ProcessBuilder builder = new ProcessBuilder("cmd.exe", "/c", cmd);
+					builder.redirectErrorStream(true);
+						try {
+							Process p = builder.start();
+							int exitVal = p.waitFor();		// very important to keep the initial process open until the batch file finished: https://stackoverflow.com/questions/6444812/executing-a-command-from-java-and-waiting-for-the-command-to-finish
+							System.out.println("thread complete");
+						} catch (IOException | InterruptedException e) {
+							e.printStackTrace();
+						}
 				}
 			};
 			threads.add(t);
@@ -201,5 +199,13 @@ public class Utility {
 		for (Thread t : threads) {
 			t.start();
 		}
+		for (Thread t : threads) {
+			try {
+				t.join();	// Wait till all threads completes
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}	
+		}
+		JOptionPane.showMessageDialog(null, file.length + " pdf files have been successfully converted to text files");
 	}
 }
