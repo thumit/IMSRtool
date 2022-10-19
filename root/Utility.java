@@ -108,15 +108,17 @@ public class Utility {
 		File[] file = choose_pdf_files();
 		if (file != null) {
 			try {
-				String folder = file[0].getParentFile().toString();
-				Path targetDirectory = Paths.get(folder + "/pdftotext.exe");
+				String inputFolder = file[0].getParentFile().toString();
+				Path targetDirectory = Paths.get(inputFolder + "/pdftotext.exe");
 				File pdftotext_exe_target_file = FilesHandle.getResourceFile("pdftotext.exe", targetDirectory);
-				run_command(folder, file);	// Run command line
+				run_command(inputFolder, file, "simple2");	// Run command line
+				run_command(inputFolder, file, "raw");		// Run command line
 				// Delete the library file
 				pdftotext_exe_target_file.deleteOnExit();
 				if (pdftotext_exe_target_file.exists()) {
 					pdftotext_exe_target_file.delete();
 				}
+				JOptionPane.showMessageDialog(null, file.length + " pdf files have been successfully converted to text files in 2 folders 'simple2' and 'raw'");
 			} catch (Exception e) {
 				e.printStackTrace();
 			} finally {
@@ -124,7 +126,7 @@ public class Utility {
 		}
 	}
 	
-	public void run_command(String folder, File[] file) {
+	public void run_command(String inputFolder, File[] file, String corvert_option) {	// option = simple2 or raw		Note that we also use the option to create folder that contains all output text files
 //		String convert_entire_folder_command = "for /r %i in (*.pdf) do \"pdftotext\" -simple2 \"%i\"";
 //		String batch_command = "cd " + folder + " && " + convert_entire_folder_command;
 //		//--------------------------------------------------------------------------------------------------------------------
@@ -147,8 +149,13 @@ public class Utility {
 //			System.out.println(line);
 //		}
 //		//--------------------------------------------------------------------------------------------------------------------
-		File directory = new File(folder);
-		ProcessBuilder builder = new ProcessBuilder("cmd.exe", "/c", "cd " + folder);	// we probably do not need these 2 lines, but sometimes it does not convert 1 file in below loop so I add these
+		File directory = new File(inputFolder);
+		File out_directory = new File(inputFolder + "/" + corvert_option);	// use the option to create folder that contains all output text files
+		if (!out_directory.exists()) {
+			out_directory.mkdirs();
+		}
+		
+		ProcessBuilder builder = new ProcessBuilder("cmd.exe", "/c", "cd " + inputFolder);	// we probably do not need these 2 lines, but sometimes it does not convert 1 file in below loop so I add these
 		builder = builder.directory(directory);
 		
 //		for (File f : file) {
@@ -173,10 +180,11 @@ public class Utility {
 		int number_files_per_thread = 30;	 // simultaneously convert each * files
 		int number_of_splits = file.length / number_files_per_thread;
 		for (int i = 0; i <= number_of_splits; i++) {
-			String batch_command = "cd " + folder;
+			String batch_command = "cd " + inputFolder;
 			for (int j = 0; j < number_files_per_thread; j++) {
 				if (number_files_per_thread * i + j < file.length) {
-					batch_command = String.join(" && ", batch_command, "pdftotext -raw " + file[number_files_per_thread * i + j].getName());
+					batch_command = String.join(" && ", batch_command, "pdftotext -" + corvert_option + " " + file[number_files_per_thread * i + j].getName()
+							+ " " + corvert_option + "\\" + file[number_files_per_thread * i + j].getName().replace(".pdf", ".txt"));
 				}
 			}
 			final String cmd = batch_command;
@@ -188,7 +196,6 @@ public class Utility {
 						try {
 							Process p = builder.start();
 							int exitVal = p.waitFor();		// very important to keep the initial process open until the batch file finished: https://stackoverflow.com/questions/6444812/executing-a-command-from-java-and-waiting-for-the-command-to-finish
-							System.out.println("thread complete");
 						} catch (IOException | InterruptedException e) {
 							e.printStackTrace();
 						}
@@ -206,6 +213,5 @@ public class Utility {
 				e.printStackTrace();
 			}	
 		}
-		JOptionPane.showMessageDialog(null, file.length + " pdf files have been successfully converted to text files");
 	}
 }
