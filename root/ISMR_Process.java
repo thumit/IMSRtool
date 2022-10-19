@@ -572,6 +572,15 @@ public class ISMR_Process {
 	}
 
 	private void get_fire_data_raw_method(String[] r_lines) {		// Information of a Fire is in one line		(Note: a special case: 20180803 at page 10 where the table without header if expanding 2 pages) 
+		// Pre-processing for some special cases
+		for (int i = 0; i < r_lines.length; i++) {
+			if (r_lines[i].length() == 3 && r_lines[i].endsWith("-")) {		// special case where unit is split into 2 lines such as 20150613, then we merge 2 lines and make the one line empty
+				r_lines[i + 1] = r_lines[i] + r_lines[i + 1];
+				r_lines[i] = "";
+			}
+		}
+		//------------------------------------------------------------
+		
 		List<String[]> line_split = new ArrayList<String[]>();
 		for (String st : r_lines) {
 			line_split.add(st.split("\\s+"));
@@ -662,9 +671,13 @@ public class ISMR_Process {
 					
 					this_fire = String.join("\t", this_fire, fire_name);
 					for (int id = unit_id; id < line_split.get(i).length; id++) {
+						if (id >= 0)
 						this_fire = String.join("\t", this_fire, line_split.get(i)[id]);	// this is all information in one whole line of this fire
 					}
 					all_fires_validation.add(this_fire);
+				} else if (line_length >= 11
+						&& line_split.get(i)[line_length - 8].matches("^\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$")) {
+					System.out.println("FUCK-------------FUCK-------------FUCK-------------FUCK-------------FUCK-------------FUCK-------------FUCK-------------");
 				}
 			}
 			
