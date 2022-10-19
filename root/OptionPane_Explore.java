@@ -35,12 +35,14 @@ public class OptionPane_Explore extends JOptionPane {
 			JScrollPane scroll = new JScrollPane();
 			scroll.setViewportView(explore_panel);
 
-			String ExitOption[] = { "NEXT", "AGGREGATE", "EXIT" };
+			String ExitOption[] = { "PREVIOUS", "NEXT", "AGGREGATE", "EXIT" };
 			int response = JOptionPane.showOptionDialog(IMSRmain.get_DesktopPane(), scroll, "EXPLORE",
 					JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, ExitOption, ExitOption[0]);
-			if (response == 0 && id < file.length) { // Next
-				id = id + 1;
-			} else if (response == 1) {
+			if (response == 0) { // Next
+				if (id > 0) id = id - 1;
+			} else if (response == 1) { // Next
+				if (id < file.length - 1) id = id + 1;
+			} else if (response == 2) {
 				exit_exploration = true;
 				new Aggregate_Scroll(file);
 			} else {
@@ -141,12 +143,12 @@ class Aggregate_Scroll extends JScrollPane {
 class Explore_Panel extends JPanel{
 	public Explore_Panel(File file) {	
 		ScrollPane_TrimFile trim = new ScrollPane_TrimFile(file);
-		TitledBorder border = new TitledBorder(file.getName().toString() + " - LINES HAVE LEADING AND ENDING SPACES TRIMMED");
+		TitledBorder border = new TitledBorder(file.getName().toString() + " - SIMPLE2 CONVERSION");
 		border.setTitleJustification(TitledBorder.CENTER);
 		trim.setBorder(border);
 		
 		ScrollPane_FinalFile result = new ScrollPane_FinalFile(file);
-		border = new TitledBorder(file.getName().toString() + " - CUSTOMIZED RESULT");
+		border = new TitledBorder(file.getName().toString() + " - EXTRACTION PREVIEW");
 		border.setTitleJustification(TitledBorder.CENTER);
 		result.setBorder(border);		
 		
