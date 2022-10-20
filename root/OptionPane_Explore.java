@@ -1,6 +1,7 @@
 package root;
 import java.awt.Dialog;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Window;
@@ -16,9 +17,12 @@ import java.nio.file.Paths;
 import java.util.List;
 
 import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import javax.swing.SwingUtilities;
 import javax.swing.border.TitledBorder;
 
@@ -31,9 +35,10 @@ public class OptionPane_Explore extends JOptionPane {
 		int id = 0;
 		boolean exit_exploration = false;
 		do {
-			Explore_Panel explore_panel = new Explore_Panel(s_files[id], r_files[id]);
+			Explore_Pane explore_pane = new Explore_Pane(s_files[id], r_files[id]);
 			JScrollPane scroll = new JScrollPane();
-			scroll.setViewportView(explore_panel);
+			scroll.setBorder(BorderFactory.createEmptyBorder());
+			scroll.setViewportView(explore_pane);
 
 			String ExitOption[] = { "PREVIOUS", "NEXT", "AGGREGATE", "EXIT" };
 			int response = JOptionPane.showOptionDialog(IMSRmain.get_DesktopPane(), scroll, "EXPLORE",
@@ -146,37 +151,88 @@ class Aggregate_Scroll extends JScrollPane {
 	}
 }
 
-class Explore_Panel extends JPanel{
-	public Explore_Panel(File s_file, File r_file) {	
-		ScrollPane_TrimFile trim = new ScrollPane_TrimFile(s_file);
-		TitledBorder border = new TitledBorder(s_file.getName().toString() + " - SIMPLE2 CONVERSION");
+class Explore_Pane extends JSplitPane {
+	public Explore_Pane(File s_file, File r_file) {	
+		JScrollPane original_pdf = new JScrollPane();
+		TitledBorder border = new TitledBorder(s_file.getName().toString().replace(".txt", ".pdf") + " - ORIGINAL");
 		border.setTitleJustification(TitledBorder.CENTER);
-		trim.setBorder(border);
+		original_pdf.setBorder(border);
 		
-		ScrollPane_FinalFile result = new ScrollPane_FinalFile(s_file, r_file);
-		border = new TitledBorder(s_file.getName().toString() + " - EXTRACTION PREVIEW");
-		border.setTitleJustification(TitledBorder.CENTER);
-		result.setBorder(border);		
+		String s_title = s_file.getName().toString() + " - SIMPLE2 CONVERSION";
+		ScrollPane_View_Trim_File s_trim = new ScrollPane_View_Trim_File(s_file, s_title);
 		
-		setLayout(new GridBagLayout());
+		String r_title = s_file.getName().toString() + " - RAW CONVERSION";
+		ScrollPane_View_Trim_File r_trim = new ScrollPane_View_Trim_File(r_file, r_title);
+		
+		JPanel radio_panel = new JPanel();
+		radio_panel.setLayout(new FlowLayout());	
+		ButtonGroup radio_button_group = new ButtonGroup();
+		JRadioButton[] radio_button = new JRadioButton[3];
+		radio_button[0]= new JRadioButton("ORIGINAL");
+		radio_button[1]= new JRadioButton("RAW");
+		radio_button[2]= new JRadioButton("SIMPLE2");
+		for (int i = 0; i < radio_button.length; i++) {
+				radio_button_group.add(radio_button[i]);
+				radio_panel.add(radio_button[i]);
+		}	
+		JScrollPane view = new JScrollPane(s_trim);
+		view.setBorder(BorderFactory.createEmptyBorder());
+		radio_button[0].addActionListener(e -> {
+			view.setViewportView(original_pdf);
+		});
+		radio_button[1].addActionListener(e -> {
+			view.setViewportView(r_trim);
+		});
+		radio_button[2].addActionListener(e -> {
+			view.setViewportView(s_trim);
+		});
+		radio_button[2].setSelected(true);
+		
+		JPanel combine_panel_1 = new JPanel();
+		combine_panel_1.setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
-		add(trim, GridBagLayoutHandle.get_c(c, "BOTH", 
+		combine_panel_1.add(view, GridBagLayoutHandle.get_c(c, "BOTH", 
 				0, 0, 1, 1, 1, 1, 	// gridx, gridy, gridwidth, gridheight, weightx, weighty
 				0, 0, 0, 0));		// insets top, left, bottom, right
-		add(result, GridBagLayoutHandle.get_c(c, "BOTH", 
-				1, 0, 1, 1, 1, 1, 	// gridx, gridy, gridwidth, gridheight, weightx, weighty
+		combine_panel_1.add(radio_panel, GridBagLayoutHandle.get_c(c, "BOTH", 
+				0, 1, 1, 1, 1, 0, 	// gridx, gridy, gridwidth, gridheight, weightx, weighty
 				0, 0, 0, 0));		// insets top, left, bottom, right
+		
+		String preview_title = s_file.getName().toString() + " - SIMPLE2 CONVERSION";
+		ScrollPane_Extraction_Preview preview = new ScrollPane_Extraction_Preview(s_file, r_file, preview_title);
+		// Just to align with left split screen
+		JPanel radio_panel_2 = new JPanel();
+		JRadioButton radio_button_2 = new JRadioButton("");
+		radio_button_2.setEnabled(false);
+		radio_panel_2.add(radio_button_2);
+		JPanel combine_panel_2 = new JPanel();
+		combine_panel_2.setLayout(new GridBagLayout());
+		c = new GridBagConstraints();
+		combine_panel_2.add(preview, GridBagLayoutHandle.get_c(c, "BOTH", 
+				0, 0, 1, 1, 1, 1, 	// gridx, gridy, gridwidth, gridheight, weightx, weighty
+				0, 0, 0, 0));		// insets top, left, bottom, right
+		combine_panel_2.add(radio_panel_2, GridBagLayoutHandle.get_c(c, "BOTH", 
+				0, 1, 1, 1, 1, 0, 	// gridx, gridy, gridwidth, gridheight, weightx, weighty
+				0, 0, 0, 0));		// insets top, left, bottom, right
+		
+		setBorder(BorderFactory.createEmptyBorder());
+		setResizeWeight(0.5);
+		setDividerSize(3);
+//		setDividerLocation(250);
+		setOneTouchExpandable(true);
+		setLeftComponent(combine_panel_1);
+		setRightComponent(combine_panel_2);
 	}
 }
 
-class ScrollPane_OriginalFile extends JScrollPane {
-	public ScrollPane_OriginalFile(File s_file) {	
+class ScrollPane_View_File extends JScrollPane {
+	public ScrollPane_View_File(File file, String title) {	
 		// Print to text area------------------	
 		TextAreaReadMe textarea = new TextAreaReadMe("icon_tree.png", 75, 75);
 		textarea.setEditable(false);
 		BufferedReader buff = null;
 		try {
-			buff = new BufferedReader(new FileReader(s_file));
+			buff = new BufferedReader(new FileReader(file));
 			String str;
 			while ((str = buff.readLine()) != null) {
 				textarea.append("\n" + str);
@@ -194,7 +250,7 @@ class ScrollPane_OriginalFile extends JScrollPane {
 			}
 		}
 		
-		TitleScrollPane explore_scrollpane = new TitleScrollPane("", "CENTER", textarea);
+		TitleScrollPane explore_scrollpane = new TitleScrollPane(title, "CENTER", textarea);
 		addHierarchyListener(new HierarchyListener() {	//	These codes make the license_scrollpane resizable --> the Big ScrollPane resizable --> JOptionPane resizable
 		    public void hierarchyChanged(HierarchyEvent e) {
 		        Window window = SwingUtilities.getWindowAncestor(explore_scrollpane);
@@ -214,15 +270,15 @@ class ScrollPane_OriginalFile extends JScrollPane {
 	}
 }
 
-class ScrollPane_TrimFile extends JScrollPane {
-	public ScrollPane_TrimFile(File s_file) {	
+class ScrollPane_View_Trim_File extends JScrollPane {
+	public ScrollPane_View_Trim_File(File file, String title) {	
 		// Print to text area--------------------	
 		TextAreaReadMe textarea = new TextAreaReadMe("icon_tree.png", 75, 75);
 		textarea.setEditable(false);
 
 		try {
 //			List<String> lines_list = Files.readAllLines(Paths.get(file.getAbsolutePath()), StandardCharsets.UTF_8);		// Not sure why this UTF_8 fail
-			List<String> lines_list = Files.readAllLines(Paths.get(s_file.getAbsolutePath()), Charset.defaultCharset());
+			List<String> lines_list = Files.readAllLines(Paths.get(file.getAbsolutePath()), Charset.defaultCharset());
 			for (String line : lines_list) {
 				textarea.append(line.replaceAll("\\s{2,}", " ").trim() + "\n");		// 2 or more spaces will be replaced by one space, then leading and ending spaces will be removed
 			}
@@ -235,7 +291,7 @@ class ScrollPane_TrimFile extends JScrollPane {
 		}
 		textarea.setCaretPosition(0);
 		
-		TitleScrollPane explore_scrollpane = new TitleScrollPane("", "CENTER", textarea);
+		TitleScrollPane explore_scrollpane = new TitleScrollPane(title, "CENTER", textarea);
 		addHierarchyListener(new HierarchyListener() {	//	These codes make the license_scrollpane resizable --> the Big ScrollPane resizable --> JOptionPane resizable
 		    public void hierarchyChanged(HierarchyEvent e) {
 		        Window window = SwingUtilities.getWindowAncestor(explore_scrollpane);
@@ -255,8 +311,8 @@ class ScrollPane_TrimFile extends JScrollPane {
 	}
 }
 
-class ScrollPane_FinalFile extends JScrollPane {
-	public ScrollPane_FinalFile(File s_file, File r_file) {
+class ScrollPane_Extraction_Preview extends JScrollPane {
+	public ScrollPane_Extraction_Preview(File s_file, File r_file, String title) {
 		String[] header1 = new String[] { "date", "national_prepareness_level", "initial_attack_activity",
 				"initial_attack_new_fires", "new_large_incidents", "large_fires_contained",
 				"uncontained_large_fires", "area_command_teams_committed", "nimos_committed", "type_1_imts_committed",
@@ -301,7 +357,7 @@ class ScrollPane_FinalFile extends JScrollPane {
 		textarea.setSelectionEnd(0);
 		textarea.setEditable(false);
 		
-		TitleScrollPane explore_scrollpane = new TitleScrollPane("", "CENTER", textarea);
+		TitleScrollPane explore_scrollpane = new TitleScrollPane(title, "CENTER", textarea);
 		addHierarchyListener(new HierarchyListener() {	//	These codes make the license_scrollpane resizable --> the Big ScrollPane resizable --> JOptionPane resizable
 		    public void hierarchyChanged(HierarchyEvent e) {
 		        Window window = SwingUtilities.getWindowAncestor(explore_scrollpane);
