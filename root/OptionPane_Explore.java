@@ -1,4 +1,5 @@
 package root;
+import java.awt.Desktop;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -31,14 +32,16 @@ import convenience_classes.TextAreaReadMe;
 import convenience_classes.TitleScrollPane;
 
 public class OptionPane_Explore extends JOptionPane {
-	public OptionPane_Explore(File[] s_files, File[] r_files) {
+	public OptionPane_Explore(File[] pdf_files, File[] s_files, File[] r_files) {
 		int id = 0;
 		boolean exit_exploration = false;
 		do {
-			Explore_Pane explore_pane = new Explore_Pane(s_files[id], r_files[id]);
+			Explore_Pane explore_pane = new Explore_Pane(pdf_files[id], s_files[id], r_files[id]);
 			JScrollPane scroll = new JScrollPane();
 			scroll.setBorder(BorderFactory.createEmptyBorder());
 			scroll.setViewportView(explore_pane);
+//			scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+//			scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
 
 			String ExitOption[] = { "PREVIOUS", "NEXT", "AGGREGATE", "EXIT" };
 			int response = JOptionPane.showOptionDialog(IMSRmain.get_DesktopPane(), scroll, "EXPLORE",
@@ -152,11 +155,9 @@ class Aggregate_Scroll extends JScrollPane {
 }
 
 class Explore_Pane extends JSplitPane {
-	public Explore_Pane(File s_file, File r_file) {	
-		JScrollPane original_pdf = new JScrollPane();
-		TitledBorder border = new TitledBorder(s_file.getName().toString().replace(".txt", ".pdf") + " - ORIGINAL");
-		border.setTitleJustification(TitledBorder.CENTER);
-		original_pdf.setBorder(border);
+	public Explore_Pane(File pdf, File s_file, File r_file) {	
+		String original_title = s_file.getName().toString().replace(".txt", ".pdf") + " - ORIGINAL";
+		ScrollPane_View_PDF original_pdf = new ScrollPane_View_PDF(pdf, original_title);
 		
 		String s_title = s_file.getName().toString() + " - SIMPLE2 CONVERSION";
 		ScrollPane_View_Trim_File s_trim = new ScrollPane_View_Trim_File(s_file, s_title);
@@ -179,6 +180,11 @@ class Explore_Pane extends JSplitPane {
 		view.setBorder(BorderFactory.createEmptyBorder());
 		radio_button[0].addActionListener(e -> {
 			view.setViewportView(original_pdf);
+			try {
+				Desktop.getDesktop().open(pdf);
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
 		});
 		radio_button[1].addActionListener(e -> {
 			view.setViewportView(r_trim);
@@ -198,7 +204,7 @@ class Explore_Pane extends JSplitPane {
 				0, 1, 1, 1, 1, 0, 	// gridx, gridy, gridwidth, gridheight, weightx, weighty
 				0, 0, 0, 0));		// insets top, left, bottom, right
 		
-		String preview_title = s_file.getName().toString() + " - SIMPLE2 CONVERSION";
+		String preview_title = s_file.getName().toString() + " - EXTRACTION PREVIEW";
 		ScrollPane_Extraction_Preview preview = new ScrollPane_Extraction_Preview(s_file, r_file, preview_title);
 		// Just to align with left split screen
 		JPanel radio_panel_2 = new JPanel();
@@ -224,6 +230,39 @@ class Explore_Pane extends JSplitPane {
 		setRightComponent(combine_panel_2);
 	}
 }
+
+class ScrollPane_View_PDF extends JScrollPane {
+	public ScrollPane_View_PDF(File pdf, String title) {
+		// download version 7.0.0: https://stackoverflow.com/questions/4437910/java-pdf-viewer
+		// guide: https://jar-download.com/download-handling.php
+		// Note: Need to add all dependencies, it would be 28MBs
+
+//		// build a controller
+//		SwingController controller = new SwingController();
+//		controller.setToolBarVisible(false);
+//		controller.setPageFitMode(DocumentViewController.PAGE_FIT_WINDOW_HEIGHT, false);
+//		// Build a SwingViewFactory configured with the controller
+//		SwingViewBuilder factory = new SwingViewBuilder(controller);
+//		// Use the factory to build a JPanel that is pre-configured with a complete, active Viewer UI.
+//		JPanel viewerComponentPanel = factory.buildViewerPanel();
+//		// add copy keyboard command
+//		ComponentKeyBinding.install(controller, viewerComponentPanel);
+//		// add interactive mouse link annotation support via callback
+//		controller.getDocumentViewController().setAnnotationCallback(
+//		      new org.icepdf.ri.common.MyAnnotationCallback(
+//		             controller.getDocumentViewController()));
+//		// Open a PDF document to view
+//        controller.openDocument(pdf.getAbsolutePath());
+//        setViewportView(viewerComponentPanel);
+        
+        TitledBorder border = new TitledBorder(title);
+		border.setTitleJustification(TitledBorder.CENTER);
+		setBorder(border);
+//		setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+//		setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
+	}
+}
+
 
 class ScrollPane_View_File extends JScrollPane {
 	public ScrollPane_View_File(File file, String title) {	
