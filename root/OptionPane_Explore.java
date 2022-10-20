@@ -134,8 +134,8 @@ class Aggregate_Scroll extends JScrollPane {
 		setViewportView(explore_scrollpane);
 		
 		// Add everything to a popup panel
-		String ExitOption[] = { "EXTRACT TO TEXT", "EXTRACT TO DATABASE", "EXIT" };
-		int response = JOptionPane.showOptionDialog(IMSRmain.get_DesktopPane(), this, "AGRREGATION RESULT PREVIEW",
+		String ExitOption[] = { "EXPORT TEXT FILE", "EXPORT DATABASE FILE", "EXPORT TO SQLSERVER", "EXIT" };
+		int response = JOptionPane.showOptionDialog(IMSRmain.get_DesktopPane(), this, "AGRREGATION PREVIEW",
 				JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, ExitOption, ExitOption[0]);
 		if (response == 0) {
 			

@@ -10,6 +10,7 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.io.File;
 import java.util.Arrays;
 
 import javax.swing.JFrame;
@@ -24,6 +25,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 
+import convenience_classes.FilesChooser;
 import sql.Calculate_A1;
 import sql.Calculate_A2;
 import sql.Calculate_A3;
@@ -149,8 +151,9 @@ public class IMSRmain extends JFrame {
 				pdftotext.setMnemonic(KeyEvent.VK_P);
 				pdftotext.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent event) {
+						File[] files = FilesChooser.chosenPdfFiles("Select pdf files for conversion to text files"); // Open File chooser
 						Utility u = new Utility();
-						u.convert_pdf_to_text_files();
+						u.convert_pdf_to_text_files(files);
 					}
 				});	
 				
@@ -159,7 +162,7 @@ public class IMSRmain extends JFrame {
 				explore_extract.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent event) {
 						Utility u = new Utility();
-						u.explore_files();
+						u.explore_and_extract_files();
 					}
 				});	
 				

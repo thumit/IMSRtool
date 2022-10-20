@@ -32,15 +32,15 @@ public class FilesChooser {
 		return files;
 	}
 	
-	public static File[] chosenPdfFiles() {
+	public static File[] chosenPdfFiles(String dialog_title) {
 		JFileChooser chooser = new JFileChooser();
-		chooser.setDialogTitle("Select pdf files for conversion to text files");
+		chooser.setDialogTitle(dialog_title);
 		chooser.setPreferredSize(new Dimension(800, 500));
 //		chooser.setCurrentDirectory(new File(FilesHandle.get_workingLocation()));
 		chooser.setCurrentDirectory(FileSystemView.getFileSystemView().getHomeDirectory().getAbsoluteFile());	// Desktop Path
 		chooser.setMultiSelectionEnabled(true);
-		chooser.setApproveButtonText("Convert");
-		chooser.setApproveButtonToolTipText("Convert files");
+		chooser.setApproveButtonText("Select");
+//		chooser.setApproveButtonToolTipText("Convert files");
 		FileNameExtensionFilter filter = new FileNameExtensionFilter("pdf file", "pdf");
 		chooser.setFileFilter(filter);
 		chooser.setAcceptAllFileFilterUsed(false);
