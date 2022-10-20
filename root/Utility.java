@@ -28,7 +28,7 @@ public class Utility {
 		int response = JOptionPane.showOptionDialog(IMSRmain.get_DesktopPane(), dialog_title, "Select pdf files",
 				JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, ExitOption, ExitOption[0]);
 		if (response <= 1) {
-			File[] selected_pdf_files = FilesChooser.chosenPdfFiles(dialog_title); // Open File chooser
+			File[] selected_pdf_files = FilesChooser.chosenPdfFiles("Select pdf files"); // Open File chooser
 			if (selected_pdf_files != null) {
 				String inputFolder = selected_pdf_files[0].getParentFile().toString();
 				Path raw_directory = Paths.get(inputFolder + "/raw");

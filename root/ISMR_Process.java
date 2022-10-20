@@ -537,7 +537,48 @@ public class ISMR_Process {
 					}
 					all_fires.add(this_fire);
 					area_fires(current_area).add(this_fire);
-				}
+				} else if (line_length >= 13 		// special case in first 5 months on 2007
+						&& line_split.get(i)[line_length - 12].length() == 2    // This is State "St" for 2007 in first 5 months. It must have only 2 characters
+						&& line_split.get(i)[line_length - 10].matches("^\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$")
+						&& line_split.get(i)[line_length - 7].matches("^\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$")) {		// this is likely a fire, smart check based on the "acres" and "personnel total" columns.
+					unit_id = line_split.get(i).length - 12;
+					String fire_priority = String.valueOf(area_fires(current_area).size() + 1);
+					String this_fire = String.join("\t", date, current_area, String.valueOf(gacc_priority), fire_priority);
+					
+					// Since it is very rare that fire name is in 3 lines, we assign the default fire name (3rd line will always be ignored)
+					// Check only the above line, if length <=5 then add to fire name
+					// Note the special case (20140808IMSR - Devils Elbow Complex) where -simple2 command do not have expected order of fire name in 2 lines.
+					String fire_name = "";
+					for (int id = 0; id < unit_id; id++) {
+						fire_name = String.join(" ", fire_name, line_split.get(i)[id]);	// this is the incident name (or part of the name that is in the same line with other fire information), join by space
+					}
+					if (line_split.get(i - 1).length <= 5 && !s_lines[i - 1].toUpperCase().endsWith("COMP LOST OWN")) {		// such as special case 20150606
+						if (!s_lines[i - 1].startsWith("24 Hrs") && !s_lines[i - 1].startsWith("Hrs")) {	// this special check is needed for years < 2015. Note: (2013,2014: 24 Hrs) (2012: Hrs)
+							fire_name = String.join(" ", line_split.get(i - 1)) + " " + fire_name;	// join by space
+						}
+					}
+					
+					fire_name = fire_name.replaceAll("\\*", "").replaceAll("\\s{2,}", " ").trim().toUpperCase();	// This will remove the * (if exist in the name) and change the name to capital (IMPORTANT)
+					this_fire = String.join("\t", this_fire, fire_name);
+					for (int id = unit_id; id < line_split.get(i).length; id++) {
+						if (id == line_split.get(i).length - 6) {	// add a column that exists in 2015 and later (Personnel Chge) but not in this case. 
+							this_fire = this_fire + "\t" + "null";
+						}
+						if (id == line_split.get(i).length - 8) {	// add a column that exists in 2015 and later (Ctn/Comp) but not exist in 2014 and earlier
+							this_fire = this_fire + "\t" + "null";
+						}
+						if (id == line_split.get(i).length - 9) {	// add a column that exists in 2015 and later (Size Chge) but not in this case. 
+							this_fire = this_fire + "\t" + "null";
+						}
+						if (id == line_split.get(i).length - 11) {	// this is "unit", we need to connect to "st" column with a "-"
+							this_fire = this_fire + "-" + line_split.get(i)[id];
+						} else {
+							this_fire = String.join("\t", this_fire, line_split.get(i)[id]);	// this is all information in one whole line of this fire
+						}
+					}
+					all_fires.add(this_fire);
+					area_fires(current_area).add(this_fire);
+				} 
 			} else { // from 2015 we use this to process data
 				if (line_length >= 15 
 						&& line_split.get(i)[line_length - 14].contains("-")    // do not use this for 2014 data, it has a different unit name, also in 20210710IMSR, one fire has wrong unit that cannot be included (Butte Creek: ID- CTS)
@@ -630,6 +671,50 @@ public class ISMR_Process {
 							this_fire = this_fire + "\t" + "null";
 						}
 						if (id == line_split.get(i).length - 13) {	// this is "unit", we need to connect to "st" column with a "-"
+							this_fire = this_fire + "-" + line_split.get(i)[id];
+						} else {
+							this_fire = String.join("\t", this_fire, line_split.get(i)[id]);	// this is all information in one whole line of this fire
+						}
+					}
+					all_fires_validation.add(this_fire);
+				} else if (line_length >= 12 
+						&& line_split.get(i)[line_length - 12].length() == 2    // This is State "St" for 2014 and earlier year. It must have only 2 characters
+						&& line_split.get(i)[line_length - 10].matches("^\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$")
+						&& line_split.get(i)[line_length - 7].matches("^\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$")) {		// this is likely a fire, smart check based on the "acres" and "personnel total" columns.
+					unit_id = line_split.get(i).length - 12;
+					String this_fire = String.join("\t", r_date, current_area, gacc_priority, fire_priority);
+					
+					// Check above lines, if length <=5 etc, then add to fire name
+					// Note the special case (20140808IMSR - Devils Elbow Complex) where -simple2 command do not have expected order of fire name in 2 lines.
+					String fire_name = "";
+					for (int id = 0; id < unit_id; id++) {
+						fire_name = String.join(" ", fire_name, line_split.get(i)[id]);	// this is the incident name (or part of the name that is in the same line with other fire information), join by space
+					}
+					// loop back previous lines to get the full fire name
+					boolean continue_loop = true;
+					int l = i;
+					do {
+						l = l - 1;
+						if (line_split.get(l).length <= 5 && !r_lines[l].toUpperCase().endsWith("OWN") && !r_lines[l].toUpperCase().endsWith("HELI")) {		// HELI is special case for 20150102
+							fire_name = String.join(" ", r_lines[l], fire_name);	// join by space
+						} else {
+							continue_loop = false;
+						}
+					} while (continue_loop);
+					fire_name = fire_name.replaceAll("\\*", "").replaceAll("\\s{2,}", " ").trim().toUpperCase();	// This will remove the * (if exist in the name) and change the name to capital (IMPORTANT)
+					
+					this_fire = String.join("\t", this_fire, fire_name);
+					for (int id = unit_id; id < line_split.get(i).length; id++) {
+						if (id == line_split.get(i).length - 6) {	// add a column that exists in 2015 and later (Personnel Chge) but not in this case. 
+							this_fire = this_fire + "\t" + "null";
+						}
+						if (id == line_split.get(i).length - 8) {	// add a column that exists in 2015 and later (Ctn/Comp) but not exist in 2014 and earlier
+							this_fire = this_fire + "\t" + "null";
+						}
+						if (id == line_split.get(i).length - 9) {	// add a column that exists in 2015 and later (Size Chge) but not in this case. 
+							this_fire = this_fire + "\t" + "null";
+						}
+						if (id == line_split.get(i).length - 11) {	// this is "unit", we need to connect to "st" column with a "-"
 							this_fire = this_fire + "-" + line_split.get(i)[id];
 						} else {
 							this_fire = String.join("\t", this_fire, line_split.get(i)[id]);	// this is all information in one whole line of this fire
