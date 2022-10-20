@@ -7,6 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import convenience_classes.SubstringBetween;
@@ -37,8 +38,9 @@ public class ISMR_Process {
 	
 	List<String> resource_summary = new ArrayList<String>();	// store all active incident resource summary information
 	
-	List<String> all_fires = new ArrayList<String>();				// All fires extracted from simple2 files
-	List<String> all_fires_validation = new ArrayList<String>();	// All fires extracted from raw files, used to validate fire name from simple2 files
+	List<String> final_fires = new ArrayList<String>();	// All fires in s_fires have fire names adjusted by using r_fires
+	List<String> s_fires = new ArrayList<String>();	// All fires extracted from simple2 files
+	List<String> r_fires = new ArrayList<String>();	// All fires extracted from raw files, used to validate fire name from simple2 files
 	List<String> AICC = new ArrayList<String>();	// Alaska
 	List<String> EACC = new ArrayList<String>();	// Eastern Area
 	List<String> EBCC = new ArrayList<String>();	// Eastern Great Basin (Before 2015)
@@ -535,7 +537,7 @@ public class ISMR_Process {
 							this_fire = String.join("\t", this_fire, line_split.get(i)[id]);	// this is all information in one whole line of this fire
 						}
 					}
-					all_fires.add(this_fire);
+					s_fires.add(this_fire);
 					area_fires(current_area).add(this_fire);
 				} else if (line_length >= 13 		// special case in first 5 months on 2007
 						&& line_split.get(i)[line_length - 12].length() == 2    // This is State "St" for 2007 in first 5 months. It must have only 2 characters
@@ -576,7 +578,7 @@ public class ISMR_Process {
 							this_fire = String.join("\t", this_fire, line_split.get(i)[id]);	// this is all information in one whole line of this fire
 						}
 					}
-					all_fires.add(this_fire);
+					s_fires.add(this_fire);
 					area_fires(current_area).add(this_fire);
 				} 
 			} else { // from 2015 we use this to process data
@@ -603,7 +605,7 @@ public class ISMR_Process {
 					for (int id = unit_id; id < line_split.get(i).length; id++) {
 						this_fire = String.join("\t", this_fire, line_split.get(i)[id]);	// this is all information in one whole line of this fire
 					}
-					all_fires.add(this_fire);
+					s_fires.add(this_fire);
 					area_fires(current_area).add(this_fire);
 				}
 			}
@@ -676,7 +678,7 @@ public class ISMR_Process {
 							this_fire = String.join("\t", this_fire, line_split.get(i)[id]);	// this is all information in one whole line of this fire
 						}
 					}
-					all_fires_validation.add(this_fire);
+					r_fires.add(this_fire);
 				} else if (line_length >= 12 
 						&& line_split.get(i)[line_length - 12].length() == 2    // This is State "St" for 2014 and earlier year. It must have only 2 characters
 						&& line_split.get(i)[line_length - 10].matches("^\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$")
@@ -720,18 +722,13 @@ public class ISMR_Process {
 							this_fire = String.join("\t", this_fire, line_split.get(i)[id]);	// this is all information in one whole line of this fire
 						}
 					}
-					all_fires_validation.add(this_fire);
+					r_fires.add(this_fire);
 				}
 			} else { // from 2015 we use this to process data
-				if ((line_length >= 14 
+				if (line_length >= 14 
 						&& line_split.get(i)[line_length - 14].contains("-")    // do not use this for 2014 data, it has a different unit name, also in 20210710IMSR, one fire has wrong unit that cannot be included (Butte Creek: ID- CTS)
 						&& line_split.get(i)[line_length - 13].matches("^\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$")
-						&& line_split.get(i)[line_length - 8].matches("^\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$"))		// this is likely a fire, smart check based on the "acres" and "personnel total" columns.
-					||
-				    (line_length >= 13 
-							&& r_lines[i - 1].contains("-")    // do not use this for 2014 data, it has a different unit name, also in 20210710IMSR, one fire has wrong unit that cannot be included (Butte Creek: ID- CTS)
-							&& line_split.get(i)[line_length - 13].matches("^\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$")
-							&& line_split.get(i)[line_length - 8].matches("^\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$"))		// this is likely a fire, smart check based on the "acres" and "personnel total" columns.
+						&& line_split.get(i)[line_length - 8].matches("^\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$")		// this is likely a fire, smart check based on the "acres" and "personnel total" columns.
 				) {
 					unit_id = line_split.get(i).length - 14;
 					String this_fire = String.join("\t", r_date, current_area, gacc_priority, fire_priority);
@@ -759,10 +756,46 @@ public class ISMR_Process {
 						if (id >= 0)
 						this_fire = String.join("\t", this_fire, line_split.get(i)[id]);	// this is all information in one whole line of this fire
 					}
-					all_fires_validation.add(this_fire);
+					r_fires.add(this_fire);
+				} else if (line_length >= 13 
+							&& (r_lines[i - 1].contains("-") || r_lines[i - 2].contains("-"))    // i-2 such as in 20150613
+							&& line_split.get(i)[line_length - 13].matches("^\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$")
+							&& line_split.get(i)[line_length - 8].matches("^\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$")		// this is likely a fire, smart check based on the "acres" and "personnel total" columns.
+				) {
+					String this_fire = String.join("\t", r_date, current_area, gacc_priority, fire_priority);
+					String unit_name = "";
+					if (r_lines[i - 1].contains("-")) unit_name = r_lines[i - 1];
+					if (r_lines[i - 2].contains("-")) unit_name = r_lines[i - 2] + r_lines[i - 1];
+					
+					// Check above lines, if length <=5 etc, then add to fire name
+					String fire_name = "";
+					// loop back previous lines to get the full fire name
+					boolean continue_loop = true;
+					int l = i;
+					if (r_lines[i - 1].contains("-")) l = i - 1;
+					if (r_lines[i - 2].contains("-")) l = i - 2;
+					do {
+						l = l - 1;
+						if (line_split.get(l).length <= 5 && !r_lines[l].toUpperCase().endsWith("OWN") && !r_lines[l].toUpperCase().endsWith("HELI")) {		// HELI is special case for 20150102
+							fire_name = String.join(" ", r_lines[l], fire_name);	// join by space
+						} else {
+							continue_loop = false;
+						}
+					} while (continue_loop);
+					fire_name = fire_name.replaceAll("\\*", "").replaceAll("\\s{2,}", " ").trim().toUpperCase();	// This will remove the * (if exist in the name) and change the name to capital (IMPORTANT)
+					
+					this_fire = String.join("\t", this_fire, fire_name, unit_name);
+					int size_id = line_split.get(i).length - 13;
+					for (int id = size_id; id < line_split.get(i).length; id++) {
+						if (id >= 0)
+						this_fire = String.join("\t", this_fire, line_split.get(i)[id]);	// this is all information in one whole line of this fire
+					}
+					r_fires.add(this_fire);
+					
+					if (this_fire.split("\t").length < 19) System.out.println(this_fire);
 				} else if (line_length >= 11
 						&& line_split.get(i)[line_length - 8].matches("^\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$")) {
-					System.out.println("FFFF-------------FFFF-------------FFFF-------------FFFF-------------FFFF-------------FFFF-------------FFFF-------------");
+//					System.out.println("FFFF-------------FFFF-------------FFFF-------------FFFF-------------FFFF-------------FFFF-------------FFFF-------------");
 				}
 			}
 			
@@ -771,25 +804,64 @@ public class ISMR_Process {
 	}
 	
 	private void fire_name_validation() {
-		int count = 0;
-		if (all_fires.size() != all_fires_validation.size()) {
-			System.out.println("simple2 date: " + s_date + " " + all_fires.size());
-			System.out.println("raw date: " + r_date + " " + all_fires_validation.size());
-		} else {
-			for (int i = 0; i < all_fires.size(); i++) {
-				String[] s_fire_info = all_fires.get(i).split("\t");
-				String[] r_fire_info = all_fires_validation.get(i).split("\t");
-				// Compare date, fire name, unit, fire size, size change
-				if (!s_fire_info[0].equals(r_fire_info[0])		// date
-					|| !s_fire_info[4].equals(r_fire_info[4])	// name
-					|| !s_fire_info[5].equals(r_fire_info[5])	// unit
-					|| !s_fire_info[6].equals(r_fire_info[6])	// size
-					|| !s_fire_info[7].equals(r_fire_info[7])	// size change
-				) {
-					count++;
-					System.out.println(s_date + ". No " + count + ". " + s_fire_info[4] + ": " + r_fire_info[4]);
+//		int count = 0;
+//		if (s_fires.size() != r_fires.size()) {
+//			System.out.println("simple2 date: " + s_date + " " + s_fires.size());
+//			System.out.println("raw date: " + r_date + " " + r_fires.size());
+//		} else {
+//			for (int i = 0; i < s_fires.size(); i++) {
+//				String[] s_fire_info = s_fires.get(i).split("\t");
+//				String[] r_fire_info = r_fires.get(i).split("\t");
+//				// Compare date, fire name, unit, fire size, size change
+//				if (!s_fire_info[0].equals(r_fire_info[0])		// date
+//					|| !s_fire_info[4].equals(r_fire_info[4])	// name
+//					|| !s_fire_info[5].equals(r_fire_info[5])	// unit
+//					|| !s_fire_info[6].equals(r_fire_info[6])	// size
+//					|| !s_fire_info[7].equals(r_fire_info[7])	// size change
+//				) {
+//					if (!r_fire_info[4].contains(s_fire_info[4])) {
+//						count++;
+//						System.out.println(s_date + ". No " + count + ". " + s_fire_info[4] + ": " + r_fire_info[4]);
+//					}
+//				}
+//			}
+//		}
+		
+		// hashmap to store pattern and id
+		LinkedHashMap<String, Integer> map_pattern_to_r_fire_id = new LinkedHashMap<String, Integer>();
+		for (int i = 0; i < r_fires.size(); i++) {
+			String[] r_fire_info = r_fires.get(i).split("\t"); 
+			// pattern = "date", "unit", "size_acres", "size_chge", "percentage", "ctn_comp", "est", "personnel_total", "personnel_chge", "resources_crw", "resources_eng", "resources_heli", "strc_lost", "ctd", "origin_own"
+			String pattern = String.join("\t", r_fire_info[0], r_fire_info[5], r_fire_info[6], r_fire_info[7],
+					r_fire_info[8], r_fire_info[9], r_fire_info[10], r_fire_info[11], r_fire_info[12], r_fire_info[13],
+					r_fire_info[14], r_fire_info[15], r_fire_info[16], r_fire_info[17], r_fire_info[18]);
+			map_pattern_to_r_fire_id.put(pattern, i);		// pattern = key, id = value		
+		}
+		if (r_fires.size() != map_pattern_to_r_fire_id.size()) {
+			System.out.println(date + " " + r_fires.size() + " " + map_pattern_to_r_fire_id.size() + ": same pattern is identified but added once in hashmap");
+		}
+		
+		// use hashmap to find matching pattern, then if names overlap between raw and simple we can adjust.
+		int rename_count = 0;
+		for (int i = 0; i < s_fires.size(); i++) {
+			String[] s_fire_info = s_fires.get(i).split("\t"); 
+			// pattern = "date", "unit", "size_acres", "size_chge", "percentage", "ctn_comp", "est", "personnel_total", "personnel_chge", "resources_crw", "resources_eng", "resources_heli", "strc_lost", "ctd", "origin_own"
+			String pattern = String.join("\t", s_fire_info[0], s_fire_info[5], s_fire_info[6], s_fire_info[7],
+					s_fire_info[8], s_fire_info[9], s_fire_info[10], s_fire_info[11], s_fire_info[12], s_fire_info[13],
+					s_fire_info[14], s_fire_info[15], s_fire_info[16], s_fire_info[17], s_fire_info[18]);
+			if (map_pattern_to_r_fire_id.get(pattern) != null) {
+				int r_id = map_pattern_to_r_fire_id.get(pattern);
+				String r_fire_name = r_fires.get(r_id).split("\t")[4];
+				String s_fire_name = s_fire_info[4];
+				String s_last_name = s_fire_name.substring(s_fire_name.lastIndexOf(" ") + 1);
+				if (r_fire_name.contains(s_last_name)) {
+					s_fire_info[4] = r_fire_name;	// adjust fire name
+					rename_count++;
 				}
 			}
+			final_fires.add(String.join("\t", s_fire_info));	// adjust fire name
 		}
+		int not_rename_count = s_fires.size() - rename_count;
+		if (not_rename_count > 0) System.out.println(date + " " + not_rename_count + " has not been renamed");
 	}
 }

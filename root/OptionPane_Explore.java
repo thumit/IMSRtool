@@ -97,7 +97,7 @@ class Aggregate_Scroll extends JScrollPane {
 		textarea.append("--------------------------------------------------------------------" + "\n");
 		textarea.append(String.join("\t", header3)  + "\n");
 		for (ISMR_Process ismr : ismr_process) {
-			for (String fire : ismr.all_fires) {
+			for (String fire : ismr.final_fires) {
 				textarea.append(fire + "\n");
 			}
 		}
@@ -105,7 +105,7 @@ class Aggregate_Scroll extends JScrollPane {
 		textarea.append("--------------------------------------------------------------------" + "\n");
 		textarea.append("--------------------------------------------------------------------" + "\n");
 		for (ISMR_Process ismr : ismr_process) {
-			if (ismr.all_fires.isEmpty()) {
+			if (ismr.final_fires.isEmpty()) {
 				textarea.append(ismr.date + " has no fire" + "\n");
 			}
 		}
@@ -384,7 +384,7 @@ class ScrollPane_Extraction_Preview extends JScrollPane {
 		}
 		textarea.append("--------------------------------------------------------------------" + "\n");
 		textarea.append(String.join("\t", header3)  + "\n");
-		for (String fire : ismr.all_fires) {
+		for (String fire : ismr.final_fires) {
 			textarea.append(fire + "\n");
 		}
 		textarea.append("--------------------------------------------------------------------" + "\n");
