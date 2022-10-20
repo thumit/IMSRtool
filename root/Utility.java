@@ -29,47 +29,49 @@ public class Utility {
 				JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, ExitOption, ExitOption[0]);
 		if (response <= 1) {
 			File[] selected_pdf_files = FilesChooser.chosenPdfFiles(dialog_title); // Open File chooser
-			String inputFolder = selected_pdf_files[0].getParentFile().toString();
-			Path raw_directory = Paths.get(inputFolder + "/raw");
-			Path simple2_directory = Paths.get(inputFolder + "/simple2");
-			
-			if (response == 1) {	// Replace
-				convert_pdf_to_text_files(selected_pdf_files);
-			}
-			
-			if (response == 0) {	// Update
-				File[] r_files = raw_directory.toFile().listFiles((dir, name) -> name.endsWith(".txt"));
-				File[] s_files = simple2_directory.toFile().listFiles((dir, name) -> name.endsWith(".txt"));
-				List<String> r_file_names = new ArrayList<String>();
-				List<String> s_file_names = new ArrayList<String>();
-				if (r_files != null) {
-					for (File f : r_files) {
-						r_file_names.add(f.getName());
-					}
-				}
-				if (s_files != null) {
-					for (File f : s_files) {
-						s_file_names.add(f.getName());
-					}
+			if (selected_pdf_files != null) {
+				String inputFolder = selected_pdf_files[0].getParentFile().toString();
+				Path raw_directory = Paths.get(inputFolder + "/raw");
+				Path simple2_directory = Paths.get(inputFolder + "/simple2");
+				
+				if (response == 1) {	// Replace
+					convert_pdf_to_text_files(selected_pdf_files);
 				}
 				
-				List<File> conversion_pdf_files = new ArrayList<File>();
-				for (File f : selected_pdf_files) {
-					String f_name = f.getName().replace(".pdf", ".txt");
-					if (!r_file_names.contains(f_name) || !s_file_names.contains(f_name)) {	// if one of the 2 folders do not have the associated text file then do conversion
-						conversion_pdf_files.add(f);
+				if (response == 0) {	// Update
+					File[] r_files = raw_directory.toFile().listFiles((dir, name) -> name.endsWith(".txt"));
+					File[] s_files = simple2_directory.toFile().listFiles((dir, name) -> name.endsWith(".txt"));
+					List<String> r_file_names = new ArrayList<String>();
+					List<String> s_file_names = new ArrayList<String>();
+					if (r_files != null) {
+						for (File f : r_files) {
+							r_file_names.add(f.getName());
+						}
 					}
+					if (s_files != null) {
+						for (File f : s_files) {
+							s_file_names.add(f.getName());
+						}
+					}
+					
+					List<File> conversion_pdf_files = new ArrayList<File>();
+					for (File f : selected_pdf_files) {
+						String f_name = f.getName().replace(".pdf", ".txt");
+						if (!r_file_names.contains(f_name) || !s_file_names.contains(f_name)) {	// if one of the 2 folders do not have the associated text file then do conversion
+							conversion_pdf_files.add(f);
+						}
+					}
+					if (!conversion_pdf_files.isEmpty()) convert_pdf_to_text_files(conversion_pdf_files.toArray(new File[conversion_pdf_files.size()]));
 				}
-				convert_pdf_to_text_files(conversion_pdf_files.toArray(new File[conversion_pdf_files.size()]));
+				
+				File[] input_r_files = new File[selected_pdf_files.length];
+				File[] input_s_files = new File[selected_pdf_files.length];
+				for (int i = 0; i < selected_pdf_files.length; i++) {
+					input_r_files[i] = new File(inputFolder + "/raw/" + selected_pdf_files[i].getName().replace(".pdf", ".txt"));
+					input_s_files[i] = new File(inputFolder + "/simple2/" + selected_pdf_files[i].getName().replace(".pdf", ".txt"));
+				}
+				new OptionPane_Explore(input_s_files, input_r_files);
 			}
-			
-			File[] input_r_files = new File[selected_pdf_files.length];
-			File[] input_s_files = new File[selected_pdf_files.length];
-			for (int i = 0; i < selected_pdf_files.length; i++) {
-				input_r_files[i] = new File(inputFolder + "/raw/" + selected_pdf_files[i].getName().replace(".pdf", ".txt"));
-				input_s_files[i] = new File(inputFolder + "/simple2/" + selected_pdf_files[i].getName().replace(".pdf", ".txt"));
-			}
-			new OptionPane_Explore(input_s_files, input_r_files);
 		}
 	}
 	

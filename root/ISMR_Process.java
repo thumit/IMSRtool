@@ -677,7 +677,7 @@ public class ISMR_Process {
 					all_fires_validation.add(this_fire);
 				} else if (line_length >= 11
 						&& line_split.get(i)[line_length - 8].matches("^\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$")) {
-					System.out.println("FUCK-------------FUCK-------------FUCK-------------FUCK-------------FUCK-------------FUCK-------------FUCK-------------");
+					System.out.println("FFFF-------------FFFF-------------FFFF-------------FFFF-------------FFFF-------------FFFF-------------FFFF-------------");
 				}
 			}
 			
