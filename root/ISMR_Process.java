@@ -78,7 +78,7 @@ public class ISMR_Process {
 			get_reource_summary_data(s_lines);
 			get_fire_data_simple2_method(s_lines);
 			get_fire_data_raw_method(r_lines);
-			fire_name_validation();
+			fire_name_validation_and_adjustment();
 			s_lines_list = null; 	// free memory
 			s_lines = null;			// free memory
 			r_lines_list = null; 	// free memory
@@ -803,30 +803,7 @@ public class ISMR_Process {
 		} while (i < r_lines.length);
 	}
 	
-	private void fire_name_validation() {
-//		int count = 0;
-//		if (s_fires.size() != r_fires.size()) {
-//			System.out.println("simple2 date: " + s_date + " " + s_fires.size());
-//			System.out.println("raw date: " + r_date + " " + r_fires.size());
-//		} else {
-//			for (int i = 0; i < s_fires.size(); i++) {
-//				String[] s_fire_info = s_fires.get(i).split("\t");
-//				String[] r_fire_info = r_fires.get(i).split("\t");
-//				// Compare date, fire name, unit, fire size, size change
-//				if (!s_fire_info[0].equals(r_fire_info[0])		// date
-//					|| !s_fire_info[4].equals(r_fire_info[4])	// name
-//					|| !s_fire_info[5].equals(r_fire_info[5])	// unit
-//					|| !s_fire_info[6].equals(r_fire_info[6])	// size
-//					|| !s_fire_info[7].equals(r_fire_info[7])	// size change
-//				) {
-//					if (!r_fire_info[4].contains(s_fire_info[4])) {
-//						count++;
-//						System.out.println(s_date + ". No " + count + ". " + s_fire_info[4] + ": " + r_fire_info[4]);
-//					}
-//				}
-//			}
-//		}
-		
+	private void fire_name_validation_and_adjustment() {
 		// hashmap to store pattern and id
 		LinkedHashMap<String, Integer> map_pattern_to_r_fire_id = new LinkedHashMap<String, Integer>();
 		for (int i = 0; i < r_fires.size(); i++) {
