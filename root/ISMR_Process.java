@@ -793,9 +793,67 @@ public class ISMR_Process {
 					r_fires.add(this_fire);
 					
 					if (this_fire.split("\t").length < 19) System.out.println(this_fire);
-				} else if (line_length >= 11
-						&& line_split.get(i)[line_length - 8].matches("^\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$")) {
-//					System.out.println("FFFF-------------FFFF-------------FFFF-------------FFFF-------------FFFF-------------FFFF-------------FFFF-------------");
+				} /*
+					 * else if (line_length >= 11 && line_split.get(i)[line_length -
+					 * 8].matches("^\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$")) { // System.out.println(
+					 * "FFFF-------------FFFF-------------FFFF-------------FFFF-------------FFFF-------------FFFF-------------FFFF-------------"
+					 * ); }
+					 */ else if (line_length >= 11 && 
+							 (((line_split.get(i)[line_length - 1].endsWith("NR") || line_split.get(i)[line_length - 1].endsWith("K") || line_split.get(i)[line_length - 1].endsWith("M"))
+										&& line_split.get(i + 1).length == 1)
+							 || (line_split.get(i)[line_length - 2].endsWith("NR") || line_split.get(i)[line_length - 2].endsWith("K") || line_split.get(i)[line_length - 2].endsWith("M")))
+						) {		// handle special cases such as in 20180726
+					String this_fire = String.join("\t", r_date, current_area, gacc_priority, fire_priority);
+					String combine_st = String.join("\t", line_split.get(i));
+					
+					// Check above lines, if length <=5 etc, then add to fire name
+					if ((line_split.get(i)[line_length - 1].endsWith("NR") || line_split.get(i)[line_length - 1].endsWith("K") || line_split.get(i)[line_length - 1].endsWith("M"))
+							&& line_split.get(i + 1).length == 1) {	// ctd column and next column is origin_own that contains only 1 word
+						combine_st = String.join("\t", combine_st, line_split.get(i + 1)[0]);
+					}
+					
+					String fire_name = "";
+					// loop back previous lines to join
+					boolean continue_loop = true;
+					int l = i;
+					do {
+						l = l - 1;
+						if ((r_fires.isEmpty() || !r_fires.get(r_fires.size() - 1).endsWith(r_lines[l])) &&	// this is to ensure we don't use the origin_own of previous fire in the name of this fire
+								line_split.get(l).length <= 5 && !r_lines[l].toUpperCase().endsWith("OWN") && !r_lines[l].toUpperCase().endsWith("HELI")) {		// HELI is special case for 20150102
+							if (r_lines[l].contains(" ")) {
+								String previous_words = r_lines[l].substring(0, r_lines[l].lastIndexOf(" "));
+								String last_word = r_lines[l].substring(r_lines[l].lastIndexOf(" ") + 1, r_lines[l].length());
+								String final_word = "";
+								if (last_word.contains("-")) {
+									final_word = String.join("\t", previous_words, last_word);
+								} else {
+									final_word = String.join(" ", previous_words, last_word);
+								}
+								fire_name = String.join(" ", final_word, fire_name);	// join by space
+							} else {
+								fire_name = String.join(" ", r_lines[l], fire_name);	// join by space
+							}
+						} else {
+							continue_loop = false;
+						}
+					} while (continue_loop);
+					fire_name = fire_name.replaceAll("\\*", "").replaceAll("\\s{2,}", " ").trim().toUpperCase();	// This will remove the * (if exist in the name) and change the name to capital (IMPORTANT)
+					// if combine_st has length > 14 then part of fire_name is in it. We need to adjust the name
+					String[] combine_st_arr = combine_st.split("\t");
+					if (combine_st_arr.length > 14) {
+						for (int j = 0; j < combine_st_arr.length - 14; j++) {
+							fire_name = String.join(" ", fire_name, combine_st_arr[j]);	// join by space
+						}
+						fire_name = fire_name.replaceAll("\\*", "").replaceAll("\\s{2,}", " ").trim().toUpperCase();	// This will remove the * (if exist in the name) and change the name to capital (IMPORTANT)
+						for (int j = combine_st_arr.length - 14; j < combine_st_arr.length; j++) {
+							fire_name = String.join("\t", fire_name, combine_st_arr[j]);	// join by space	// this is all the other columns attached after the fire name
+						}
+						this_fire = String.join("\t", this_fire, fire_name);
+					} else {
+						this_fire = String.join("\t", this_fire, fire_name, combine_st);
+					}
+					r_fires.add(this_fire);
+//					if (this_fire.split("\t").length < 19) System.out.println(this_fire);
 				}
 			}
 			
@@ -813,6 +871,9 @@ public class ISMR_Process {
 					r_fire_info[8], r_fire_info[9], r_fire_info[10], r_fire_info[11], r_fire_info[12], r_fire_info[13],
 					r_fire_info[14], r_fire_info[15], r_fire_info[16], r_fire_info[17], r_fire_info[18]);
 			map_pattern_to_r_fire_id.put(pattern, i);		// pattern = key, id = value		
+		}
+		if (r_fires.size() != s_fires.size()) {
+			System.out.println(date + " has different results between raw and simple2: " + r_fires.size() + " " + s_fires.size());
 		}
 		if (r_fires.size() != map_pattern_to_r_fire_id.size()) {
 			System.out.println(date + " " + r_fires.size() + " " + map_pattern_to_r_fire_id.size() + ": same pattern is identified but added once in hashmap");
