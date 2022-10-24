@@ -793,16 +793,15 @@ public class ISMR_Process {
 					r_fires.add(this_fire);
 					
 					if (this_fire.split("\t").length < 19) System.out.println(this_fire);
-				} /*
-					 * else if (line_length >= 11 && line_split.get(i)[line_length -
-					 * 8].matches("^\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$")) { // System.out.println(
-					 * "FFFF-------------FFFF-------------FFFF-------------FFFF-------------FFFF-------------FFFF-------------FFFF-------------"
-					 * ); }
-					 */ else if (line_length >= 11 && 
-							 (((line_split.get(i)[line_length - 1].endsWith("NR") || line_split.get(i)[line_length - 1].endsWith("K") || line_split.get(i)[line_length - 1].endsWith("M"))
-										&& line_split.get(i + 1).length == 1)
-							 || (line_split.get(i)[line_length - 2].endsWith("NR") || line_split.get(i)[line_length - 2].endsWith("K") || line_split.get(i)[line_length - 2].endsWith("M")))
-						) {		// handle special cases such as in 20180726
+				} else if (line_length >= 11 && 
+							 (
+								((line_split.get(i)[line_length - 1].endsWith("NR") || line_split.get(i)[line_length - 1].endsWith("K") || line_split.get(i)[line_length - 1].endsWith("M"))
+										&& line_split.get(i + 1).length == 1 && line_split.get(i)[line_length - 8].matches("^\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$"))
+							 || 
+							 	((line_split.get(i)[line_length - 2].endsWith("NR") || line_split.get(i)[line_length - 2].endsWith("K") || line_split.get(i)[line_length - 2].endsWith("M"))
+									 	&& line_split.get(i)[line_length - 7].matches("^\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$"))
+							 )
+						  ) {	// handle special cases such as in 20180726
 					String this_fire = String.join("\t", r_date, current_area, gacc_priority, fire_priority);
 					String combine_st = String.join("\t", line_split.get(i));
 					
@@ -824,7 +823,9 @@ public class ISMR_Process {
 								String previous_words = r_lines[l].substring(0, r_lines[l].lastIndexOf(" "));
 								String last_word = r_lines[l].substring(r_lines[l].lastIndexOf(" ") + 1, r_lines[l].length());
 								String final_word = "";
-								if (last_word.contains("-")) {
+								if (last_word.equals("-")) { // such as "Michael - " in 20181022
+									final_word = String.join(" ", previous_words, last_word);
+								} else if (last_word.contains("-")) {
 									final_word = String.join("\t", previous_words, last_word);
 								} else {
 									final_word = String.join(" ", previous_words, last_word);
@@ -837,6 +838,8 @@ public class ISMR_Process {
 							continue_loop = false;
 						}
 					} while (continue_loop);
+					
+					fire_name = fire_name.replaceAll("---", "---" + "\t");	// special case such as 20180913
 					fire_name = fire_name.replaceAll("\\*", "").replaceAll("\\s{2,}", " ").trim().toUpperCase();	// This will remove the * (if exist in the name) and change the name to capital (IMPORTANT)
 					// if combine_st has length > 14 then part of fire_name is in it. We need to adjust the name
 					String[] combine_st_arr = combine_st.split("\t");
@@ -852,8 +855,11 @@ public class ISMR_Process {
 					} else {
 						this_fire = String.join("\t", this_fire, fire_name, combine_st);
 					}
-					r_fires.add(this_fire);
-//					if (this_fire.split("\t").length < 19) System.out.println(this_fire);
+					if (this_fire.split("\t").length == 19) {
+						r_fires.add(this_fire);
+					} else {
+						System.out.println(this_fire);	// problem need to fix manually: i.e. CA-KNF-006098 Complex 20170929
+					}
 				}
 			}
 			
