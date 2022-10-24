@@ -302,7 +302,7 @@ public class ISMR_Process {
 		String gacc_type_2_imts_committed = null;
 		
 		if (s_lines[start_line].indexOf(")") == -1) {
-			System.out.println(date + " missing information, national level will be used to replace gacc level");
+			System.out.println(date + " missing gacc preparedness information");
 			gacc_prepareness_level = "null";	 // Example missing information: 20211105IMSR
 		} else {
 			gacc_prepareness_level = s_lines[start_line].substring(s_lines[start_line].indexOf("(PL") + 3, s_lines[start_line].indexOf(")"));
@@ -506,7 +506,7 @@ public class ISMR_Process {
 			if (year_before_2015) { // before 2015 we use this to process data (Note unit is split by 2 columns and we need to merge, also we do not have the "Ctn/Comp" and we need to assign Ctn for it)
 				if (line_length >= 15 
 						&& line_split.get(i)[line_length - 14].length() == 2    // This is State "St" for 2014 and earlier year. It must have only 2 characters
-						&& line_split.get(i)[line_length - 12].matches("^\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$")
+						&& (line_split.get(i)[line_length - 12].matches("^\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$") || line_split.get(i)[line_length - 12].equals("N/A")) 
 						&& line_split.get(i)[line_length - 8].matches("^\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$")) {		// this is likely a fire, smart check based on the "acres" and "personnel total" columns.
 					unit_id = line_split.get(i).length - 14;
 					String fire_priority = String.valueOf(area_fires(current_area).size() + 1);
@@ -541,7 +541,7 @@ public class ISMR_Process {
 					area_fires(current_area).add(this_fire);
 				} else if (line_length >= 13 		// special case in first 5 months on 2007
 						&& line_split.get(i)[line_length - 12].length() == 2    // This is State "St" for 2007 in first 5 months. It must have only 2 characters
-						&& line_split.get(i)[line_length - 10].matches("^\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$")
+						&& (line_split.get(i)[line_length - 10].matches("^\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$") || line_split.get(i)[line_length - 10].equals("N/A"))
 						&& line_split.get(i)[line_length - 7].matches("^\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$")) {		// this is likely a fire, smart check based on the "acres" and "personnel total" columns.
 					unit_id = line_split.get(i).length - 12;
 					String fire_priority = String.valueOf(area_fires(current_area).size() + 1);
@@ -584,7 +584,7 @@ public class ISMR_Process {
 			} else { // from 2015 we use this to process data
 				if (line_length >= 15 
 						&& line_split.get(i)[line_length - 14].contains("-")    // do not use this for 2014 data, it has a different unit name, also in 20210710IMSR, one fire has wrong unit that cannot be included (Butte Creek: ID- CTS)
-						&& line_split.get(i)[line_length - 13].matches("^\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$")
+						&& (line_split.get(i)[line_length - 13].matches("^\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$") || line_split.get(i)[line_length - 13].equals("N/A")) // special cases such as U.S. Virgin in 20171004
 						&& line_split.get(i)[line_length - 8].matches("^\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$")) {		// this is likely a fire, smart check based on the "acres" and "personnel total" columns.
 					unit_id = line_split.get(i).length - 14;
 					String fire_priority = String.valueOf(area_fires(current_area).size() + 1);
@@ -636,6 +636,34 @@ public class ISMR_Process {
 		
 		int i = 0;
 		do {
+			if (r_lines[i].contains("(PL")) {			// do not use this to compare fire name because gacc block is not consistent, but we can use this to add fire in raw but not in simple2
+				if (r_lines[i].startsWith("Alaska")) {
+					current_area = "AICC";
+				} else if (r_lines[i].startsWith("Eastern Area")) {
+					current_area = "EACC";
+				} else if (r_lines[i].contains("Eastern Great Basin")) {		// before 2015
+					current_area = "EBCC";
+				} else if (r_lines[i].contains("Western Great Basin")) {		// before 2015
+					current_area = "WBCC";
+				} else if (r_lines[i].contains("Great Basin")) {		// 2015 and after. Special case in 20170708: The gacc is "Great Basin", does not have "Area"
+					current_area = "GBCC";
+				} else if (r_lines[i].startsWith("Northern California")) {
+					current_area = "ONCC";
+				} else if (r_lines[i].startsWith("Northern Rockies")) {
+					current_area = "NRCC";
+				} else if (r_lines[i].startsWith("Northwest")) {
+					current_area = "NWCC";
+				} else if (r_lines[i].startsWith("Rocky Mountain")) {
+					current_area = "RMCC";
+				} else if (r_lines[i].startsWith("Southern Area")) {
+					current_area = "SACC";
+				} else if (r_lines[i].startsWith("Southern California")) {
+					current_area = "OSCC";
+				} else if (r_lines[i].startsWith("Southwest")) {
+					current_area = "SWCC";
+				}
+			}
+			
 			int unit_id = 0;	// find the second column of the table
 			int line_length = line_split.get(i).length;
 			
@@ -643,7 +671,7 @@ public class ISMR_Process {
 			if (year_before_2015) { // before 2015 we use this to process data (Note unit is split by 2 columns and we need to merge, also we do not have the "Ctn/Comp" and we need to assign Ctn for it)
 				if (line_length >= 14 
 						&& line_split.get(i)[line_length - 14].length() == 2    // This is State "St" for 2014 and earlier year. It must have only 2 characters
-						&& line_split.get(i)[line_length - 12].matches("^\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$")
+						&& (line_split.get(i)[line_length - 12].matches("^\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$") || line_split.get(i)[line_length - 12].equals("N/A"))
 						&& line_split.get(i)[line_length - 8].matches("^\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$")) {		// this is likely a fire, smart check based on the "acres" and "personnel total" columns.
 					unit_id = line_split.get(i).length - 14;
 					String this_fire = String.join("\t", r_date, current_area, gacc_priority, fire_priority);
@@ -681,7 +709,7 @@ public class ISMR_Process {
 					r_fires.add(this_fire);
 				} else if (line_length >= 12 
 						&& line_split.get(i)[line_length - 12].length() == 2    // This is State "St" for 2014 and earlier year. It must have only 2 characters
-						&& line_split.get(i)[line_length - 10].matches("^\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$")
+						&& (line_split.get(i)[line_length - 10].matches("^\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$") || line_split.get(i)[line_length - 10].equals("N/A"))
 						&& line_split.get(i)[line_length - 7].matches("^\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$")) {		// this is likely a fire, smart check based on the "acres" and "personnel total" columns.
 					unit_id = line_split.get(i).length - 12;
 					String this_fire = String.join("\t", r_date, current_area, gacc_priority, fire_priority);
@@ -727,7 +755,7 @@ public class ISMR_Process {
 			} else { // from 2015 we use this to process data
 				if (line_length >= 14 
 						&& line_split.get(i)[line_length - 14].contains("-")    // do not use this for 2014 data, it has a different unit name, also in 20210710IMSR, one fire has wrong unit that cannot be included (Butte Creek: ID- CTS)
-						&& line_split.get(i)[line_length - 13].matches("^\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$")
+						&& (line_split.get(i)[line_length - 13].matches("^\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$") || line_split.get(i)[line_length - 13].equals("N/A")) // special cases such as U.S. Virgin in 20171004
 						&& line_split.get(i)[line_length - 8].matches("^\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$")		// this is likely a fire, smart check based on the "acres" and "personnel total" columns.
 				) {
 					unit_id = line_split.get(i).length - 14;
@@ -759,7 +787,7 @@ public class ISMR_Process {
 					r_fires.add(this_fire);
 				} else if (line_length >= 13 
 							&& (r_lines[i - 1].contains("-") || r_lines[i - 2].contains("-"))    // i-2 such as in 20150613
-							&& line_split.get(i)[line_length - 13].matches("^\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$")
+							&& (line_split.get(i)[line_length - 13].matches("^\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$") || line_split.get(i)[line_length - 13].equals("N/A")) // special cases such as U.S. Virgin in 20171004
 							&& line_split.get(i)[line_length - 8].matches("^\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$")		// this is likely a fire, smart check based on the "acres" and "personnel total" columns.
 				) {
 					String this_fire = String.join("\t", r_date, current_area, gacc_priority, fire_priority);
