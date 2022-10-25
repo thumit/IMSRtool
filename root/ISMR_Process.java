@@ -799,16 +799,29 @@ public class ISMR_Process {
 				) {
 					String this_fire = String.join("\t", r_date, current_area, gacc_priority, fire_priority);
 					String unit_name = "";
-					if (r_lines[i - 1].contains("-")) unit_name = r_lines[i - 1];
-					if (r_lines[i - 2].contains("-")) unit_name = r_lines[i - 2] + r_lines[i - 1];
+					if (r_lines[i - 1].contains("-")) {
+						unit_name = r_lines[i - 1];
+					} else {
+						if (r_lines[i - 2].contains("-")) unit_name = r_lines[i - 2] + r_lines[i - 1];
+					}
 					
 					// Check above lines, if length <=5 etc, then add to fire name
 					String fire_name = "";
+					// fix the special case: Trestle 20180727 where unit still cotain part of fire name
+					String[] unit_contain_fire_name = unit_name.split(" ");
+					if (unit_contain_fire_name.length == 2) {
+						fire_name = unit_contain_fire_name[0];
+						unit_name = unit_contain_fire_name[1];
+					}
+					
 					// loop back previous lines to get the full fire name
 					boolean continue_loop = true;
 					int l = i;
-					if (r_lines[i - 1].contains("-")) l = i - 1;
-					if (r_lines[i - 2].contains("-")) l = i - 2;
+					if (r_lines[i - 1].contains("-")) {
+						l = i - 1;
+					} else {
+						if (r_lines[i - 2].contains("-")) l = i - 2;
+					}
 					do {
 						l = l - 1;
 						if (line_split.get(l).length <= 5 && !r_lines[l].toUpperCase().endsWith("OWN") && !r_lines[l].toUpperCase().endsWith("HELI")) {		// HELI is special case for 20150102
@@ -832,10 +845,10 @@ public class ISMR_Process {
 							 (
 								((line_split.get(i)[line_length - 1].endsWith("NR") || line_split.get(i)[line_length - 1].endsWith("K") || line_split.get(i)[line_length - 1].endsWith("M"))
 										&& line_split.get(i + 1).length == 1 
-										&& (line_split.get(i)[line_length - 8].matches("^\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$") || line_split.get(i)[line_length - 8].equals("---")))
+										&& (line_split.get(i)[line_length - 7].matches("^\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$") || line_split.get(i)[line_length - 7].equals("---")))
 							 || 
 							 	((line_split.get(i)[line_length - 2].endsWith("NR") || line_split.get(i)[line_length - 2].endsWith("K") || line_split.get(i)[line_length - 2].endsWith("M"))
-									 	&& (line_split.get(i)[line_length - 7].matches("^\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$") || line_split.get(i)[line_length - 7].equals("---")))
+									 	&& (line_split.get(i)[line_length - 8].matches("^\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$") || line_split.get(i)[line_length - 8].equals("---")))
 							 )
 						  ) {	// handle special cases such as in 20180726
 					String this_fire = String.join("\t", r_date, current_area, gacc_priority, fire_priority);
