@@ -864,6 +864,12 @@ public class ISMR_Process {
 					// loop back previous lines to join
 					boolean continue_loop = true;
 					int l = i;
+					if (combine_st.startsWith("---0")) {	// special case such as 20180913 in AICC ---0 is shown in the raw txt as 2 lines but actually they are in a single line after reading.
+						combine_st = combine_st.replace("---0", "---" + "\t" + "0");	// this is because line i-1 shown as --- but it is actually not after reading
+						combine_st = String.join("\t", r_lines[i - 2].replace(" ", "\t"), combine_st);
+						fire_name = r_lines[i - 3];
+						l = i - 2;
+					}
 					do {
 						l = l - 1;
 						if ((r_fires.isEmpty() || !r_fires.get(r_fires.size() - 1).endsWith(r_lines[l])) &&	// this is to ensure we don't use the origin_own of previous fire in the name of this fire
@@ -874,7 +880,7 @@ public class ISMR_Process {
 								String final_word = "";
 								if (last_word.equals("-")) { // such as "Michael - " in 20181022
 									final_word = String.join(" ", previous_words, last_word);
-								} else if (last_word.contains("-")) {
+								} else if (last_word.contains("-")) {	// this is unit
 									final_word = String.join("\t", previous_words, last_word);
 								} else {
 									final_word = String.join(" ", previous_words, last_word);
@@ -888,7 +894,7 @@ public class ISMR_Process {
 						}
 					} while (continue_loop);
 					
-					fire_name = fire_name.replaceAll("---", "---" + "\t");	// special case such as 20180913
+//					fire_name = fire_name.replaceAll("---", "---" + "\t");	// special case such as 20180913
 					fire_name = fire_name.replaceAll("\\*", "").replaceAll("\\s{2,}", " ").trim().toUpperCase();	// This will remove the * (if exist in the name) and change the name to capital (IMPORTANT)
 					// if combine_st has length > 14 then part of fire_name is in it. We need to adjust the name
 					String[] combine_st_arr = combine_st.split("\t");
