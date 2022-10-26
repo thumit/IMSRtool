@@ -7,7 +7,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 import convenience_classes.SubstringBetween;
@@ -894,7 +893,6 @@ public class ISMR_Process {
 						}
 					} while (continue_loop);
 					
-//					fire_name = fire_name.replaceAll("---", "---" + "\t");	// special case such as 20180913
 					fire_name = fire_name.replaceAll("\\*", "").replaceAll("\\s{2,}", " ").trim().toUpperCase();	// This will remove the * (if exist in the name) and change the name to capital (IMPORTANT)
 					// if combine_st has length > 14 then part of fire_name is in it. We need to adjust the name
 					String[] combine_st_arr = combine_st.split("\t");
@@ -920,27 +918,31 @@ public class ISMR_Process {
 			
 			i = i + 1;
 		} while (i < r_lines.length);
+		
+//		for (String st : r_fires) {
+//			System.out.println(st);	
+//		}
 	}
 	
 	private void fire_name_validation_and_adjustment() {
-		// hashmap to store pattern and id
-		LinkedHashMap<String, Integer> map_pattern_to_r_fire_id = new LinkedHashMap<String, Integer>();
+		// list to store pattern and id
+		List<String>r_pattern_list = new ArrayList<String>();
 		for (int i = 0; i < r_fires.size(); i++) {
 			String[] r_fire_info = r_fires.get(i).split("\t"); 
 			// pattern = "date", "unit", "size_acres", "size_chge", "percentage", "ctn_comp", "est", "personnel_total", "personnel_chge", "resources_crw", "resources_eng", "resources_heli", "strc_lost", "ctd", "origin_own"
 			String pattern = String.join("\t", r_fire_info[0], r_fire_info[5], r_fire_info[6], r_fire_info[7],
 					r_fire_info[8], r_fire_info[9], r_fire_info[10], r_fire_info[11], r_fire_info[12], r_fire_info[13],
 					r_fire_info[14], r_fire_info[15], r_fire_info[16], r_fire_info[17], r_fire_info[18]);
-			map_pattern_to_r_fire_id.put(pattern, i);		// pattern = key, id = value		
+			r_pattern_list.add(pattern);
 		}
 		if (r_fires.size() != s_fires.size()) {
 			System.out.println(date + " has different results between raw and simple2: " + r_fires.size() + " " + s_fires.size());
 		}
-		if (r_fires.size() != map_pattern_to_r_fire_id.size()) {
-			System.out.println(date + " " + r_fires.size() + " " + map_pattern_to_r_fire_id.size() + ": same pattern is identified but added once in hashmap");
+		if (r_fires.size() != r_pattern_list.size()) {
+			System.out.println(date + " " + r_fires.size() + " " + r_pattern_list.size() + ": same pattern is identified but added once in hashmap");
 		}
 		
-		// use hashmap to find matching pattern, then if names overlap between raw and simple we can adjust.
+		// find matching pattern, then if names overlap between raw and simple we can adjust.
 		int rename_count = 0;
 		for (int i = 0; i < s_fires.size(); i++) {
 			String[] s_fire_info = s_fires.get(i).split("\t"); 
@@ -948,14 +950,14 @@ public class ISMR_Process {
 			String pattern = String.join("\t", s_fire_info[0], s_fire_info[5], s_fire_info[6], s_fire_info[7],
 					s_fire_info[8], s_fire_info[9], s_fire_info[10], s_fire_info[11], s_fire_info[12], s_fire_info[13],
 					s_fire_info[14], s_fire_info[15], s_fire_info[16], s_fire_info[17], s_fire_info[18]);
-			if (map_pattern_to_r_fire_id.get(pattern) != null) {
-				int r_id = map_pattern_to_r_fire_id.get(pattern);
+			if (r_pattern_list.contains(pattern)) {
+				int r_id = r_pattern_list.indexOf(pattern);
 				String r_fire_name = r_fires.get(r_id).split("\t")[4];
 				String s_fire_name = s_fire_info[4];
 				String s_last_name = s_fire_name.substring(s_fire_name.lastIndexOf(" ") + 1);
 				if (r_fire_name.contains(s_last_name)) {
 					s_fire_info[4] = r_fire_name;	// adjust fire name
-					rename_count++;
+					rename_count = rename_count + 1;
 				}
 			}
 			final_fires.add(String.join("\t", s_fire_info));	// adjust fire name
