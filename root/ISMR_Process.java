@@ -938,9 +938,6 @@ public class ISMR_Process {
 		if (r_fires.size() != s_fires.size()) {
 			System.out.println(date + " has different results between raw and simple2: " + r_fires.size() + " " + s_fires.size());
 		}
-		if (r_fires.size() != r_pattern_list.size()) {
-			System.out.println(date + " " + r_fires.size() + " " + r_pattern_list.size() + ": same pattern is identified but added once in hashmap");
-		}
 		
 		// find matching pattern, then if names overlap between raw and simple we can adjust.
 		int rename_count = 0;
@@ -950,19 +947,20 @@ public class ISMR_Process {
 			String pattern = String.join("\t", s_fire_info[0], s_fire_info[5], s_fire_info[6], s_fire_info[7],
 					s_fire_info[8], s_fire_info[9], s_fire_info[10], s_fire_info[11], s_fire_info[12], s_fire_info[13],
 					s_fire_info[14], s_fire_info[15], s_fire_info[16], s_fire_info[17], s_fire_info[18]);
-			if (r_pattern_list.contains(pattern)) {
-				int r_id = r_pattern_list.indexOf(pattern);
-				String r_fire_name = r_fires.get(r_id).split("\t")[4];
-				String s_fire_name = s_fire_info[4];
-				String s_last_name = s_fire_name.substring(s_fire_name.lastIndexOf(" ") + 1);
-				if (r_fire_name.contains(s_last_name)) {
-					s_fire_info[4] = r_fire_name;	// adjust fire name
-					rename_count = rename_count + 1;
-				}
+			
+			String s_fire_name = s_fire_info[4];
+			String s_last_name = s_fire_name.substring(s_fire_name.lastIndexOf(" ") + 1);
+			int r_id = r_pattern_list.indexOf(pattern);
+			String r_fire_name = (r_id > -1)? r_fires.get(r_id).split("\t")[4] : "-9999";
+			if (r_id > -1 && r_fire_name.contains(s_last_name)) {
+				s_fire_info[4] = r_fire_name;	// adjust fire name
+				rename_count = rename_count + 1;
+			} else {
+				System.out.println(date + " " + s_fire_info[4] + " has not been renamed");
 			}
 			final_fires.add(String.join("\t", s_fire_info));	// adjust fire name
 		}
-		int not_rename_count = s_fires.size() - rename_count;
-		if (not_rename_count > 0) System.out.println(date + " " + not_rename_count + " has not been renamed");
+//		int not_rename_count = s_fires.size() - rename_count;
+//		if (not_rename_count > 0) System.out.println(date + " " + not_rename_count + " has not been renamed");
 	}
 }
