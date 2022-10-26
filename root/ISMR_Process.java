@@ -840,7 +840,7 @@ public class ISMR_Process {
 					r_fires.add(this_fire);
 					
 					if (this_fire.split("\t").length < 19) System.out.println(this_fire);
-				} else if (line_length >= 11 && 
+				} else if (line_length >= 10 && 
 							 (
 								((line_split.get(i)[line_length - 1].endsWith("NR") || line_split.get(i)[line_length - 1].endsWith("K") || line_split.get(i)[line_length - 1].endsWith("M"))
 										&& line_split.get(i + 1).length == 1 
@@ -866,6 +866,11 @@ public class ISMR_Process {
 					if (combine_st.startsWith("---0")) {	// special case such as 20180913 in AICC ---0 is shown in the raw txt as 2 lines but actually they are in a single line after reading.
 						combine_st = combine_st.replace("---0", "---" + "\t" + "0");	// this is because line i-1 shown as --- but it is actually not after reading
 						combine_st = String.join("\t", r_lines[i - 2].replace(" ", "\t"), combine_st);
+						fire_name = r_lines[i - 3];
+						l = i - 2;
+					} else 
+					if (combine_st.startsWith("Ctn") && r_lines[i - 1].matches("^\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$") && r_lines[i - 2].contains("-")) {	// special case such as Spokane Complex 20180824
+						combine_st = String.join("\t", r_lines[i - 2].replace(" ", "\t"), r_lines[i - 1], combine_st);
 						fire_name = r_lines[i - 3];
 						l = i - 2;
 					}
@@ -936,7 +941,7 @@ public class ISMR_Process {
 			r_pattern_list.add(pattern);
 		}
 		if (r_fires.size() != s_fires.size()) {
-			System.out.println(date + " has different results between raw and simple2: " + r_fires.size() + " " + s_fires.size());
+			System.out.println(date + " has different number of fires between raw and simple2: " + r_fires.size() + " " + s_fires.size());
 		}
 		
 		// find matching pattern, then if names overlap between raw and simple we can adjust.
