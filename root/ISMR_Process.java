@@ -690,7 +690,7 @@ public class ISMR_Process {
 					int l = i;
 					do {
 						l = l - 1;
-						if (line_split.get(l).length <= 5 && !r_lines[l].toUpperCase().endsWith("OWN") && !r_lines[l].toUpperCase().endsWith("HELI")) {		// HELI is special case for 20150102
+						if (line_split.get(l).length <= 5 && !r_lines[l].endsWith("Own") && !r_lines[l].endsWith("Heli")) {		// HELI is special case for 20150102
 							fire_name = String.join(" ", r_lines[l], fire_name);	// join by space
 						} else {
 							continue_loop = false;
@@ -729,7 +729,7 @@ public class ISMR_Process {
 					int l = i;
 					do {
 						l = l - 1;
-						if (line_split.get(l).length <= 5 && !r_lines[l].toUpperCase().endsWith("OWN") && !r_lines[l].toUpperCase().endsWith("HELI")) {		// HELI is special case for 20150102
+						if (line_split.get(l).length <= 5 && !r_lines[l].endsWith("Own") && !r_lines[l].endsWith("Heli")) {		// HELI is special case for 20150102
 							fire_name = String.join(" ", r_lines[l], fire_name);	// join by space
 						} else {
 							continue_loop = false;
@@ -776,7 +776,7 @@ public class ISMR_Process {
 					int l = i;
 					do {
 						l = l - 1;
-						if (line_split.get(l).length <= 5 && !r_lines[l].toUpperCase().endsWith("OWN") && !r_lines[l].toUpperCase().endsWith("HELI")) {		// HELI is special case for 20150102
+						if (line_split.get(l).length <= 5 && !r_lines[l].endsWith("Own") && !r_lines[l].endsWith("Heli")) {		// HELI is special case for 20150102
 							fire_name = String.join(" ", r_lines[l], fire_name);	// join by space
 						} else {
 							continue_loop = false;
@@ -823,7 +823,7 @@ public class ISMR_Process {
 					}
 					do {
 						l = l - 1;
-						if (line_split.get(l).length <= 5 && !r_lines[l].toUpperCase().endsWith("OWN") && !r_lines[l].toUpperCase().endsWith("HELI")) {		// HELI is special case for 20150102
+						if (line_split.get(l).length <= 5 && !r_lines[l].endsWith("Own") && !r_lines[l].endsWith("Heli")) {		// HELI is special case for 20150102
 							fire_name = String.join(" ", r_lines[l], fire_name);	// join by space
 						} else {
 							continue_loop = false;
@@ -877,7 +877,7 @@ public class ISMR_Process {
 					do {
 						l = l - 1;
 						if ((r_fires.isEmpty() || !r_fires.get(r_fires.size() - 1).endsWith(r_lines[l])) &&	// this is to ensure we don't use the origin_own of previous fire in the name of this fire
-								line_split.get(l).length <= 5 && !r_lines[l].toUpperCase().endsWith("OWN") && !r_lines[l].toUpperCase().endsWith("HELI")) {		// HELI is special case for 20150102
+								line_split.get(l).length <= 5 && !r_lines[l].endsWith("Own") && !r_lines[l].endsWith("Heli")) {		// HELI is special case for 20150102
 							if (r_lines[l].contains(" ")) {
 								String previous_words = r_lines[l].substring(0, r_lines[l].lastIndexOf(" "));
 								String last_word = r_lines[l].substring(r_lines[l].lastIndexOf(" ") + 1, r_lines[l].length());
@@ -931,7 +931,112 @@ public class ISMR_Process {
 	
 	private void fire_name_validation_and_adjustment() {
 		// list to store pattern and id
-		List<String>r_pattern_list = new ArrayList<String>();
+		List<String[]> s_fire_list = new ArrayList<String[]>();
+		for (int i = 0; i < s_fires.size(); i++) {
+			String[] s_fire_info = s_fires.get(i).split("\t"); 
+			s_fire_list.add(s_fire_info);
+		}
+		List<String[]> r_fire_list = new ArrayList<String[]>();
+		for (int i = 0; i < r_fires.size(); i++) {
+			String[] r_fire_info = r_fires.get(i).split("\t"); 
+			r_fire_list.add(r_fire_info);
+		}
+		
+		List<String> r_pattern_list = new ArrayList<String>();
+		for (int i = 0; i < r_fires.size(); i++) {
+			String[] r_fire_info = r_fires.get(i).split("\t"); 
+			// pattern = "date", "unit", "size_acres", "size_chge", "percentage", "ctn_comp", "est", "personnel_total", "personnel_chge", "resources_crw", "resources_eng", "resources_heli", "strc_lost", "ctd", "origin_own"
+			String pattern = String.join("\t", r_fire_info[0], r_fire_info[5], r_fire_info[6], r_fire_info[7],
+					r_fire_info[8], r_fire_info[9], r_fire_info[10], r_fire_info[11], r_fire_info[12], r_fire_info[13],
+					r_fire_info[14], r_fire_info[15], r_fire_info[16], r_fire_info[17], r_fire_info[18]);
+			r_pattern_list.add(pattern);
+		}
+		
+		
+		// find matching pattern, then if names overlap between raw and simple we can adjust.
+		List<String> fire_in_s_not_in_r = new ArrayList<String>();
+		int in_s_but_not_in_r_count = 0;
+		for (int i = 0; i < s_fires.size(); i++) {
+			String[] s_fire_info = s_fires.get(i).split("\t"); 
+			// pattern = "date", "unit", "size_acres", "size_chge", "percentage", "ctn_comp", "est", "personnel_total", "personnel_chge", "resources_crw", "resources_eng", "resources_heli", "strc_lost", "ctd", "origin_own"
+			String pattern = String.join("\t", s_fire_info[0], s_fire_info[5], s_fire_info[6], s_fire_info[7],
+					s_fire_info[8], s_fire_info[9], s_fire_info[10], s_fire_info[11], s_fire_info[12], s_fire_info[13],
+					s_fire_info[14], s_fire_info[15], s_fire_info[16], s_fire_info[17], s_fire_info[18]);
+			
+			String s_fire_name = s_fire_info[4];
+			String s_last_name = s_fire_name.substring(s_fire_name.lastIndexOf(" ") + 1);
+			
+			boolean overlap_found = false;
+			int r_id = 0;
+			do {
+				String r_fire_name = r_fire_list.get(r_id)[4];
+				if (r_pattern_list.get(r_id).equals(pattern) && r_fire_name.contains(s_last_name)) {
+					overlap_found = true;	// overlapped fire
+				} else if (	// apply a different check
+						r_fire_list.get(r_id)[0].contains(s_fire_list.get(i)[0]) &&
+						r_fire_list.get(r_id)[4].contains(s_last_name) &&
+						r_fire_list.get(r_id)[5].contains(s_fire_list.get(i)[5]) &&
+						r_fire_list.get(r_id)[6].contains(s_fire_list.get(i)[6]) &&
+						r_fire_list.get(r_id)[7].contains(s_fire_list.get(i)[7]) &&
+						r_fire_list.get(r_id)[8].contains(s_fire_list.get(i)[8]) &&
+						r_fire_list.get(r_id)[9].contains(s_fire_list.get(i)[9]) &&
+						r_fire_list.get(r_id)[10].contains(s_fire_list.get(i)[10]) &&
+						r_fire_list.get(r_id)[11].contains(s_fire_list.get(i)[11]) &&
+						r_fire_list.get(r_id)[12].contains(s_fire_list.get(i)[12]) &&
+						r_fire_list.get(r_id)[13].contains(s_fire_list.get(i)[13]) &&
+						r_fire_list.get(r_id)[14].contains(s_fire_list.get(i)[14]) &&
+						r_fire_list.get(r_id)[15].contains(s_fire_list.get(i)[15]) &&
+						r_fire_list.get(r_id)[16].contains(s_fire_list.get(i)[16]) &&
+						r_fire_list.get(r_id)[17].contains(s_fire_list.get(i)[17]) &&
+						r_fire_list.get(r_id)[18].contains(s_fire_list.get(i)[18])					
+						) {
+					overlap_found = true;	// overlapped fire
+				}
+				
+				r_id = r_id + 1;
+			} while (r_id < r_fires.size() && !overlap_found);
+			
+			if (!overlap_found) {
+				// not overlapped fire
+				in_s_but_not_in_r_count = in_s_but_not_in_r_count + 1;
+				fire_in_s_not_in_r.add(s_fires.get(i));
+				System.out.println(date + " " + s_fire_info[4] + " is in simple2 list but not in raw list");
+				System.out.println(s_fires.get(i));
+			}
+			
+			
+			
+//			int r_id = r_pattern_list.indexOf(pattern);
+//			String r_fire_name = (r_id > -1)? r_fires.get(r_id).split("\t")[4] : "-9999";
+//			if (r_id > -1 && r_fire_name.contains(s_last_name)) {
+//				// overlapped fire
+//			} else {
+//				// not overlapped fire
+//				in_s_but_not_in_r_count = in_s_but_not_in_r_count + 1;
+//				fire_in_s_not_in_r.add(s_fires.get(i));
+//				System.out.println(date + " " + s_fire_info[4] + " is in simple2 list but not in raw list");
+//				System.out.println(s_fires.get(i));
+//				System.out.println(r_id);
+//				System.out.println(r_fire_name);
+//				System.out.println(s_last_name);
+//			}
+		}
+		
+		for (int i = 0; i < r_fires.size(); i++) {
+			final_fires.add(r_fires.get(i));	
+		}
+		
+		
+//		int not_rename_count = s_fires.size() - rename_count;
+//		if (not_rename_count > 0) System.out.println(date + " " + not_rename_count + " has not been renamed");
+		if (r_fires.size() != s_fires.size()) {
+			System.out.println(date + " has different number of fires between raw and simple2: " + r_fires.size() + " " + s_fires.size());
+		}
+	}
+	
+	private void fire_name_validation_and_adjustmen_old_not_use() {
+		// list to store pattern and id
+		List<String> r_pattern_list = new ArrayList<String>();
 		for (int i = 0; i < r_fires.size(); i++) {
 			String[] r_fire_info = r_fires.get(i).split("\t"); 
 			// pattern = "date", "unit", "size_acres", "size_chge", "percentage", "ctn_comp", "est", "personnel_total", "personnel_chge", "resources_crw", "resources_eng", "resources_heli", "strc_lost", "ctd", "origin_own"
