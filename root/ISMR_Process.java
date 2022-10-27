@@ -448,6 +448,16 @@ public class ISMR_Process {
 	}
 	
 	private void get_fire_data_simple2_method(String[] s_lines) {		// Information of a Fire is in one line		(Note: a special case: 20180803 at page 10 where the table without header if expanding 2 pages) 
+		// Pre-processing for some special cases
+		for (int i = 0; i < s_lines.length; i++) {
+			if (s_lines[i].length() == 3 && s_lines[i].endsWith("-")) {		// special case where unit is split into 2 lines such as 20150613, then we merge 2 lines and make the one line empty
+				s_lines[i + 1] = s_lines[i] + s_lines[i + 1];
+				s_lines[i] = "";
+			}
+			s_lines[i] = s_lines[i].replaceAll(" - ", " -"); 	// in many cases such as 20080201, negative number is represented by - and a space then number. This is to merger the sign and the number of
+		}
+		//------------------------------------------------------------
+		
 		List<String[]> line_split = new ArrayList<String[]>();
 		for (String st : s_lines) {
 			line_split.add(st.split("\\s+"));
@@ -623,6 +633,7 @@ public class ISMR_Process {
 				r_lines[i + 1] = r_lines[i] + r_lines[i + 1];
 				r_lines[i] = "";
 			}
+			r_lines[i] = r_lines[i].replaceAll(" - ", " -"); 	// in many cases such as 20080201, negative number is represented by - and a space then number. This is to merger the sign and the number of
 		}
 		//------------------------------------------------------------
 		
@@ -755,6 +766,21 @@ public class ISMR_Process {
 						}
 					}
 					r_fires.add(this_fire);
+				} else if (line_length >= 6 && 
+						 (
+							((line_split.get(i)[line_length - 1].endsWith("NR") || line_split.get(i)[line_length - 1].endsWith("K") || line_split.get(i)[line_length - 1].endsWith("M"))
+									&& line_split.get(i + 1).length == 1 
+									&& line_split.get(i)[line_length - 2].matches("^-?\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$")
+									&& line_split.get(i)[line_length - 3].matches("^-?\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$")
+							)
+						 || 
+						 	((line_split.get(i)[line_length - 2].endsWith("NR") || line_split.get(i)[line_length - 2].endsWith("K") || line_split.get(i)[line_length - 2].endsWith("M"))
+									&& line_split.get(i)[line_length - 3].matches("^-?\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$")
+									&& line_split.get(i)[line_length - 4].matches("^-?\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$")
+							)		
+						 )
+					  ) {	// is there any fire else?
+					System.out.println( date + ": " + "Is this a fire we forgot to add when processing raw?   " + r_lines[i]);
 				}
 			} else { // from 2015 we use this to process data
 				if (line_length >= 14 
@@ -936,7 +962,7 @@ public class ISMR_Process {
 							System.out.println("new info:     " + this_fire);
 							r_fires.add(this_fire);
 						} else {
-							System.out.println("We do not this (length not 19). Is it a fire?  " + date + ":     " + this_fire);	
+							System.out.println("We did not add this (length not 19). Is it a fire?  " + date + ":     " + this_fire);	
 						}
 					}
 				} else if (line_length >= 6 && 
@@ -972,7 +998,7 @@ public class ISMR_Process {
 						System.out.println("new info:     " + this_fire);
 						r_fires.add(this_fire);
 					} else {
-						System.out.println("Is this a fire we forgot to add when processing raw?  " + date + ":     " + r_lines[i]);
+						System.out.println( date + ": " +"Is this a fire we forgot to add when processing raw?   " + r_lines[i]);
 					}
 				}
 			}
@@ -1049,9 +1075,9 @@ public class ISMR_Process {
 			final_fires.add(r_fires.get(i));	
 		}
 		
-		if (r_fires.size() != s_fires.size()) {
-			System.out.println(date + ": different number of fires in raw vs simple2: " + r_fires.size() + " " + s_fires.size());
-		}
+//		if (r_fires.size() != s_fires.size()) {
+//			System.out.println(date + ": different number of fires in raw vs simple2: " + r_fires.size() + " " + s_fires.size());
+//		}
 		
 		if (fire_in_s_not_in_r.size() > 0) {
 			System.out.println(date + " --------------------------------------- fires in simple2 list but not in raw list: " + fire_in_s_not_in_r.size());
