@@ -967,7 +967,7 @@ public class ISMR_Process {
 							System.out.println("new info:     " + this_fire);
 							r_fires.add(this_fire);
 						} else {
-							System.out.println("We did not add this (length not 19). Is it a fire?  " + date + ":     " + this_fire);	
+							System.out.println( date + ": " +"Is this a fire we did not add (length not 19) when processing raw?   " + this_fire);
 						}
 					}
 				} else if (line_length >= 6 && 
@@ -984,26 +984,65 @@ public class ISMR_Process {
 							)		
 						 )
 					  ) {	// is there any fire else?
-					if (r_lines[i].equals("CA-LNU 110,720 0 99 Ctn 10/31 150 -88 4 5 0 7,010 101 M ST")) {
-						System.out.println("this fire is fixed and added manually");
-						System.out.println("old info:     " + r_lines[i]);
-						String this_fire =  "2017-10-31	ONCC	NA	NA	CENTRAL LNU COMPLEX	CA-LNU	110,720	0	99	Ctn	10/31	150	-88	4	5	0	7,010	101M	ST";
-						System.out.println("new info:     " + this_fire);
-						r_fires.add(this_fire);
-					} else if (r_lines[i].equals("0 --- 0 0 0 0 1K FWS")) {
-						System.out.println("this fire is fixed and added manually");
-						System.out.println("old info:     " + r_lines[i]);
-						String this_fire =  "2015-08-09	AICC	NA	NA	LITTLE MUD	AK-TAD	433	---	0	Comp	NR	0	---	0	0	0	0	1K	FWS";
-						System.out.println("new info:     " + this_fire);
-						r_fires.add(this_fire);
-					}  else if (r_lines[i].equals("8 0 0 0 0 0 85K TRI")) {
-						System.out.println("this fire is fixed and added manually");
-						System.out.println("old info:     " + r_lines[i]);
-						String this_fire =  "2015-08-09	AICC	NA	NA	BIG CREEK TWO	AK-GAD	288,735	16,988	0	Comp	NR	8	0	0	0	0	0	85K	TRI";
-						System.out.println("new info:     " + this_fire);
+//					if (r_lines[i].equals("CA-LNU 110,720 0 99 Ctn 10/31 150 -88 4 5 0 7,010 101 M ST")) {
+//						System.out.println("this fire is fixed and added manually");
+//						System.out.println("old info:     " + r_lines[i]);
+//						String this_fire =  "2017-10-31	ONCC	NA	NA	CENTRAL LNU COMPLEX	CA-LNU	110,720	0	99	Ctn	10/31	150	-88	4	5	0	7,010	101M	ST";
+//						System.out.println("new info:     " + this_fire);
+//						r_fires.add(this_fire);
+//					} else if (r_lines[i].equals("0 --- 0 0 0 0 1K FWS")) {
+//						System.out.println("this fire is fixed and added manually");
+//						System.out.println("old info:     " + r_lines[i]);
+//						String this_fire =  "2015-08-09	AICC	NA	NA	LITTLE MUD	AK-TAD	433	---	0	Comp	NR	0	---	0	0	0	0	1K	FWS";
+//						System.out.println("new info:     " + this_fire);
+//						r_fires.add(this_fire);
+//					}  else if (r_lines[i].equals("8 0 0 0 0 0 85K TRI")) {
+//						System.out.println("this fire is fixed and added manually");
+//						System.out.println("old info:     " + r_lines[i]);
+//						String this_fire =  "2015-08-09	AICC	NA	NA	BIG CREEK TWO	AK-GAD	288,735	16,988	0	Comp	NR	8	0	0	0	0	0	85K	TRI";
+//						System.out.println("new info:     " + this_fire);
+//						r_fires.add(this_fire);
+//					} else {
+//						System.out.println( date + ": " +"Is this a fire we did not add (length >=6) when processing raw?   " + r_lines[i]);
+//					}
+					
+					String current_merge_info = r_lines[i].replaceAll("---", "---" + " ").replaceAll("\\s{2,}", " ");			// special case such as "---0" in 20180930
+					// loop back previous lines to join, loop 6 previous lines at max
+					boolean continue_loop = true;
+					int l = i;
+					do {
+						l = l - 1;
+						if (r_lines[l].isBlank()) l = l - 1;	// this is very special case where the line is empty
+						if ((r_fires.isEmpty() || !r_fires.get(r_fires.size() - 1).endsWith(r_lines[l])) &&	// this is to ensure we don't use the origin_own of previous fire in the name of this fire
+								(r_lines[l].toUpperCase().endsWith("CTN") || r_lines[l].toUpperCase().endsWith("COMP") || line_split.get(l).length <= 5) && !r_lines[l].substring(r_lines[l].lastIndexOf(" ") + 1).toUpperCase().equals("OWN") && !r_lines[l].toUpperCase().endsWith("HELI")) {		// HELI is special case for 20150102
+							current_merge_info = String.join(" ", r_lines[l].replaceAll("---", "---" + " ").replaceAll("\\s{2,}", " "), current_merge_info);	// join by space
+						} else {
+							continue_loop = false;
+						}
+					} while (continue_loop);
+					String[] info_split = current_merge_info.split(" ");
+					String this_fire = String.join("\t", r_date, current_area, gacc_priority, fire_priority);
+					String fire_name = "";
+					if (info_split.length > 14) {
+						for (int k = 0; k < info_split.length - 14; k++) {
+							fire_name = String.join(" ", fire_name, info_split[k].toUpperCase());	// This is part of fire name
+						}
+						this_fire = String.join("\t", this_fire, fire_name);
+						for (int k = info_split.length - 14; k < info_split.length; k++) {
+							this_fire = String.join("\t", this_fire, info_split[k]);
+						}
+					}
+					
+					if (this_fire.split("\t").length == 19) {
 						r_fires.add(this_fire);
 					} else {
-						System.out.println( date + ": " +"Is this a fire we forgot to add when processing raw?   " + r_lines[i]);
+//						System.out.println(date + ": " +"Is this a fire we did not add (length >=6) when processing raw?   " + r_lines[i-5]);
+//						System.out.println(date + ": " +"Is this a fire we did not add (length >=6) when processing raw?   " + r_lines[i-4]);
+//						System.out.println(date + ": " +"Is this a fire we did not add (length >=6) when processing raw?   " + r_lines[i-3]);
+//						System.out.println(date + ": " +"Is this a fire we did not add (length >=6) when processing raw?   " + r_lines[i-2]);
+//						System.out.println(date + ": " +"Is this a fire we did not add (length >=6) when processing raw?   " + r_lines[i-1]);
+						System.out.println(date + ": " +"Is this a fire we did not add (length >=6) when processing raw?   " + r_lines[i]);
+						System.out.println(current_merge_info);
 					}
 				}
 			}
@@ -1087,9 +1126,9 @@ public class ISMR_Process {
 		if (fire_in_s_not_in_r.size() > 0) {
 			System.out.println(date + " --------------------------------------- fires in simple2 list but not in raw list: " + fire_in_s_not_in_r.size());
 			for (String st : fire_in_s_not_in_r) {
-				System.out.println("in simple2:     " + st);
+				System.out.println("simple2:     " + st);
 				if (st.equals("2015-08-21	SACC	7	2	LANE FIRE	GA-BLR	337	---	85	Comp	8/25	4	---	0	1	0	0	13K	FWS")) {
-					System.out.println("no worry, in raw as:     " + st);
+					System.out.println("incorrect simple2 but correct raw:     " + st);
 				}
 			}
 		}
