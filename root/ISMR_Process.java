@@ -706,10 +706,14 @@ public class ISMR_Process {
 					int l = i;
 					do {
 						l = l - 1;
-						if (line_split.get(l).length <= 5 && !r_lines[l].substring(r_lines[l].lastIndexOf(" ") + 1).toUpperCase().equals("OWN") && !r_lines[l].toUpperCase().endsWith("HELI")) {		// HELI is special case for 20150102
-							fire_name = String.join(" ", r_lines[l], fire_name);	// join by space
-						} else {
+						if (date.equals("2008-01-11") && r_lines[l].startsWith("Uncontained large fires")) {	// This is only one special case in 20080111
 							continue_loop = false;
+						} else {
+							if (line_split.get(l).length <= 5 && !r_lines[l].substring(r_lines[l].lastIndexOf(" ") + 1).toUpperCase().equals("OWN") && !r_lines[l].toUpperCase().endsWith("HELI")) {		// HELI is special case for 20150102
+								fire_name = String.join(" ", r_lines[l], fire_name);	// join by space
+							} else {
+								continue_loop = false;
+							}
 						}
 					} while (continue_loop);
 					fire_name = fire_name.replaceAll("\\*", "").replaceAll("\\s{2,}", " ").trim().toUpperCase();	// This will remove the * (if exist in the name) and change the name to capital (IMPORTANT)
@@ -822,7 +826,7 @@ public class ISMR_Process {
 					}
 					r_fires.add(this_fire);
 				} else if (line_length >= 13 
-							&& (r_lines[i - 1].contains("-") || r_lines[i - 2].contains("-"))    // i-2 such as in 20150613
+							&& ((r_lines[i - 1].contains("-") && r_lines[i - 1].length() <= 8) || (r_lines[i - 2].endsWith("-") && r_lines[i - 2].length() <= 8))    // i-2 such as in 20150613
 							&& (line_split.get(i)[line_length - 13].matches("^-?\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$") || line_split.get(i)[line_length - 13].equals("N/A") || line_split.get(i)[line_length - 13].equals("NR") || line_split.get(i)[line_length - 13].equals("---")) // special cases such as U.S. Virgin in 20171004
 							&& (line_split.get(i)[line_length - 8].matches("^-?\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$") || line_split.get(i)[line_length - 8].equals("UNK") || line_split.get(i)[line_length - 8].equals("NR") || line_split.get(i)[line_length - 8].equals("---"))
 									// this is likely a fire, smart check based on the "acres" and "personnel total" columns.
@@ -832,7 +836,7 @@ public class ISMR_Process {
 					if (r_lines[i - 1].contains("-")) {
 						unit_name = r_lines[i - 1];
 					} else {
-						if (r_lines[i - 2].contains("-")) unit_name = r_lines[i - 2] + r_lines[i - 1];
+						if (r_lines[i - 2].endsWith("-")) unit_name = r_lines[i - 2] + r_lines[i - 1];
 					}
 					
 					// Check above lines, if length <=5 etc, then add to fire name
