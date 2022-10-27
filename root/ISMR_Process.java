@@ -518,7 +518,7 @@ public class ISMR_Process {
 			if (year_before_2015) { // before 2015 we use this to process data (Note unit is split by 2 columns and we need to merge, also we do not have the "Ctn/Comp" and we need to assign Ctn for it)
 				if (line_length >= 15 
 						&& line_split.get(i)[line_length - 14].length() == 2    // This is State "St" for 2014 and earlier year. It must have only 2 characters
-						&& (line_split.get(i)[line_length - 12].matches("^-?\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$") || line_split.get(i)[line_length - 12].equals("N/A") || line_split.get(i)[line_length - 12].equals("---")) 
+						&& (line_split.get(i)[line_length - 12].matches("^-?\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$") || line_split.get(i)[line_length - 12].equals("N/A") || line_split.get(i)[line_length - 12].equals("NR") || line_split.get(i)[line_length - 12].equals("---")) 
 						&& (line_split.get(i)[line_length - 8].matches("^-?\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$") || line_split.get(i)[line_length - 8].equals("UNK") || line_split.get(i)[line_length - 8].equals("NR") || line_split.get(i)[line_length - 8].equals("---"))
 						) {		// this is likely a fire, smart check based on the "acres" and "personnel total" columns.
 					unit_id = line_split.get(i).length - 14;
@@ -554,7 +554,7 @@ public class ISMR_Process {
 					area_fires(current_area).add(this_fire);
 				} else if (line_length >= 13 		// special case in first 5 months on 2007
 						&& line_split.get(i)[line_length - 12].length() == 2    // This is State "St" for 2007 in first 5 months. It must have only 2 characters
-						&& (line_split.get(i)[line_length - 10].matches("^-?\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$") || line_split.get(i)[line_length - 10].equals("N/A") || line_split.get(i)[line_length - 10].equals("---"))
+						&& (line_split.get(i)[line_length - 10].matches("^-?\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$") || line_split.get(i)[line_length - 10].equals("N/A") || line_split.get(i)[line_length - 10].equals("NR") || line_split.get(i)[line_length - 10].equals("---"))
 						&& (line_split.get(i)[line_length - 7].matches("^-?\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$") || line_split.get(i)[line_length - 7].equals("UNK") || line_split.get(i)[line_length - 7].equals("NR") || line_split.get(i)[line_length - 7].equals("---"))
 						) {		// this is likely a fire, smart check based on the "acres" and "personnel total" columns.
 					unit_id = line_split.get(i).length - 12;
@@ -598,7 +598,7 @@ public class ISMR_Process {
 			} else { // from 2015 we use this to process data
 				if (line_length >= 15 
 						&& line_split.get(i)[line_length - 14].contains("-")    // do not use this for 2014 data, it has a different unit name, also in 20210710IMSR, one fire has wrong unit that cannot be included (Butte Creek: ID- CTS)
-						&& (line_split.get(i)[line_length - 13].matches("^-?\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$") || line_split.get(i)[line_length - 13].equals("N/A") || line_split.get(i)[line_length - 13].equals("---")) // special cases N/A such as U.S. Virgin in 20171004, --- such as in 20210822
+						&& (line_split.get(i)[line_length - 13].matches("^-?\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$") || line_split.get(i)[line_length - 13].equals("N/A") || line_split.get(i)[line_length - 13].equals("NR") || line_split.get(i)[line_length - 13].equals("---")) // special cases N/A such as U.S. Virgin in 20171004, --- such as in 20210822
 						&& (line_split.get(i)[line_length - 8].matches("^-?\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$") || line_split.get(i)[line_length - 8].equals("UNK") || line_split.get(i)[line_length - 8].equals("NR") || line_split.get(i)[line_length - 8].equals("---"))
 					) {		// this is likely a fire, smart check based on the "acres" and "personnel total" columns.
 					unit_id = line_split.get(i).length - 14;
@@ -689,7 +689,7 @@ public class ISMR_Process {
 			if (year_before_2015) { // before 2015 we use this to process data (Note unit is split by 2 columns and we need to merge, also we do not have the "Ctn/Comp" and we need to assign Ctn for it)
 				if (line_length >= 14 
 						&& line_split.get(i)[line_length - 14].length() == 2    // This is State "St" for 2014 and earlier year. It must have only 2 characters
-						&& (line_split.get(i)[line_length - 12].matches("^-?\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$") || line_split.get(i)[line_length - 12].equals("N/A") || line_split.get(i)[line_length - 12].equals("---"))
+						&& (line_split.get(i)[line_length - 12].matches("^-?\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$") || line_split.get(i)[line_length - 12].equals("N/A") || line_split.get(i)[line_length - 12].equals("NR") || line_split.get(i)[line_length - 12].equals("---"))
 						&& (line_split.get(i)[line_length - 8].matches("^-?\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$") || line_split.get(i)[line_length - 8].equals("UNK") || line_split.get(i)[line_length - 8].equals("NR") || line_split.get(i)[line_length - 8].equals("---"))
 					) {		// this is likely a fire, smart check based on the "acres" and "personnel total" columns.
 					unit_id = line_split.get(i).length - 14;
@@ -728,7 +728,7 @@ public class ISMR_Process {
 					r_fires.add(this_fire);
 				} else if (line_length >= 12 
 						&& line_split.get(i)[line_length - 12].length() == 2    // This is State "St" for 2014 and earlier year. It must have only 2 characters
-						&& (line_split.get(i)[line_length - 10].matches("^-?\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$") || line_split.get(i)[line_length - 10].equals("N/A") || line_split.get(i)[line_length - 10].equals("---"))
+						&& (line_split.get(i)[line_length - 10].matches("^-?\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$") || line_split.get(i)[line_length - 10].equals("N/A") || line_split.get(i)[line_length - 10].equals("NR") || line_split.get(i)[line_length - 10].equals("---"))
 						&& (line_split.get(i)[line_length - 7].matches("^-?\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$") || line_split.get(i)[line_length - 7].equals("UNK") || line_split.get(i)[line_length - 7].equals("NR") || line_split.get(i)[line_length - 7].equals("---"))
 						) {		// this is likely a fire, smart check based on the "acres" and "personnel total" columns.
 					unit_id = line_split.get(i).length - 12;
@@ -785,12 +785,12 @@ public class ISMR_Process {
 							)		
 						 )
 					  ) {	// is there any fire else?
-					System.out.println( date + ": " + "Is this a fire we forgot to add when processing raw?   " + r_lines[i]);
+					System.out.println( date + ": " + "Is this a fire we did not add when processing raw?   " + r_lines[i]);
 				}
 			} else { // from 2015 we use this to process data
 				if (line_length >= 14 
 						&& line_split.get(i)[line_length - 14].contains("-")    // do not use this for 2014 data, it has a different unit name, also in 20210710IMSR, one fire has wrong unit that cannot be included (Butte Creek: ID- CTS)
-						&& (line_split.get(i)[line_length - 13].matches("^-?\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$") || line_split.get(i)[line_length - 13].equals("N/A") || line_split.get(i)[line_length - 13].equals("---")) // special cases such as U.S. Virgin in 20171004
+						&& (line_split.get(i)[line_length - 13].matches("^-?\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$") || line_split.get(i)[line_length - 13].equals("N/A") || line_split.get(i)[line_length - 13].equals("NR") || line_split.get(i)[line_length - 13].equals("---")) // special cases such as U.S. Virgin in 20171004
 						&& (line_split.get(i)[line_length - 8].matches("^-?\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$") || line_split.get(i)[line_length - 8].equals("UNK") || line_split.get(i)[line_length - 8].equals("NR") || line_split.get(i)[line_length - 8].equals("---"))
 								// this is likely a fire, smart check based on the "acres" and "personnel total" columns.
 				) {
@@ -823,7 +823,7 @@ public class ISMR_Process {
 					r_fires.add(this_fire);
 				} else if (line_length >= 13 
 							&& (r_lines[i - 1].contains("-") || r_lines[i - 2].contains("-"))    // i-2 such as in 20150613
-							&& (line_split.get(i)[line_length - 13].matches("^-?\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$") || line_split.get(i)[line_length - 13].equals("N/A") || line_split.get(i)[line_length - 13].equals("---")) // special cases such as U.S. Virgin in 20171004
+							&& (line_split.get(i)[line_length - 13].matches("^-?\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$") || line_split.get(i)[line_length - 13].equals("N/A") || line_split.get(i)[line_length - 13].equals("NR") || line_split.get(i)[line_length - 13].equals("---")) // special cases such as U.S. Virgin in 20171004
 							&& (line_split.get(i)[line_length - 8].matches("^-?\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$") || line_split.get(i)[line_length - 8].equals("UNK") || line_split.get(i)[line_length - 8].equals("NR") || line_split.get(i)[line_length - 8].equals("---"))
 									// this is likely a fire, smart check based on the "acres" and "personnel total" columns.
 				) {
@@ -947,24 +947,48 @@ public class ISMR_Process {
 					if (this_fire.split("\t").length == 19) {
 						r_fires.add(this_fire);
 					} else {
-						// problem need to fix manually: i.e. CA-KNF-006098 Complex 20170929
-						if (this_fire.equals("2017-09-29	ONCC	NA	NA	CA-KNF- 006098 COMPLEX CA-KNF 78,698 .4	0	51	Comp	10/10	318	1	5	11	2	0	44.5M	FS")) {
-							System.out.println("this fire is fixed and added manually");
-							System.out.println("old info:     " + this_fire);
-							this_fire =  "2017-09-29	ONCC	NA	NA	CA-KNF-006098 COMPLEX	CA-KNF	78,698	0	51	Comp	10/10	318	1	5	11	2	0	44.5M	FS";
-							System.out.println("new info:     " + this_fire);
-							r_fires.add(this_fire);
-						} else if (this_fire.equals("2015-06-01	SACC	NA	NA	MUD LAKE COMPLEX	FL-BCP	35,321	0	70	Comp	260	-32	4	7	6	0	7.6M	NPS")) {
-							System.out.println("this fire is fixed and added manually");
-							System.out.println("old info:     " + this_fire);
-							this_fire =  "2015-06-01	SACC	NA	NA	MUD LAKE COMPLEX	FL-BCP	35,321	0	70	Comp	---	260	-32	4	7	6	0	7.6M	NPS";
-							System.out.println("new info:     " + this_fire);
-							r_fires.add(this_fire);
-						}  else if (this_fire.equals("2015-06-01	SACC	NA	NA	BOLIN SLIME PIT	FL-FLS	300	---	95	Ctn	2	---	0	0	0	0	1K	ST")) {
-							System.out.println("this fire is fixed and added manually");
-							System.out.println("old info:     " + this_fire);
-							this_fire =  "2015-06-01	SACC	NA	NA	BOLIN SLIME PIT	FL-FLS	300	---	95	Ctn	---	2	---	0	0	0	0	1K	ST";
-							System.out.println("new info:     " + this_fire);
+//						// problem need to fix manually: i.e. CA-KNF-006098 Complex 20170929
+//						if (this_fire.equals("2017-09-29	ONCC	NA	NA	CA-KNF- 006098 COMPLEX CA-KNF 78,698 .4	0	51	Comp	10/10	318	1	5	11	2	0	44.5M	FS")) {
+//							System.out.println("this fire is fixed and added manually");
+//							System.out.println("old info:     " + this_fire);
+//							this_fire =  "2017-09-29	ONCC	NA	NA	CA-KNF-006098 COMPLEX	CA-KNF	78,698	0	51	Comp	10/10	318	1	5	11	2	0	44.5M	FS";
+//							System.out.println("new info:     " + this_fire);
+//							r_fires.add(this_fire);
+//						} else if (this_fire.equals("2015-06-01	SACC	NA	NA	MUD LAKE COMPLEX	FL-BCP	35,321	0	70	Comp	260	-32	4	7	6	0	7.6M	NPS")) {
+//							System.out.println("this fire is fixed and added manually");
+//							System.out.println("old info:     " + this_fire);
+//							this_fire =  "2015-06-01	SACC	NA	NA	MUD LAKE COMPLEX	FL-BCP	35,321	0	70	Comp	---	260	-32	4	7	6	0	7.6M	NPS";
+//							System.out.println("new info:     " + this_fire);
+//							r_fires.add(this_fire);
+//						}  else if (this_fire.equals("2015-06-01	SACC	NA	NA	BOLIN SLIME PIT	FL-FLS	300	---	95	Ctn	2	---	0	0	0	0	1K	ST")) {
+//							System.out.println("this fire is fixed and added manually");
+//							System.out.println("old info:     " + this_fire);
+//							this_fire =  "2015-06-01	SACC	NA	NA	BOLIN SLIME PIT	FL-FLS	300	---	95	Ctn	---	2	---	0	0	0	0	1K	ST";
+//							System.out.println("new info:     " + this_fire);
+//							r_fires.add(this_fire);
+//						} else {
+//							System.out.println( date + ": " +"Is this a fire we did not add (length not 19) when processing raw?   " + this_fire);
+//						} 
+						
+						String adjust_fire = "";
+						String[] this_fire_split = this_fire.split("\t");
+						for (int k = 0; k < this_fire_split.length; k++) {
+							if (k < 7) adjust_fire = String.join("\t", adjust_fire, this_fire_split[k]);
+							if (k >= 7) {	// started from fire size column (7-1=6)
+								if (this_fire_split[k - 1].equals("-")) {		// 2020-09-14	AUGUST COMPLEX	- 140,218 should be -140,218 (need to join instead of having space in between)
+									adjust_fire = adjust_fire + this_fire_split[k];
+								} else {
+									String[] st_split = this_fire_split[k - 1].split(",");
+									if (st_split.length == 2 && st_split[1].length() < 3) {	// cases where a number with comma is split into 2 terms, such as in 20210802 BOOTLEG, 413,76 2 should be 413,762
+										adjust_fire = adjust_fire + this_fire_split[k];
+									} else {
+										adjust_fire = String.join("\t", adjust_fire, this_fire_split[k]);
+									}
+								}
+							}
+						}
+						this_fire = adjust_fire;
+						if (this_fire.split("\t").length == 19) {
 							r_fires.add(this_fire);
 						} else {
 							System.out.println( date + ": " +"Is this a fire we did not add (length not 19) when processing raw?   " + this_fire);
@@ -984,6 +1008,7 @@ public class ISMR_Process {
 							)		
 						 )
 					  ) {	// is there any fire else?
+//					// problem need to fix manually
 //					if (r_lines[i].equals("")) {
 //						System.out.println("this fire is fixed and added manually");
 //						System.out.println("old info:     " + r_lines[i]);
@@ -1102,7 +1127,7 @@ public class ISMR_Process {
 //		}
 		
 		if (fire_in_s_not_in_r.size() > 0) {
-			System.out.println(date + " --------------------------------------- fires in simple2 list but not in raw list: " + fire_in_s_not_in_r.size());
+			System.out.println(date + " --------------------------------------- fires in simple2 list but may not be in raw list (check it): " + fire_in_s_not_in_r.size());
 			for (String st : fire_in_s_not_in_r) {
 				System.out.println("simple2:     " + st);
 				if (st.equals("2015-08-21	SACC	7	2	LANE FIRE	GA-BLR	337	---	85	Comp	8/25	4	---	0	1	0	0	13K	FWS")) {
