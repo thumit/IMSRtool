@@ -1031,10 +1031,12 @@ public class ISMR_Process {
 							continue_loop = false;
 						}
 					} while (continue_loop);
+					String this_fire = String.join("\t", r_date, current_area, gacc_priority, fire_priority, current_merge_info);	// fire joined but not correct yet.
+					// Process when enough information to correct the join by tab
 					String[] info_split = current_merge_info.split(" ");
-					String this_fire = String.join("\t", r_date, current_area, gacc_priority, fire_priority);
-					String fire_name = "";
 					if (info_split.length > 14) {
+						this_fire = String.join("\t", r_date, current_area, gacc_priority, fire_priority);
+						String fire_name = "";
 						for (int k = 0; k < info_split.length - 14; k++) {
 							fire_name = String.join(" ", fire_name, info_split[k]);	// This is part of fire name
 						}
@@ -1048,8 +1050,7 @@ public class ISMR_Process {
 					if (this_fire.split("\t").length == 19) {
 						r_fires.add(this_fire);
 					} else {
-						System.out.println(date + ": " +"Is this a fire we did not add (length >=6) when processing raw?   " + r_lines[i]);
-						System.out.println(current_merge_info);
+						System.out.println(date + ": " +"Is this a fire we did not add (length >=6) when processing raw?   " + this_fire);
 					}
 				}
 			}
@@ -1087,6 +1088,7 @@ public class ISMR_Process {
 		}
 				
 		// find matching pattern, then if names overlap between raw and simple we can adjust.
+		List<Integer> s_id_to_r_id = new ArrayList<Integer>();
 		List<String> fire_in_s_not_in_r = new ArrayList<String>();
 		int in_s_but_not_in_r_count = 0;
 		for (int s_id = 0; s_id < s_fires.size(); s_id++) {
@@ -1115,12 +1117,38 @@ public class ISMR_Process {
 			if (!overlap_found) {	// not overlapped fire
 				in_s_but_not_in_r_count = in_s_but_not_in_r_count + 1;
 				fire_in_s_not_in_r.add(s_fires.get(s_id));
+				s_id_to_r_id.add(-9999);
+			} else {
+				s_id_to_r_id.add(r_id - 1);
+//				if (!s_fire_info[1].equals(r_fire_list.get(r_id - 1)[1])) {
+//					System.out.println(date + " Matching fire does not have GACC matched: " + s_fire_info[4] + " " + s_fire_info[1] + " " + r_fire_list.get(r_id - 1)[1]);
+//				}
 			}
 		}
 		
-		for (int i = 0; i < r_fires.size(); i++) {
-			final_fires.add(r_fires.get(i));	
+		//-------------------------------NOW GENERATE FINAL FIRE RESULTS--------------------------------------------
+		//-------------------------------NOW GENERATE FINAL FIRE RESULTS--------------------------------------------
+		//-------------------------------NOW GENERATE FINAL FIRE RESULTS--------------------------------------------
+		// Because GACC positions are messed up in raw, we will substitute by GACC positions from raw when possible
+		for (int r_id = 0; r_id < r_fires.size(); r_id++) {
+			int s_id = s_id_to_r_id.indexOf(r_id);
+			String[] r_fire_info = r_fire_list.get(r_id);
+			if (s_id > -1) {
+				String[] s_fire_info = s_fire_list.get(s_id);
+				r_fire_info[1] = s_fire_info[1];	// Gacc
+			} else if ((r_id > 0) && (r_id < r_fires.size() - 1) && r_fire_list.get(r_id - 1)[1].equals(r_fire_list.get(r_id + 1)[1])) {	// because above and below raw IDs have the same GACC, we apply that GACC to the middle
+				r_fire_info[1] = r_fire_list.get(r_id - 1)[1];
+			} else {
+				System.out.println(date + "     " + r_fire_info[4] + "     "  + "missing GACC and is replaced by raw GACC that is    " + r_fire_info[1]); // has been checked manually and was 100% correct across 2016-2021
+				r_fire_info[1] = r_fire_info[1];	// Gacc
+				// r_fire_info[1] = "N/A";			// Gacc
+			}
+			final_fires.add(String.join("\t", r_fire_info));	
 		}
+		
+//		for (int i = 0; i < r_fires.size(); i++) {
+//			final_fires.add(r_fires.get(i));	
+//		}
 		
 //		if (r_fires.size() != s_fires.size()) {
 //			System.out.println(date + ": different number of fires in raw vs simple2: " + r_fires.size() + " " + s_fires.size());
