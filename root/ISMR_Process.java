@@ -448,13 +448,16 @@ public class ISMR_Process {
 	}
 	
 	private void get_fire_data_simple2_method(String[] s_lines) {		// Information of a Fire is in one line		(Note: a special case: 20180803 at page 10 where the table without header if expanding 2 pages) 
+		boolean year_before_2015 = Integer.valueOf(r_date.substring(0, 4)) < 2015;	// first 4 letters   
 		// Pre-processing for some special cases
 		for (int i = 0; i < s_lines.length; i++) {
 			if (s_lines[i].length() == 3 && s_lines[i].endsWith("-")) {		// special case where unit is split into 2 lines such as 20150613, then we merge 2 lines and make the one line empty
 				s_lines[i + 1] = s_lines[i] + s_lines[i + 1];
 				s_lines[i] = "";
 			}
-			s_lines[i] = s_lines[i].replaceAll(" - ", " -"); 	// in many cases such as 20080201, negative number is represented by - and a space then number. This is to merger the sign and the number of
+			// in many cases such as 20080201, negative number is represented by - and a space then number. This is to merger the sign and the number.
+			// Also in some cases ctd contains a space between the number and M, we need to join as well
+			if (year_before_2015) s_lines[i] = s_lines[i].replaceAll(" - ", " -").replaceAll(" M ", "- ");
 		}
 		//------------------------------------------------------------
 		
@@ -511,7 +514,7 @@ public class ISMR_Process {
 			int unit_id = 0;	// find the second column of the table
 			int line_length = line_split.get(i).length;
 			
-			boolean year_before_2015 = Integer.valueOf(date.substring(0, 4)) < 2015;	// first 4 letters   (Note that from 2007-05-28 to the end of 2014, there are 15 columns for each fire)
+			// (Note that from 2007-05-28 to the end of 2014, there are 15 columns for each fire)
 			if (year_before_2015) { // before 2015 we use this to process data (Note unit is split by 2 columns and we need to merge, also we do not have the "Ctn/Comp" and we need to assign Ctn for it)
 				if (line_length >= 15 
 						&& line_split.get(i)[line_length - 14].length() == 2    // This is State "St" for 2014 and earlier year. It must have only 2 characters
@@ -627,13 +630,15 @@ public class ISMR_Process {
 	}
 
 	private void get_fire_data_raw_method(String[] r_lines) {		// Information of a Fire is in one line		(Note: a special case: 20180803 at page 10 where the table without header if expanding 2 pages) 
+		boolean year_before_2015 = Integer.valueOf(r_date.substring(0, 4)) < 2015;	// first 4 letters   
 		// Pre-processing for some special cases
 		for (int i = 0; i < r_lines.length; i++) {
 			if (r_lines[i].length() == 3 && r_lines[i].endsWith("-")) {		// special case where unit is split into 2 lines such as 20150613, then we merge 2 lines and make the one line empty
 				r_lines[i + 1] = r_lines[i] + r_lines[i + 1];
 				r_lines[i] = "";
 			}
-			r_lines[i] = r_lines[i].replaceAll(" - ", " -"); 	// in many cases such as 20080201, negative number is represented by - and a space then number. This is to merger the sign and the number of
+			// Also in some cases ctd contains a space between the number and M, we need to join as well
+			if (year_before_2015) r_lines[i] = r_lines[i].replaceAll(" - ", " -").replaceAll(" M ", "- ");
 		}
 		//------------------------------------------------------------
 		
@@ -680,7 +685,7 @@ public class ISMR_Process {
 			int unit_id = 0;	// find the second column of the table
 			int line_length = line_split.get(i).length;
 			
-			boolean year_before_2015 = Integer.valueOf(r_date.substring(0, 4)) < 2015;	// first 4 letters   (Note that from 2007-05-28 to the end of 2014, there are 15 columns for each fire)
+			// (Note that from 2007-05-28 to the end of 2014, there are 15 columns for each fire)
 			if (year_before_2015) { // before 2015 we use this to process data (Note unit is split by 2 columns and we need to merge, also we do not have the "Ctn/Comp" and we need to assign Ctn for it)
 				if (line_length >= 14 
 						&& line_split.get(i)[line_length - 14].length() == 2    // This is State "St" for 2014 and earlier year. It must have only 2 characters
