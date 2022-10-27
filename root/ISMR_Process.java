@@ -7,7 +7,10 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import convenience_classes.SubstringBetween;
 
@@ -232,6 +235,7 @@ public class ISMR_Process {
 	}
 	
 	private void get_area_data(String[] s_lines) {
+		LinkedHashMap<String, Integer> map_gacc_to_priority = new LinkedHashMap<String, Integer>();
 		String current_area = "";
 		int gacc_priority = 0;
 		// Loop all lines, whenever found a gacc area, stop and process data
@@ -240,51 +244,63 @@ public class ISMR_Process {
 				if (s_lines[i].startsWith("Alaska")) {
 					current_area = "AICC";
 					gacc_priority = gacc_priority + 1;
-					process_area_data(s_lines, i, current_area, gacc_priority);
+					if (map_gacc_to_priority.get(current_area) == null) map_gacc_to_priority.put(current_area, gacc_priority);
+					if (gacc_priority == map_gacc_to_priority.get(current_area)) process_area_data(s_lines, i, current_area, gacc_priority);
 				} else if (s_lines[i].startsWith("Eastern Area")) {
 					current_area = "EACC";
 					gacc_priority = gacc_priority + 1;
-					process_area_data(s_lines, i, current_area, gacc_priority);
+					if (map_gacc_to_priority.get(current_area) == null) map_gacc_to_priority.put(current_area, gacc_priority);
+					if (gacc_priority == map_gacc_to_priority.get(current_area)) process_area_data(s_lines, i, current_area, gacc_priority);
 				} else if (s_lines[i].startsWith("Eastern Great Basin")) {	// before 2015
 					current_area = "EBCC";
 					gacc_priority = gacc_priority + 1;
-					process_area_data(s_lines, i, current_area, gacc_priority);
+					if (map_gacc_to_priority.get(current_area) == null) map_gacc_to_priority.put(current_area, gacc_priority);
+					if (gacc_priority == map_gacc_to_priority.get(current_area)) process_area_data(s_lines, i, current_area, gacc_priority);
 				}  else if (s_lines[i].startsWith("Western Great Basin")) {	// before 2015
 					current_area = "WBCC";
 					gacc_priority = gacc_priority + 1;
-					process_area_data(s_lines, i, current_area, gacc_priority);
+					if (map_gacc_to_priority.get(current_area) == null) map_gacc_to_priority.put(current_area, gacc_priority);
+					if (gacc_priority == map_gacc_to_priority.get(current_area)) process_area_data(s_lines, i, current_area, gacc_priority);
 				} else if (s_lines[i].startsWith("Great Basin")) {	// 2015 and after
 					current_area = "GBCC";
 					gacc_priority = gacc_priority + 1;
-					process_area_data(s_lines, i, current_area, gacc_priority);
+					if (map_gacc_to_priority.get(current_area) == null) map_gacc_to_priority.put(current_area, gacc_priority);
+					if (gacc_priority == map_gacc_to_priority.get(current_area)) process_area_data(s_lines, i, current_area, gacc_priority);
 				} else if (s_lines[i].startsWith("Northern California")) {
 					current_area = "ONCC";
 					gacc_priority = gacc_priority + 1;
-					process_area_data(s_lines, i, current_area, gacc_priority);
+					if (map_gacc_to_priority.get(current_area) == null) map_gacc_to_priority.put(current_area, gacc_priority);
+					if (gacc_priority == map_gacc_to_priority.get(current_area)) process_area_data(s_lines, i, current_area, gacc_priority);
 				} else if (s_lines[i].startsWith("Northern Rockies")) {
 					current_area = "NRCC";
 					gacc_priority = gacc_priority + 1;
-					process_area_data(s_lines, i, current_area, gacc_priority);
+					if (map_gacc_to_priority.get(current_area) == null) map_gacc_to_priority.put(current_area, gacc_priority);
+					if (gacc_priority == map_gacc_to_priority.get(current_area)) process_area_data(s_lines, i, current_area, gacc_priority);
 				} else if (s_lines[i].startsWith("Northwest")) {
 					current_area = "NWCC";
 					gacc_priority = gacc_priority + 1;
-					process_area_data(s_lines, i, current_area, gacc_priority);
+					if (map_gacc_to_priority.get(current_area) == null) map_gacc_to_priority.put(current_area, gacc_priority);
+					if (gacc_priority == map_gacc_to_priority.get(current_area)) process_area_data(s_lines, i, current_area, gacc_priority);
 				} else if (s_lines[i].startsWith("Rocky Mountain")) {
 					current_area = "RMCC";
 					gacc_priority = gacc_priority + 1;
-					process_area_data(s_lines, i, current_area, gacc_priority);
+					if (map_gacc_to_priority.get(current_area) == null) map_gacc_to_priority.put(current_area, gacc_priority);
+					if (gacc_priority == map_gacc_to_priority.get(current_area)) process_area_data(s_lines, i, current_area, gacc_priority);
 				} else if (s_lines[i].startsWith("Southern Area")) {
 					current_area = "SACC";
 					gacc_priority = gacc_priority + 1;
-					process_area_data(s_lines, i, current_area, gacc_priority);
+					if (map_gacc_to_priority.get(current_area) == null) map_gacc_to_priority.put(current_area, gacc_priority);
+					if (gacc_priority == map_gacc_to_priority.get(current_area)) process_area_data(s_lines, i, current_area, gacc_priority);
 				} else if (s_lines[i].startsWith("Southern California")) {
 					current_area = "OSCC";
 					gacc_priority = gacc_priority + 1;
-					process_area_data(s_lines, i, current_area, gacc_priority);
+					if (map_gacc_to_priority.get(current_area) == null) map_gacc_to_priority.put(current_area, gacc_priority);
+					if (gacc_priority == map_gacc_to_priority.get(current_area)) process_area_data(s_lines, i, current_area, gacc_priority);
 				} else if (s_lines[i].startsWith("Southwest")) {
 					current_area = "SWCC";
 					gacc_priority = gacc_priority + 1;
-					process_area_data(s_lines, i, current_area, gacc_priority);
+					if (map_gacc_to_priority.get(current_area) == null) map_gacc_to_priority.put(current_area, gacc_priority);
+					if (gacc_priority == map_gacc_to_priority.get(current_area)) process_area_data(s_lines, i, current_area, gacc_priority);
 				}
 			}
 		}
@@ -1149,6 +1165,11 @@ public class ISMR_Process {
 			}
 			final_fires.add(String.join("\t", r_fire_info));	
 		}
+		
+		// use set to remove duplicated records (such as triple duplication in 20200719) and convert back to list
+		Set<String> unique_fires_set = new LinkedHashSet<String>();
+		unique_fires_set.addAll(final_fires);
+		final_fires = new ArrayList<>(unique_fires_set);
 		
 //		for (int i = 0; i < r_fires.size(); i++) {
 //			final_fires.add(r_fires.get(i));	
