@@ -506,7 +506,7 @@ public class ISMR_Process {
 				if (line_length >= 15 
 						&& line_split.get(i)[line_length - 14].length() == 2    // This is State "St" for 2014 and earlier year. It must have only 2 characters
 						&& (line_split.get(i)[line_length - 12].matches("^\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$") || line_split.get(i)[line_length - 12].equals("N/A") || line_split.get(i)[line_length - 12].equals("---")) 
-						&& (line_split.get(i)[line_length - 8].matches("^\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$") || line_split.get(i)[line_length - 8].equals("---"))
+						&& (line_split.get(i)[line_length - 8].matches("^\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$") || line_split.get(i)[line_length - 8].equals("UNK") || line_split.get(i)[line_length - 8].equals("NR") || line_split.get(i)[line_length - 8].equals("---"))
 						) {		// this is likely a fire, smart check based on the "acres" and "personnel total" columns.
 					unit_id = line_split.get(i).length - 14;
 					String fire_priority = String.valueOf(area_fires(current_area).size() + 1);
@@ -542,7 +542,7 @@ public class ISMR_Process {
 				} else if (line_length >= 13 		// special case in first 5 months on 2007
 						&& line_split.get(i)[line_length - 12].length() == 2    // This is State "St" for 2007 in first 5 months. It must have only 2 characters
 						&& (line_split.get(i)[line_length - 10].matches("^\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$") || line_split.get(i)[line_length - 10].equals("N/A") || line_split.get(i)[line_length - 10].equals("---"))
-						&& (line_split.get(i)[line_length - 7].matches("^\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$") || line_split.get(i)[line_length - 7].equals("---"))
+						&& (line_split.get(i)[line_length - 7].matches("^\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$") || line_split.get(i)[line_length - 7].equals("UNK") || line_split.get(i)[line_length - 7].equals("NR") || line_split.get(i)[line_length - 7].equals("---"))
 						) {		// this is likely a fire, smart check based on the "acres" and "personnel total" columns.
 					unit_id = line_split.get(i).length - 12;
 					String fire_priority = String.valueOf(area_fires(current_area).size() + 1);
@@ -586,7 +586,7 @@ public class ISMR_Process {
 				if (line_length >= 15 
 						&& line_split.get(i)[line_length - 14].contains("-")    // do not use this for 2014 data, it has a different unit name, also in 20210710IMSR, one fire has wrong unit that cannot be included (Butte Creek: ID- CTS)
 						&& (line_split.get(i)[line_length - 13].matches("^\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$") || line_split.get(i)[line_length - 13].equals("N/A") || line_split.get(i)[line_length - 13].equals("---")) // special cases N/A such as U.S. Virgin in 20171004, --- such as in 20210822
-						&& (line_split.get(i)[line_length - 8].matches("^\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$") || line_split.get(i)[line_length - 8].equals("---"))
+						&& (line_split.get(i)[line_length - 8].matches("^\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$") || line_split.get(i)[line_length - 8].equals("UNK") || line_split.get(i)[line_length - 8].equals("NR") || line_split.get(i)[line_length - 8].equals("---"))
 					) {		// this is likely a fire, smart check based on the "acres" and "personnel total" columns.
 					unit_id = line_split.get(i).length - 14;
 					String fire_priority = String.valueOf(area_fires(current_area).size() + 1);
@@ -674,7 +674,7 @@ public class ISMR_Process {
 				if (line_length >= 14 
 						&& line_split.get(i)[line_length - 14].length() == 2    // This is State "St" for 2014 and earlier year. It must have only 2 characters
 						&& (line_split.get(i)[line_length - 12].matches("^\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$") || line_split.get(i)[line_length - 12].equals("N/A") || line_split.get(i)[line_length - 12].equals("---"))
-						&& (line_split.get(i)[line_length - 8].matches("^\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$") || line_split.get(i)[line_length - 8].equals("---"))
+						&& (line_split.get(i)[line_length - 8].matches("^\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$") || line_split.get(i)[line_length - 8].equals("UNK") || line_split.get(i)[line_length - 8].equals("NR") || line_split.get(i)[line_length - 8].equals("---"))
 					) {		// this is likely a fire, smart check based on the "acres" and "personnel total" columns.
 					unit_id = line_split.get(i).length - 14;
 					String this_fire = String.join("\t", r_date, current_area, gacc_priority, fire_priority);
@@ -690,7 +690,7 @@ public class ISMR_Process {
 					int l = i;
 					do {
 						l = l - 1;
-						if (line_split.get(l).length <= 5 && !r_lines[l].endsWith("Own") && !r_lines[l].endsWith("Heli")) {		// HELI is special case for 20150102
+						if (line_split.get(l).length <= 5 && !r_lines[l].substring(r_lines[l].lastIndexOf(" ") + 1).toUpperCase().equals("OWN") && !r_lines[l].toUpperCase().endsWith("HELI")) {		// HELI is special case for 20150102
 							fire_name = String.join(" ", r_lines[l], fire_name);	// join by space
 						} else {
 							continue_loop = false;
@@ -713,7 +713,7 @@ public class ISMR_Process {
 				} else if (line_length >= 12 
 						&& line_split.get(i)[line_length - 12].length() == 2    // This is State "St" for 2014 and earlier year. It must have only 2 characters
 						&& (line_split.get(i)[line_length - 10].matches("^\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$") || line_split.get(i)[line_length - 10].equals("N/A") || line_split.get(i)[line_length - 10].equals("---"))
-						&& (line_split.get(i)[line_length - 7].matches("^\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$") || line_split.get(i)[line_length - 7].equals("---"))
+						&& (line_split.get(i)[line_length - 7].matches("^\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$") || line_split.get(i)[line_length - 7].equals("UNK") || line_split.get(i)[line_length - 7].equals("NR") || line_split.get(i)[line_length - 7].equals("---"))
 						) {		// this is likely a fire, smart check based on the "acres" and "personnel total" columns.
 					unit_id = line_split.get(i).length - 12;
 					String this_fire = String.join("\t", r_date, current_area, gacc_priority, fire_priority);
@@ -729,7 +729,7 @@ public class ISMR_Process {
 					int l = i;
 					do {
 						l = l - 1;
-						if (line_split.get(l).length <= 5 && !r_lines[l].endsWith("Own") && !r_lines[l].endsWith("Heli")) {		// HELI is special case for 20150102
+						if (line_split.get(l).length <= 5 && !r_lines[l].substring(r_lines[l].lastIndexOf(" ") + 1).toUpperCase().equals("OWN") && !r_lines[l].toUpperCase().endsWith("HELI")) {		// HELI is special case for 20150102
 							fire_name = String.join(" ", r_lines[l], fire_name);	// join by space
 						} else {
 							continue_loop = false;
@@ -760,7 +760,7 @@ public class ISMR_Process {
 				if (line_length >= 14 
 						&& line_split.get(i)[line_length - 14].contains("-")    // do not use this for 2014 data, it has a different unit name, also in 20210710IMSR, one fire has wrong unit that cannot be included (Butte Creek: ID- CTS)
 						&& (line_split.get(i)[line_length - 13].matches("^\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$") || line_split.get(i)[line_length - 13].equals("N/A") || line_split.get(i)[line_length - 13].equals("---")) // special cases such as U.S. Virgin in 20171004
-						&& (line_split.get(i)[line_length - 8].matches("^\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$") || line_split.get(i)[line_length - 8].equals("---"))
+						&& (line_split.get(i)[line_length - 8].matches("^\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$") || line_split.get(i)[line_length - 8].equals("UNK") || line_split.get(i)[line_length - 8].equals("NR") || line_split.get(i)[line_length - 8].equals("---"))
 								// this is likely a fire, smart check based on the "acres" and "personnel total" columns.
 				) {
 					unit_id = line_split.get(i).length - 14;
@@ -776,7 +776,7 @@ public class ISMR_Process {
 					int l = i;
 					do {
 						l = l - 1;
-						if (line_split.get(l).length <= 5 && !r_lines[l].endsWith("Own") && !r_lines[l].endsWith("Heli")) {		// HELI is special case for 20150102
+						if (line_split.get(l).length <= 5 && !r_lines[l].substring(r_lines[l].lastIndexOf(" ") + 1).toUpperCase().equals("OWN") && !r_lines[l].toUpperCase().endsWith("HELI")) {		// HELI is special case for 20150102
 							fire_name = String.join(" ", r_lines[l], fire_name);	// join by space
 						} else {
 							continue_loop = false;
@@ -793,7 +793,7 @@ public class ISMR_Process {
 				} else if (line_length >= 13 
 							&& (r_lines[i - 1].contains("-") || r_lines[i - 2].contains("-"))    // i-2 such as in 20150613
 							&& (line_split.get(i)[line_length - 13].matches("^\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$") || line_split.get(i)[line_length - 13].equals("N/A") || line_split.get(i)[line_length - 13].equals("---")) // special cases such as U.S. Virgin in 20171004
-							&& (line_split.get(i)[line_length - 8].matches("^\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$") || line_split.get(i)[line_length - 8].equals("---"))
+							&& (line_split.get(i)[line_length - 8].matches("^\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$") || line_split.get(i)[line_length - 8].equals("UNK") || line_split.get(i)[line_length - 8].equals("NR") || line_split.get(i)[line_length - 8].equals("---"))
 									// this is likely a fire, smart check based on the "acres" and "personnel total" columns.
 				) {
 					String this_fire = String.join("\t", r_date, current_area, gacc_priority, fire_priority);
@@ -823,7 +823,7 @@ public class ISMR_Process {
 					}
 					do {
 						l = l - 1;
-						if (line_split.get(l).length <= 5 && !r_lines[l].endsWith("Own") && !r_lines[l].endsWith("Heli")) {		// HELI is special case for 20150102
+						if (line_split.get(l).length <= 5 && !r_lines[l].substring(r_lines[l].lastIndexOf(" ") + 1).toUpperCase().equals("OWN") && !r_lines[l].toUpperCase().endsWith("HELI")) {		// HELI is special case for 20150102
 							fire_name = String.join(" ", r_lines[l], fire_name);	// join by space
 						} else {
 							continue_loop = false;
@@ -844,10 +844,10 @@ public class ISMR_Process {
 							 (
 								((line_split.get(i)[line_length - 1].endsWith("NR") || line_split.get(i)[line_length - 1].endsWith("K") || line_split.get(i)[line_length - 1].endsWith("M"))
 										&& line_split.get(i + 1).length == 1 
-										&& (line_split.get(i)[line_length - 7].matches("^\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$") || line_split.get(i)[line_length - 7].equals("---")))
+										&& (line_split.get(i)[line_length - 7].matches("^\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$") || line_split.get(i)[line_length - 7].equals("UNK") || line_split.get(i)[line_length - 7].equals("NR") || line_split.get(i)[line_length - 7].equals("---")))
 							 || 
 							 	((line_split.get(i)[line_length - 2].endsWith("NR") || line_split.get(i)[line_length - 2].endsWith("K") || line_split.get(i)[line_length - 2].endsWith("M"))
-									 	&& (line_split.get(i)[line_length - 8].matches("^\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$") || line_split.get(i)[line_length - 8].equals("---")))
+									 	&& (line_split.get(i)[line_length - 8].matches("^\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$") || line_split.get(i)[line_length - 8].equals("UNK") || line_split.get(i)[line_length - 8].equals("NR") || line_split.get(i)[line_length - 8].equals("---")))
 							 )
 						  ) {	// handle special cases such as in 20180726
 					String this_fire = String.join("\t", r_date, current_area, gacc_priority, fire_priority);
@@ -877,7 +877,7 @@ public class ISMR_Process {
 					do {
 						l = l - 1;
 						if ((r_fires.isEmpty() || !r_fires.get(r_fires.size() - 1).endsWith(r_lines[l])) &&	// this is to ensure we don't use the origin_own of previous fire in the name of this fire
-								line_split.get(l).length <= 5 && !r_lines[l].endsWith("Own") && !r_lines[l].endsWith("Heli")) {		// HELI is special case for 20150102
+								line_split.get(l).length <= 5 && !r_lines[l].substring(r_lines[l].lastIndexOf(" ") + 1).toUpperCase().equals("OWN") && !r_lines[l].toUpperCase().endsWith("HELI")) {		// HELI is special case for 20150102
 							if (r_lines[l].contains(" ")) {
 								String previous_words = r_lines[l].substring(0, r_lines[l].lastIndexOf(" "));
 								String last_word = r_lines[l].substring(r_lines[l].lastIndexOf(" ") + 1, r_lines[l].length());
@@ -918,6 +918,21 @@ public class ISMR_Process {
 					} else {
 						System.out.println(this_fire);	// problem need to fix manually: i.e. CA-KNF-006098 Complex 20170929
 					}
+				} else if (line_length >= 6 && 
+						 (
+							((line_split.get(i)[line_length - 1].endsWith("NR") || line_split.get(i)[line_length - 1].endsWith("K") || line_split.get(i)[line_length - 1].endsWith("M"))
+									&& line_split.get(i + 1).length == 1 
+									&& line_split.get(i)[line_length - 2].matches("^\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$")
+									&& line_split.get(i)[line_length - 3].matches("^\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$")
+							)
+						 || 
+						 	((line_split.get(i)[line_length - 2].endsWith("NR") || line_split.get(i)[line_length - 2].endsWith("K") || line_split.get(i)[line_length - 2].endsWith("M"))
+									&& line_split.get(i)[line_length - 3].matches("^\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$")
+									&& line_split.get(i)[line_length - 4].matches("^\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$")
+							)		
+						 )
+					  ) {	// is there any fire else?
+					System.out.println("Is this a fire we forgot to add when processing raw?  "+ date + ":     " + r_lines[i]);
 				}
 			}
 			
@@ -994,7 +1009,7 @@ public class ISMR_Process {
 		}
 		
 		if (r_fires.size() != s_fires.size()) {
-			System.out.println(date + ": number of fires in raw vs simple2: " + r_fires.size() + " " + s_fires.size());
+			System.out.println(date + ": different number of fires in raw vs simple2: " + r_fires.size() + " " + s_fires.size());
 		}
 		
 		if (fire_in_s_not_in_r.size() > 0) {
