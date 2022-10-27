@@ -984,26 +984,12 @@ public class ISMR_Process {
 							)		
 						 )
 					  ) {	// is there any fire else?
-//					if (r_lines[i].equals("CA-LNU 110,720 0 99 Ctn 10/31 150 -88 4 5 0 7,010 101 M ST")) {
+//					if (r_lines[i].equals("")) {
 //						System.out.println("this fire is fixed and added manually");
 //						System.out.println("old info:     " + r_lines[i]);
-//						String this_fire =  "2017-10-31	ONCC	NA	NA	CENTRAL LNU COMPLEX	CA-LNU	110,720	0	99	Ctn	10/31	150	-88	4	5	0	7,010	101M	ST";
+//						String this_fire =  "";
 //						System.out.println("new info:     " + this_fire);
 //						r_fires.add(this_fire);
-//					} else if (r_lines[i].equals("0 --- 0 0 0 0 1K FWS")) {
-//						System.out.println("this fire is fixed and added manually");
-//						System.out.println("old info:     " + r_lines[i]);
-//						String this_fire =  "2015-08-09	AICC	NA	NA	LITTLE MUD	AK-TAD	433	---	0	Comp	NR	0	---	0	0	0	0	1K	FWS";
-//						System.out.println("new info:     " + this_fire);
-//						r_fires.add(this_fire);
-//					}  else if (r_lines[i].equals("8 0 0 0 0 0 85K TRI")) {
-//						System.out.println("this fire is fixed and added manually");
-//						System.out.println("old info:     " + r_lines[i]);
-//						String this_fire =  "2015-08-09	AICC	NA	NA	BIG CREEK TWO	AK-GAD	288,735	16,988	0	Comp	NR	8	0	0	0	0	0	85K	TRI";
-//						System.out.println("new info:     " + this_fire);
-//						r_fires.add(this_fire);
-//					} else {
-//						System.out.println( date + ": " +"Is this a fire we did not add (length >=6) when processing raw?   " + r_lines[i]);
 //					}
 					
 					String current_merge_info = r_lines[i].replaceAll("---", "---" + " ").replaceAll("\\s{2,}", " ");			// special case such as "---0" in 20180930
@@ -1025,8 +1011,9 @@ public class ISMR_Process {
 					String fire_name = "";
 					if (info_split.length > 14) {
 						for (int k = 0; k < info_split.length - 14; k++) {
-							fire_name = String.join(" ", fire_name, info_split[k].toUpperCase());	// This is part of fire name
+							fire_name = String.join(" ", fire_name, info_split[k]);	// This is part of fire name
 						}
+						fire_name = fire_name.replaceAll("\\*", "").replaceAll("\\s{2,}", " ").trim().toUpperCase();	// This will remove the * (if exist in the name) and change the name to capital (IMPORTANT)
 						this_fire = String.join("\t", this_fire, fire_name);
 						for (int k = info_split.length - 14; k < info_split.length; k++) {
 							this_fire = String.join("\t", this_fire, info_split[k]);
@@ -1036,11 +1023,6 @@ public class ISMR_Process {
 					if (this_fire.split("\t").length == 19) {
 						r_fires.add(this_fire);
 					} else {
-//						System.out.println(date + ": " +"Is this a fire we did not add (length >=6) when processing raw?   " + r_lines[i-5]);
-//						System.out.println(date + ": " +"Is this a fire we did not add (length >=6) when processing raw?   " + r_lines[i-4]);
-//						System.out.println(date + ": " +"Is this a fire we did not add (length >=6) when processing raw?   " + r_lines[i-3]);
-//						System.out.println(date + ": " +"Is this a fire we did not add (length >=6) when processing raw?   " + r_lines[i-2]);
-//						System.out.println(date + ": " +"Is this a fire we did not add (length >=6) when processing raw?   " + r_lines[i-1]);
 						System.out.println(date + ": " +"Is this a fire we did not add (length >=6) when processing raw?   " + r_lines[i]);
 						System.out.println(current_merge_info);
 					}
@@ -1049,10 +1031,6 @@ public class ISMR_Process {
 			
 			i = i + 1;
 		} while (i < r_lines.length);
-		
-//		for (String st : r_fires) {
-//			System.out.println(st);	
-//		}
 	}
 	
 	private void fire_name_validation_and_adjustment() {
