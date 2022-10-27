@@ -916,7 +916,16 @@ public class ISMR_Process {
 					if (this_fire.split("\t").length == 19) {
 						r_fires.add(this_fire);
 					} else {
-						System.out.println(this_fire);	// problem need to fix manually: i.e. CA-KNF-006098 Complex 20170929
+						// problem need to fix manually: i.e. CA-KNF-006098 Complex 20170929
+						if (this_fire.equals("2017-09-29	ONCC	NA	NA	CA-KNF- 006098 COMPLEX CA-KNF 78,698 .4	0	51	Comp	10/10	318	1	5	11	2	0	44.5M	FS")) {
+							System.out.println("this fire is fixed and added manually");
+							System.out.println("old info:     " + this_fire);
+							this_fire =  "2017-09-29	ONCC	NA	NA	CA-KNF-006098 COMPLEX	CA-KNF	78,698	0	51	Comp	10/10	318	1	5	11	2	0	44.5M	FS";
+							System.out.println("new info:     " + this_fire);
+							r_fires.add(this_fire);
+						} else {
+							System.out.println(this_fire);	
+						}
 					}
 				} else if (line_length >= 6 && 
 						 (
@@ -932,7 +941,15 @@ public class ISMR_Process {
 							)		
 						 )
 					  ) {	// is there any fire else?
-					System.out.println("Is this a fire we forgot to add when processing raw?  "+ date + ":     " + r_lines[i]);
+					if (r_lines[i].equals("CA-LNU 110,720 0 99 Ctn 10/31 150 -88 4 5 0 7,010 101 M ST")) {
+						System.out.println("this fire is fixed and added manually");
+						System.out.println("old info:     " + r_lines[i]);
+						String this_fire =  "2017-10-31	ONCC	NA	NA	CENTRAL LNU COMPLEX	CA-LNU	110,720	0	99	Ctn	10/31	150	-88	4	5	0	7,010	101M	ST";
+						System.out.println("new info:     " + this_fire);
+						r_fires.add(this_fire);
+					} else {
+						System.out.println("Is this a fire we forgot to add when processing raw?  "+ date + ":     " + r_lines[i]);
+					}
 				}
 			}
 			
