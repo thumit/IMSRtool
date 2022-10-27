@@ -807,7 +807,7 @@ public class ISMR_Process {
 					// Check above lines, if length <=5 etc, then add to fire name
 					String fire_name = "";
 					// fix the special case: Trestle 20180727 where unit still cotain part of fire name
-					String[] unit_contain_fire_name = unit_name.split(" ");
+					String[] unit_contain_fire_name = unit_name.replaceAll("\\*", "").trim().split(" ");	// replace * and trim to handle special case such as Cranston in 20180726
 					if (unit_contain_fire_name.length == 2) {
 						fire_name = unit_contain_fire_name[0];
 						unit_name = unit_contain_fire_name[1];
@@ -942,26 +942,33 @@ public class ISMR_Process {
 			r_fire_list.add(r_fire_info);
 		}
 		
-		List<String> r_pattern_list = new ArrayList<String>();
+		List<String> r_pattern_1 = new ArrayList<String>();		// check full info in some columns
+		List<String> r_pattern_2 = new ArrayList<String>();		// check the initial character in some columns
 		for (int i = 0; i < r_fires.size(); i++) {
 			String[] r_fire_info = r_fires.get(i).split("\t"); 
 			// pattern = "date", "unit", "size_acres", "size_chge", "percentage", "ctn_comp", "est", "personnel_total", "personnel_chge", "resources_crw", "resources_eng", "resources_heli", "strc_lost", "ctd", "origin_own"
-			String pattern = String.join("\t", r_fire_info[0], r_fire_info[5], r_fire_info[6], r_fire_info[7],
+			String pattern_1 = String.join("\t", r_fire_info[0], r_fire_info[5], r_fire_info[6], r_fire_info[7],
 					r_fire_info[8], r_fire_info[9], r_fire_info[10], r_fire_info[11], r_fire_info[12], r_fire_info[13],
 					r_fire_info[14], r_fire_info[15], r_fire_info[16], r_fire_info[17], r_fire_info[18]);
-			r_pattern_list.add(pattern);
+			String pattern_2 = String.join("\t", r_fire_info[0], r_fire_info[5].substring(0, 1), r_fire_info[6].substring(0, 1), r_fire_info[7].substring(0, 1),
+					r_fire_info[8].substring(0, 1), r_fire_info[9].substring(0, 1), r_fire_info[10].substring(0, 1), r_fire_info[11].substring(0, 1), r_fire_info[12].substring(0, 1), r_fire_info[13].substring(0, 1),
+					r_fire_info[14].substring(0, 1), r_fire_info[15].substring(0, 1), r_fire_info[16].substring(0, 1), r_fire_info[17].substring(0, 1), r_fire_info[18].substring(0, 1));
+			r_pattern_1.add(pattern_1);
+			r_pattern_2.add(pattern_2);
 		}
-		
-		
+				
 		// find matching pattern, then if names overlap between raw and simple we can adjust.
 		List<String> fire_in_s_not_in_r = new ArrayList<String>();
 		int in_s_but_not_in_r_count = 0;
-		for (int i = 0; i < s_fires.size(); i++) {
-			String[] s_fire_info = s_fires.get(i).split("\t"); 
+		for (int s_id = 0; s_id < s_fires.size(); s_id++) {
+			String[] s_fire_info = s_fires.get(s_id).split("\t"); 
 			// pattern = "date", "unit", "size_acres", "size_chge", "percentage", "ctn_comp", "est", "personnel_total", "personnel_chge", "resources_crw", "resources_eng", "resources_heli", "strc_lost", "ctd", "origin_own"
-			String pattern = String.join("\t", s_fire_info[0], s_fire_info[5], s_fire_info[6], s_fire_info[7],
+			String pattern_1 = String.join("\t", s_fire_info[0], s_fire_info[5], s_fire_info[6], s_fire_info[7],
 					s_fire_info[8], s_fire_info[9], s_fire_info[10], s_fire_info[11], s_fire_info[12], s_fire_info[13],
 					s_fire_info[14], s_fire_info[15], s_fire_info[16], s_fire_info[17], s_fire_info[18]);
+			String pattern_2 = String.join("\t", s_fire_info[0], s_fire_info[5].substring(0, 1), s_fire_info[6].substring(0, 1), s_fire_info[7].substring(0, 1),
+					s_fire_info[8].substring(0, 1), s_fire_info[9].substring(0, 1), s_fire_info[10].substring(0, 1), s_fire_info[11].substring(0, 1), s_fire_info[12].substring(0, 1), s_fire_info[13].substring(0, 1),
+					s_fire_info[14].substring(0, 1), s_fire_info[15].substring(0, 1), s_fire_info[16].substring(0, 1), s_fire_info[17].substring(0, 1), s_fire_info[18].substring(0, 1));
 			
 			String s_fire_name = s_fire_info[4];
 			String s_last_name = s_fire_name.substring(s_fire_name.lastIndexOf(" ") + 1);
@@ -970,67 +977,31 @@ public class ISMR_Process {
 			int r_id = 0;
 			do {
 				String r_fire_name = r_fire_list.get(r_id)[4];
-				if (r_pattern_list.get(r_id).equals(pattern) && r_fire_name.contains(s_last_name)) {
-					overlap_found = true;	// overlapped fire
-				} else if (	// apply a different check
-						r_fire_list.get(r_id)[0].contains(s_fire_list.get(i)[0]) &&
-						r_fire_list.get(r_id)[4].contains(s_last_name) &&
-						r_fire_list.get(r_id)[5].contains(s_fire_list.get(i)[5]) &&
-						r_fire_list.get(r_id)[6].contains(s_fire_list.get(i)[6]) &&
-						r_fire_list.get(r_id)[7].contains(s_fire_list.get(i)[7]) &&
-						r_fire_list.get(r_id)[8].contains(s_fire_list.get(i)[8]) &&
-						r_fire_list.get(r_id)[9].contains(s_fire_list.get(i)[9]) &&
-						r_fire_list.get(r_id)[10].contains(s_fire_list.get(i)[10]) &&
-						r_fire_list.get(r_id)[11].contains(s_fire_list.get(i)[11]) &&
-						r_fire_list.get(r_id)[12].contains(s_fire_list.get(i)[12]) &&
-						r_fire_list.get(r_id)[13].contains(s_fire_list.get(i)[13]) &&
-						r_fire_list.get(r_id)[14].contains(s_fire_list.get(i)[14]) &&
-						r_fire_list.get(r_id)[15].contains(s_fire_list.get(i)[15]) &&
-						r_fire_list.get(r_id)[16].contains(s_fire_list.get(i)[16]) &&
-						r_fire_list.get(r_id)[17].contains(s_fire_list.get(i)[17]) &&
-						r_fire_list.get(r_id)[18].contains(s_fire_list.get(i)[18])					
-						) {
+				if (r_fire_name.contains(s_last_name) && (r_pattern_1.get(r_id).equals(pattern_1) || r_pattern_2.get(r_id).equals(pattern_2))) {
 					overlap_found = true;	// overlapped fire
 				}
-				
 				r_id = r_id + 1;
 			} while (r_id < r_fires.size() && !overlap_found);
 			
-			if (!overlap_found) {
-				// not overlapped fire
+			if (!overlap_found) {	// not overlapped fire
 				in_s_but_not_in_r_count = in_s_but_not_in_r_count + 1;
-				fire_in_s_not_in_r.add(s_fires.get(i));
-				System.out.println(date + " " + s_fire_info[4] + " is in simple2 list but not in raw list");
-				System.out.println(s_fires.get(i));
+				fire_in_s_not_in_r.add(s_fires.get(s_id));
 			}
-			
-			
-			
-//			int r_id = r_pattern_list.indexOf(pattern);
-//			String r_fire_name = (r_id > -1)? r_fires.get(r_id).split("\t")[4] : "-9999";
-//			if (r_id > -1 && r_fire_name.contains(s_last_name)) {
-//				// overlapped fire
-//			} else {
-//				// not overlapped fire
-//				in_s_but_not_in_r_count = in_s_but_not_in_r_count + 1;
-//				fire_in_s_not_in_r.add(s_fires.get(i));
-//				System.out.println(date + " " + s_fire_info[4] + " is in simple2 list but not in raw list");
-//				System.out.println(s_fires.get(i));
-//				System.out.println(r_id);
-//				System.out.println(r_fire_name);
-//				System.out.println(s_last_name);
-//			}
 		}
 		
 		for (int i = 0; i < r_fires.size(); i++) {
 			final_fires.add(r_fires.get(i));	
 		}
 		
-		
-//		int not_rename_count = s_fires.size() - rename_count;
-//		if (not_rename_count > 0) System.out.println(date + " " + not_rename_count + " has not been renamed");
 		if (r_fires.size() != s_fires.size()) {
-			System.out.println(date + " has different number of fires between raw and simple2: " + r_fires.size() + " " + s_fires.size());
+			System.out.println(date + ": number of fires in raw vs simple2: " + r_fires.size() + " " + s_fires.size());
+		}
+		
+		if (fire_in_s_not_in_r.size() > 0) {
+			System.out.println(date + " --------------------------------------- fires in simple2 list but not in raw list: " + fire_in_s_not_in_r.size());
+			for (String st : fire_in_s_not_in_r) {
+				System.out.println(st);
+			}
 		}
 	}
 	
