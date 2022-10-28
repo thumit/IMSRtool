@@ -69,7 +69,7 @@ class Aggregate extends JScrollPane {
 		String[] header2 = new String[] { "date", "gacc", "gacc_priority", "preparedness_level", "new_fires",
 				"new_large_fires", "uncontained_large_fires", "area_command_teams", "nimos", "type_1_imts", "type_2_imts" };
 		String[] header3 = new String[] { "date", "gacc", "gacc_priority", "fire_priority", "fire", "unit", "size",
-				"size_change", "percent", "ctn_comp", "est_date", "personnel_total", "personnel_change", "crews",
+				"size_change", "percent", "ctn_comp", "est_date", "personnel", "personnel_change", "crews",
 				"engines", "helicopters", "structures_lost", "ctd", "origin_own" };
 		String[] header4 = new String[] { "date", "gacc", "incidents", "cumulative_size", "crews", "engines", "helicopters", "personnel", "personnel_change" };
 		
@@ -393,23 +393,23 @@ class ScrollPane_Extraction_Preview extends JScrollPane {
 		String[] header2 = new String[] { "date", "gacc", "gacc_priority", "preparedness_level", "new_fires",
 				"new_large_fires", "uncontained_large_fires", "area_command_teams", "nimos", "type_1_imts", "type_2_imts" };
 		String[] header3 = new String[] { "date", "gacc", "gacc_priority", "fire_priority", "fire", "unit", "size",
-				"size_change", "percent", "ctn_comp", "est_date", "personnel_total", "personnel_change", "crews",
+				"size_change", "percent", "ctn_comp", "est_date", "personnel", "personnel_change", "crews",
 				"engines", "helicopters", "structures_lost", "ctd", "origin_own" };
 		String[] header4 = new String[] { "date", "gacc", "incidents", "cumulative_size", "crews", "engines", "helicopters", "personnel", "personnel_change" };
 		
 		textarea = new ColorTextArea("icon_tree.png", 75, 75);	// Print to text area
 		ISMR_Process ismr = new ISMR_Process(s_file, r_file);
-		textarea.append(header1[0] + "\t" + ismr.date + "\n");
+		textarea.append(header1[0] + "\t" + "\t" + ismr.date + "\n");
 		textarea.append(header1[1] + "\t" + ismr.national_prepareness_level + "\n");
 		textarea.append(header1[2] + "\t" + ismr.initial_attack_activity + "\n");
-		textarea.append(header1[3] + "\t" + ismr.initial_attack_new_fires + "\n");
-		textarea.append(header1[4] + "\t" + ismr.new_large_incidents + "\n");
+		textarea.append(header1[3] + "\t" + "\t" + ismr.initial_attack_new_fires + "\n");
+		textarea.append(header1[4] + "\t" + "\t" + ismr.new_large_incidents + "\n");
 		textarea.append(header1[5] + "\t" + ismr.large_fires_contained + "\n");
 		textarea.append(header1[6] + "\t" + ismr.uncontained_large_fires + "\n");
 		textarea.append(header1[7] + "\t" + ismr.area_command_teams_committed + "\n");
-		textarea.append(header1[8] + "\t" + ismr.nimos_committed + "\n");
-		textarea.append(header1[9] + "\t" + ismr.type_1_imts_committed + "\n");
-		textarea.append(header1[10] + "\t" + ismr.type_2_imts_committed + "\n");
+		textarea.append(header1[8] + "\t" + "\t" + ismr.nimos_committed + "\n");
+		textarea.append(header1[9] + "\t" + "\t" + ismr.type_1_imts_committed + "\n");
+		textarea.append(header1[10] + "\t" + "\t" + ismr.type_2_imts_committed + "\n");
 		textarea.append("--------------------------------------------------------------------" + "\n");
 		textarea.append(String.join("\t", header2)  + "\n");
 		for (String st : ismr.gacc_fire_activity) {
