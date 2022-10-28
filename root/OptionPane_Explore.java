@@ -135,9 +135,9 @@ class Aggregate extends JScrollPane {
 		radio_panel.setLayout(new FlowLayout());
 		ButtonGroup radio_button_group = new ButtonGroup();
 		JRadioButton[] radio_button = new JRadioButton[4];
-		radio_button[0]= new JRadioButton("NATIONAL");
-		radio_button[1]= new JRadioButton("GACC");
-		radio_button[2]= new JRadioButton("FIRES");
+		radio_button[0]= new JRadioButton("NATIONAL ACTIVITY");
+		radio_button[1]= new JRadioButton("GACC ACTIVITY");
+		radio_button[2]= new JRadioButton("WILDFIRE ACTIVITY");
 		radio_button[3]= new JRadioButton("RESOURCE SUMMARY");
 		for (int i = 0; i < radio_button.length; i++) {
 				radio_button_group.add(radio_button[i]);
@@ -399,17 +399,17 @@ class ScrollPane_Extraction_Preview extends JScrollPane {
 		
 		textarea = new ColorTextArea("icon_tree.png", 75, 75);	// Print to text area
 		ISMR_Process ismr = new ISMR_Process(s_file, r_file);
-		textarea.append(ismr.date + "\n");
-		textarea.append(ismr.national_prepareness_level + "\n");
-		textarea.append(ismr.initial_attack_activity + "\n");
-		textarea.append(ismr.initial_attack_new_fires + "\n");
-		textarea.append(ismr.new_large_incidents + "\n");
-		textarea.append(ismr.large_fires_contained + "\n");
-		textarea.append(ismr.uncontained_large_fires + "\n");
-		textarea.append(ismr.area_command_teams_committed + "\n");
-		textarea.append(ismr.nimos_committed + "\n");
-		textarea.append(ismr.type_1_imts_committed + "\n");
-		textarea.append(ismr.type_2_imts_committed + "\n");
+		textarea.append(header1[0] + "\t" + ismr.date + "\n");
+		textarea.append(header1[1] + "\t" + ismr.national_prepareness_level + "\n");
+		textarea.append(header1[2] + "\t" + ismr.initial_attack_activity + "\n");
+		textarea.append(header1[3] + "\t" + ismr.initial_attack_new_fires + "\n");
+		textarea.append(header1[4] + "\t" + ismr.new_large_incidents + "\n");
+		textarea.append(header1[5] + "\t" + ismr.large_fires_contained + "\n");
+		textarea.append(header1[6] + "\t" + ismr.uncontained_large_fires + "\n");
+		textarea.append(header1[7] + "\t" + ismr.area_command_teams_committed + "\n");
+		textarea.append(header1[8] + "\t" + ismr.nimos_committed + "\n");
+		textarea.append(header1[9] + "\t" + ismr.type_1_imts_committed + "\n");
+		textarea.append(header1[10] + "\t" + ismr.type_2_imts_committed + "\n");
 		textarea.append("--------------------------------------------------------------------" + "\n");
 		textarea.append(String.join("\t", header2)  + "\n");
 		for (String st : ismr.gacc_fire_activity) {
