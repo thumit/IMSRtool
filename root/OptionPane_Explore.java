@@ -347,20 +347,7 @@ class ScrollPane_View_File extends JScrollPane {
 				System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
 			}
 		}
-		
 		TitleScrollPane explore_scrollpane = new TitleScrollPane(title, "CENTER", textarea);
-		addHierarchyListener(new HierarchyListener() {	//	These codes make the license_scrollpane resizable --> the Big ScrollPane resizable --> JOptionPane resizable
-		    public void hierarchyChanged(HierarchyEvent e) {
-		        Window window = SwingUtilities.getWindowAncestor(explore_scrollpane);
-		        if (window instanceof Dialog) {
-		            Dialog dialog = (Dialog)window;
-		            if (!dialog.isResizable()) {
-		                dialog.setResizable(true);
-		                dialog.setPreferredSize(new Dimension((int) (IMSRmain.get_main().getWidth() / 1.1), (int) (IMSRmain.get_main().getHeight() / 1.21)));
-		            }
-		        }
-		    }
-		});
 		
 		// Add the Panel to this Big ScrollPane
 		setBorder(BorderFactory.createEmptyBorder());
@@ -391,20 +378,7 @@ class ScrollPane_View_Trim_File extends JScrollPane {
 			System.err.println(e.getClass().getName() + ": " + e.getMessage());
 		}
 		textarea.setCaretPosition(0);
-		
 		TitleScrollPane explore_scrollpane = new TitleScrollPane(title, "CENTER", textarea);
-		addHierarchyListener(new HierarchyListener() {	//	These codes make the license_scrollpane resizable --> the Big ScrollPane resizable --> JOptionPane resizable
-		    public void hierarchyChanged(HierarchyEvent e) {
-		        Window window = SwingUtilities.getWindowAncestor(explore_scrollpane);
-		        if (window instanceof Dialog) {
-		            Dialog dialog = (Dialog)window;
-		            if (!dialog.isResizable()) {
-		                dialog.setResizable(true);
-		                dialog.setPreferredSize(new Dimension((int) (IMSRmain.get_main().getWidth() / 1.1), (int) (IMSRmain.get_main().getHeight() / 1.21)));
-		            }
-		        }
-		    }
-		});
 		
 		// Add the Panel to this Big ScrollPane
 		setBorder(BorderFactory.createEmptyBorder());
@@ -458,20 +432,7 @@ class ScrollPane_Extraction_Preview extends JScrollPane {
 		textarea.setSelectionStart(0);	// scroll to top
 		textarea.setSelectionEnd(0);
 		textarea.setEditable(false);
-		
 		TitleScrollPane explore_scrollpane = new TitleScrollPane(title, "CENTER", textarea);
-		addHierarchyListener(new HierarchyListener() {	//	These codes make the license_scrollpane resizable --> the Big ScrollPane resizable --> JOptionPane resizable
-		    public void hierarchyChanged(HierarchyEvent e) {
-		        Window window = SwingUtilities.getWindowAncestor(explore_scrollpane);
-		        if (window instanceof Dialog) {
-		            Dialog dialog = (Dialog)window;
-		            if (!dialog.isResizable()) {
-		                dialog.setResizable(true);
-		                dialog.setPreferredSize(new Dimension((int) (IMSRmain.get_main().getWidth() / 1.1), (int) (IMSRmain.get_main().getHeight() / 1.21)));
-		            }
-		        }
-		    }
-		});
 		
 		// Add the Panel to this Big ScrollPane
 		setBorder(BorderFactory.createEmptyBorder());

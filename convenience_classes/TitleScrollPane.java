@@ -20,11 +20,18 @@ along with PRISM. If not, see <http://www.gnu.org/licenses/>.
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dialog;
 import java.awt.Dimension;
+import java.awt.Window;
+import java.awt.event.HierarchyEvent;
+import java.awt.event.HierarchyListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
 import javax.swing.border.TitledBorder;
+
+import root.IMSRmain;
 
 public class TitleScrollPane extends JScrollPane {	
 	// Scroll Panel with Title and the nested ScrollPane with Border
@@ -35,6 +42,18 @@ public class TitleScrollPane extends JScrollPane {
 		nested_scrollpane = new JScrollPane(component);	
 		nested_scrollpane.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, ColorUtil.makeTransparent(Color.BLACK, 75)));
 		nested_scrollpane.setPreferredSize(new Dimension(100, 100));
+		nested_scrollpane.addHierarchyListener(new HierarchyListener() {	//	These codes make the license_scrollpane resizable --> the Big ScrollPane resizable --> JOptionPane resizable
+		    public void hierarchyChanged(HierarchyEvent e) {
+		        Window window = SwingUtilities.getWindowAncestor(nested_scrollpane);
+		        if (window instanceof Dialog) {
+		            Dialog dialog = (Dialog)window;
+		            if (!dialog.isResizable()) {
+		                dialog.setResizable(true);
+		                dialog.setPreferredSize(new Dimension((int) (IMSRmain.get_main().getWidth() / 1.1), (int) (IMSRmain.get_main().getHeight() / 1.21)));
+		            }
+		        }
+		    }
+		});
 		
 		border = new TitledBorder(title);
 		if (title_alignment.equals("LEFT")) {
