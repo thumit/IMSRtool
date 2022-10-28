@@ -1171,9 +1171,25 @@ public class ISMR_Process {
 		unique_fires_set.addAll(final_fires);
 		final_fires = new ArrayList<>(unique_fires_set);
 		
-//		for (int i = 0; i < r_fires.size(); i++) {
-//			final_fires.add(r_fires.get(i));	
-//		}
+		// recalculate priority for gacc and fire
+		Set<String> gacc_set = new LinkedHashSet<String>();
+		LinkedHashMap<String, Integer> map_gacc_to_priority = new LinkedHashMap<String, Integer>();
+		int gacc_priority = 0;
+		int fire_priority = 0;
+		for (int i = 0; i < final_fires.size(); i++) {
+			String[] final_fire_info = final_fires.get(i).split("\t");
+			String current_gacc = final_fire_info[1];
+			if (map_gacc_to_priority.get(current_gacc) == null) {	// new gacc
+				gacc_priority = gacc_priority + 1;
+				map_gacc_to_priority.put(current_gacc, gacc_priority);
+				fire_priority = 1;	// reset fire priority
+			} else {
+				fire_priority = fire_priority + 1;
+			}
+			final_fire_info[2] = String.valueOf(gacc_priority);
+			final_fire_info[3] = String.valueOf(fire_priority);
+			final_fires.set(i, String.join("\t", final_fire_info));
+		}
 		
 //		if (r_fires.size() != s_fires.size()) {
 //			System.out.println(date + ": different number of fires in raw vs simple2: " + r_fires.size() + " " + s_fires.size());

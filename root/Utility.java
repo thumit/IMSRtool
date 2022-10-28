@@ -77,22 +77,17 @@ public class Utility {
 	
 	public void convert_pdf_to_text_files(File[] files) {
 		if (files != null) {
-			try {
-				String inputFolder = files[0].getParentFile().toString();
-				Path targetDirectory = Paths.get(inputFolder + "/pdftotext.exe");
-				File pdftotext_exe_target_file = FilesHandle.getResourceFile("pdftotext.exe", targetDirectory);
-				run_command(inputFolder, files, "simple2");	// Run command line
-				run_command(inputFolder, files, "raw");		// Run command line
-				// Delete the library file
-				pdftotext_exe_target_file.deleteOnExit();
-				if (pdftotext_exe_target_file.exists()) {
-					pdftotext_exe_target_file.delete();
-				}
-				JOptionPane.showMessageDialog(null, files.length + " pdf files have been successfully converted to text files in 2 folders 'simple2' and 'raw'");
-			} catch (Exception e) {
-				e.printStackTrace();
-			} finally {
+			String inputFolder = files[0].getParentFile().toString();
+			Path targetDirectory = Paths.get(inputFolder + "/pdftotext.exe");
+			File pdftotext_exe_target_file = FilesHandle.getResourceFile("pdftotext.exe", targetDirectory);
+			run_command(inputFolder, files, "simple2");	// Run command line
+			run_command(inputFolder, files, "raw");		// Run command line
+			// Delete the library file
+			pdftotext_exe_target_file.deleteOnExit();
+			if (pdftotext_exe_target_file.exists()) {
+				pdftotext_exe_target_file.delete();
 			}
+			JOptionPane.showMessageDialog(null, files.length + " pdf files have been successfully converted to text files in 2 folders 'simple2' and 'raw'");
 		}
 	}
 	
@@ -119,14 +114,14 @@ public class Utility {
 //			System.out.println(line);
 //		}
 //		//--------------------------------------------------------------------------------------------------------------------
-		File directory = new File(inputFolder);
-		File out_directory = new File(inputFolder + "/" + corvert_option);	// use the option to create folder that contains all output text files
+		final File directory = new File(inputFolder);
+		final File out_directory = new File(inputFolder + "/" + corvert_option);	// use the option to create folder that contains all output text files
 		if (!out_directory.exists()) {
 			out_directory.mkdirs();
 		}
 		
-		ProcessBuilder builder = new ProcessBuilder("cmd.exe", "/c", "cd " + inputFolder);	// we probably do not need these 2 lines, but sometimes it does not convert 1 file in below loop so I add these
-		builder = builder.directory(directory);
+//		ProcessBuilder builder = new ProcessBuilder("cmd.exe", "/c", "cd " + inputFolder);	// we probably do not need these 2 lines, but sometimes it does not convert 1 file in below loop so I add these
+//		builder = builder.directory(directory);
 //		for (File f : file) {
 //			String command = "pdftotext -raw " + f.getName();
 //			builder = new ProcessBuilder("cmd.exe", "/c", command);
@@ -158,9 +153,11 @@ public class Utility {
 			}
 			final String cmd = batch_command;
 			// JOptionPane.showMessageDialog(null, cmd);
-			Thread t = new Thread() {
-				public void run() {
+			Thread t = new Thread(new Runnable(){
+			    @Override
+			    public void run() {
 					ProcessBuilder builder = new ProcessBuilder("cmd.exe", "/c", cmd);
+					builder = builder.directory(directory);
 					builder.redirectErrorStream(true);
 						try {
 							Process p = builder.start();
@@ -169,7 +166,7 @@ public class Utility {
 							e.printStackTrace();
 						}
 				}
-			};
+			});
 			threads.add(t);
 		}
 		for (Thread t : threads) {
