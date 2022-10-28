@@ -1159,12 +1159,13 @@ public class ISMR_Process {
 			} else if ((r_id > 0) && (r_id < r_fires.size() - 1) && r_fire_list.get(r_id - 1)[1].equals(r_fire_list.get(r_id + 1)[1])) {	// because above and below raw IDs have the same GACC, we apply that GACC to the middle
 				r_fire_info[1] = r_fire_list.get(r_id - 1)[1];
 			} else {
-				System.out.println(date + "     " + r_fire_info[4] + "     "  + "missing GACC and is replaced by raw GACC that is    " + r_fire_info[1]); // has been checked manually and was 100% correct across 2016-2021
+//				System.out.println(date + "     " + r_fire_info[4] + "     "  + "missing GACC and is replaced by raw GACC that is    " + r_fire_info[1]); // has been checked manually and was 100% correct across 2016-2021
 				r_fire_info[1] = r_fire_info[1];	// Gacc
 				// r_fire_info[1] = "N/A";			// Gacc
 			}
 			final_fires.add(String.join("\t", r_fire_info));	
 		}
+		int original_fire_size = final_fires.size();	// duplicated records may exist
 		
 		// use set to remove duplicated records (such as triple duplication in 20200719) and convert back to list
 		Set<String> unique_fires_set = new LinkedHashSet<String>();
@@ -1190,6 +1191,11 @@ public class ISMR_Process {
 			final_fire_info[3] = String.valueOf(fire_priority);
 			final_fires.set(i, String.join("\t", final_fire_info));
 		}
+		
+		int final_fire_size = final_fires.size();	// no duplication, only unique records
+//		if (final_fire_size != original_fire_size) {
+//			System.out.println(date + ": number of duplication records removed: " + String.valueOf(original_fire_size - final_fire_size));
+//		}
 		
 //		if (r_fires.size() != s_fires.size()) {
 //			System.out.println(date + ": different number of fires in raw vs simple2: " + r_fires.size() + " " + s_fires.size());
