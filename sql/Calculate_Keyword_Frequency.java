@@ -19,7 +19,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 
-import convenience_classes.TextAreaReadMe;
+import convenience_classes.ColorTextArea;
 import convenience_classes.TitleScrollPane;
 import root.IMSRmain;
 
@@ -95,7 +95,7 @@ public class Calculate_Keyword_Frequency {
 	class Keyword_Scroll extends JScrollPane {
 		public Keyword_Scroll() {		
 			String[] header = new String[] { "KEYWORD", "FREQUENCY"};
-			TextAreaReadMe textarea = new TextAreaReadMe("icon_tree.png", 75, 75);	// Print to text area
+			ColorTextArea textarea = new ColorTextArea("icon_tree.png", 75, 75);	// Print to text area
 			textarea.append("Below are keywords identified from the field " + SIT_Field + "\n");
 			textarea.append(String.join("\t", header)  + "\n");
 			

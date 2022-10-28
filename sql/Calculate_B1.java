@@ -26,7 +26,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 
-import convenience_classes.TextAreaReadMe;
+import convenience_classes.ColorTextArea;
 import convenience_classes.TitleScrollPane;
 import root.IMSRmain;
 
@@ -103,7 +103,7 @@ public class Calculate_B1 {
 	class B1_Scroll extends JScrollPane {
 		public B1_Scroll() {		
 			String[] header = new String[] { "RECORD", "YEAR", "INC", "INC209R", "DAMAGED", "DESTROYED", "THREATENED", "TOTAL", "Final_Point" };
-			TextAreaReadMe textarea = new TextAreaReadMe("icon_tree.png", 75, 75);	// Print to text area
+			ColorTextArea textarea = new ColorTextArea("icon_tree.png", 75, 75);	// Print to text area
 			textarea.append(String.join("\t", header)  + "\n");
 			int number_of_records = year.size();
 			for (int i = 0; i < number_of_records; i++) {

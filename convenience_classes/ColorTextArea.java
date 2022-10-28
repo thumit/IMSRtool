@@ -40,12 +40,12 @@ import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 import javax.swing.text.DefaultCaret;
 
-public class TextAreaReadMe extends JTextArea {
+public class ColorTextArea extends JTextArea {
 	private String png;
 	private int width;
 	private int height;
 	
-	public TextAreaReadMe(String png, int width, int height) {
+	public ColorTextArea(String png, int width, int height) {
 		this.png = png;
 		this.width = width;
 		this.height = height;

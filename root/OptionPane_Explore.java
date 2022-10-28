@@ -27,8 +27,9 @@ import javax.swing.JSplitPane;
 import javax.swing.SwingUtilities;
 import javax.swing.border.TitledBorder;
 
+import convenience_classes.ColorTextArea;
+import convenience_classes.FindTextPane;
 import convenience_classes.GridBagLayoutHandle;
-import convenience_classes.TextAreaReadMe;
 import convenience_classes.TitleScrollPane;
 
 public class OptionPane_Explore extends JOptionPane {
@@ -79,9 +80,9 @@ class Aggregate extends JScrollPane {
 			ismr_process[i] = new ISMR_Process(s_files[i], r_files[i]);
 		}
 		
-		TextAreaReadMe[] textarea = new TextAreaReadMe[4];
+		ColorTextArea[] textarea = new ColorTextArea[4];
 		for (int i = 0; i < 4; i++) {
-			textarea[i] = new TextAreaReadMe("icon_tree.png", 75, 75);
+			textarea[i] = new ColorTextArea("icon_tree.png", 75, 75);
 			textarea[i].setSelectionStart(0);	// scroll to top
 			textarea[i].setSelectionEnd(0);
 			textarea[i].setEditable(false);
@@ -117,13 +118,22 @@ class Aggregate extends JScrollPane {
 				textarea[3].append(st + "\n");
 			}
 		}
-		JScrollPane view = new JScrollPane();
-		view.setBorder(BorderFactory.createEmptyBorder());
-		view.setViewportView(textarea[0]);
+		JScrollPane textarea_view = new JScrollPane();
+		textarea_view.setBorder(BorderFactory.createEmptyBorder());
+		textarea_view.setViewportView(textarea[0]);
+		
+		FindTextPane[] textpane = new FindTextPane[4];
+		textpane[0] = new FindTextPane(textarea[0]);
+		textpane[1] = new FindTextPane(textarea[1]);
+		textpane[2] = new FindTextPane(textarea[2]);
+		textpane[3] = new FindTextPane(textarea[3]);
+		JScrollPane textpane_view = new JScrollPane();
+		textpane_view.setBorder(BorderFactory.createEtchedBorder());
+		textpane_view.setViewportView(textpane[0]);
 		
 		// Add to GUI
 		JPanel radio_panel = new JPanel();
-		radio_panel.setBorder(BorderFactory.createEmptyBorder());
+		radio_panel.setBorder(BorderFactory.createEtchedBorder());
 		radio_panel.setLayout(new FlowLayout());
 		ButtonGroup radio_button_group = new ButtonGroup();
 		JRadioButton[] radio_button = new JRadioButton[4];
@@ -136,7 +146,8 @@ class Aggregate extends JScrollPane {
 				radio_panel.add(radio_button[i]);
 				final int ii =i;
 				radio_button[i].addActionListener(e -> {
-					view.setViewportView(textarea[ii]);
+					textarea_view.setViewportView(textarea[ii]);
+					textpane_view.setViewportView(textpane[ii]);
 				});
 		}	
 		radio_button[0].setSelected(true);
@@ -157,15 +168,15 @@ class Aggregate extends JScrollPane {
 		    }
 		});
 		GridBagConstraints c = new GridBagConstraints();
-		combine_panel.add(view, GridBagLayoutHandle.get_c(c, "BOTH", 
-				0, 0, 1, 1, 1, 1, 	// gridx, gridy, gridwidth, gridheight, weightx, weighty
+		combine_panel.add(textarea_view, GridBagLayoutHandle.get_c(c, "BOTH", 
+				0, 0, 2, 1, 1, 1, 	// gridx, gridy, gridwidth, gridheight, weightx, weighty
 				0, 0, 0, 0));		// insets top, left, bottom, right
 		combine_panel.add(radio_panel, GridBagLayoutHandle.get_c(c, "BOTH", 
 				0, 1, 1, 1, 1, 0, 	// gridx, gridy, gridwidth, gridheight, weightx, weighty
 				0, 0, 0, 0));		// insets top, left, bottom, right
-		
-		// Show pop-up panel
-
+		combine_panel.add(textpane_view, GridBagLayoutHandle.get_c(c, "BOTH", 
+				1, 1, 1, 1, 1, 0, 	// gridx, gridy, gridwidth, gridheight, weightx, weighty
+				0, 0, 0, 0));		// insets top, left, bottom, right
 		
 		// Add everything to a popup panel
 		String ExitOption[] = { "EXPORT TEXT FILE", "EXPORT DATABASE FILE", "EXPORT TO SQLSERVER", "EXIT" };
@@ -293,7 +304,7 @@ class ScrollPane_View_PDF extends JScrollPane {
 class ScrollPane_View_File extends JScrollPane {
 	public ScrollPane_View_File(File file, String title) {	
 		// Print to text area------------------	
-		TextAreaReadMe textarea = new TextAreaReadMe("icon_tree.png", 75, 75);
+		ColorTextArea textarea = new ColorTextArea("icon_tree.png", 75, 75);
 		textarea.setEditable(false);
 		BufferedReader buff = null;
 		try {
@@ -338,7 +349,7 @@ class ScrollPane_View_File extends JScrollPane {
 class ScrollPane_View_Trim_File extends JScrollPane {
 	public ScrollPane_View_Trim_File(File file, String title) {	
 		// Print to text area--------------------	
-		TextAreaReadMe textarea = new TextAreaReadMe("icon_tree.png", 75, 75);
+		ColorTextArea textarea = new ColorTextArea("icon_tree.png", 75, 75);
 		textarea.setEditable(false);
 
 		try {
@@ -390,7 +401,7 @@ class ScrollPane_Extraction_Preview extends JScrollPane {
 				"resources_eng", "resources_heli", "strc_lost", "ctd", "origin_own" };
 		String[] header4 = new String[] { "date", "gacc_name", "incidents", "cumulative_acres", "crews", "engines", "helicopters", "total_personnel", "change_in_personnel" };
 		
-		TextAreaReadMe textarea = new TextAreaReadMe("icon_tree.png", 75, 75);	// Print to text area
+		ColorTextArea textarea = new ColorTextArea("icon_tree.png", 75, 75);	// Print to text area
 		ISMR_Process ismr = new ISMR_Process(s_file, r_file);
 		textarea.append(ismr.date + "\n");
 		textarea.append(ismr.national_prepareness_level + "\n");

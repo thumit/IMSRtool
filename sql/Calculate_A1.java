@@ -48,7 +48,7 @@ import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.ByteBuffersDirectory;
 import org.apache.lucene.store.Directory;
 
-import convenience_classes.TextAreaReadMe;
+import convenience_classes.ColorTextArea;
 import convenience_classes.TitleScrollPane;
 import root.IMSRmain;
 
@@ -250,7 +250,7 @@ public class Calculate_A1 {
 	class A1_Scroll extends JScrollPane {
 		public A1_Scroll() {		
 			String[] header = new String[] { "RECORD", "YEAR", "INC", "INC209R", "Box33", "Box34", "Box33_Point", "Box34_Point", "Final_Point" };
-			TextAreaReadMe textarea = new TextAreaReadMe("icon_tree.png", 75, 75);	// Print to text area
+			ColorTextArea textarea = new ColorTextArea("icon_tree.png", 75, 75);	// Print to text area
 			textarea.append(String.join("\t", header)  + "\n");
 			int number_of_records = year.size();
 			for (int i = 0; i < number_of_records; i++) {
