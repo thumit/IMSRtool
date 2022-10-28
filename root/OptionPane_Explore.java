@@ -195,14 +195,30 @@ class Explore_Pane extends JSplitPane {
 	public Explore_Pane(File pdf, File s_file, File r_file) {	
 		String original_title = s_file.getName().toString().replace(".txt", ".pdf") + " - ORIGINAL";
 		ScrollPane_View_PDF original_pdf = new ScrollPane_View_PDF(pdf, original_title);
-		
-		String s_title = s_file.getName().toString() + " - SIMPLE2 CONVERSION";
-		ScrollPane_View_Trim_File s_trim = new ScrollPane_View_Trim_File(s_file, s_title);
-		
 		String r_title = s_file.getName().toString() + " - RAW CONVERSION";
 		ScrollPane_View_Trim_File r_trim = new ScrollPane_View_Trim_File(r_file, r_title);
+		String s_title = s_file.getName().toString() + " - SIMPLE2 CONVERSION";
+		ScrollPane_View_Trim_File s_trim = new ScrollPane_View_Trim_File(s_file, s_title);
+				
+		ColorTextArea[] textarea = new ColorTextArea[3];
+		textarea[0] = null;
+		textarea[1] = r_trim.textarea;
+		textarea[2] = s_trim.textarea;
+		JScrollPane textarea_view = new JScrollPane();
+		textarea_view.setBorder(BorderFactory.createEmptyBorder());
+		textarea_view.setViewportView(r_trim);
 		
+		FindTextPane[] textpane = new FindTextPane[3];
+		textpane[0] = new FindTextPane(textarea[0]);
+		textpane[1] = new FindTextPane(textarea[1]);
+		textpane[2] = new FindTextPane(textarea[2]);
+		JScrollPane textpane_view = new JScrollPane();
+		textpane_view.setBorder(BorderFactory.createBevelBorder(1));
+		textpane_view.setViewportView(textpane[1]);
+		
+		// Add to GUI		
 		JPanel radio_panel = new JPanel();
+		radio_panel.setBorder(BorderFactory.createBevelBorder(1));
 		radio_panel.setLayout(new FlowLayout());	
 		ButtonGroup radio_button_group = new ButtonGroup();
 		JRadioButton[] radio_button = new JRadioButton[3];
@@ -213,10 +229,9 @@ class Explore_Pane extends JSplitPane {
 				radio_button_group.add(radio_button[i]);
 				radio_panel.add(radio_button[i]);
 		}	
-		JScrollPane view = new JScrollPane(s_trim);
-		view.setBorder(BorderFactory.createEmptyBorder());
 		radio_button[0].addActionListener(e -> {
-			view.setViewportView(original_pdf);
+			textarea_view.setViewportView(original_pdf);
+			textpane_view.setViewportView(textpane[0]);
 			try {
 				Desktop.getDesktop().open(pdf);
 			} catch (IOException e1) {
@@ -224,42 +239,45 @@ class Explore_Pane extends JSplitPane {
 			}
 		});
 		radio_button[1].addActionListener(e -> {
-			view.setViewportView(r_trim);
+			textarea_view.setViewportView(r_trim);
+			textpane_view.setViewportView(textpane[1]);
 		});
 		radio_button[2].addActionListener(e -> {
-			view.setViewportView(s_trim);
+			textarea_view.setViewportView(s_trim);
+			textpane_view.setViewportView(textpane[2]);
 		});
-		radio_button[2].setSelected(true);
+		radio_button[1].setSelected(true);
 		
 		JPanel combine_panel_1 = new JPanel();
 		combine_panel_1.setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
-		combine_panel_1.add(view, GridBagLayoutHandle.get_c(c, "BOTH", 
-				0, 0, 1, 1, 1, 1, 	// gridx, gridy, gridwidth, gridheight, weightx, weighty
+		combine_panel_1.add(textarea_view, GridBagLayoutHandle.get_c(c, "BOTH", 
+				0, 0, 2, 1, 1, 1, 	// gridx, gridy, gridwidth, gridheight, weightx, weighty
 				0, 0, 0, 0));		// insets top, left, bottom, right
-		combine_panel_1.add(radio_panel, GridBagLayoutHandle.get_c(c, "BOTH", 
+		combine_panel_1.add(textpane_view, GridBagLayoutHandle.get_c(c, "BOTH", 
 				0, 1, 1, 1, 1, 0, 	// gridx, gridy, gridwidth, gridheight, weightx, weighty
 				0, 0, 0, 0));		// insets top, left, bottom, right
+		combine_panel_1.add(radio_panel, GridBagLayoutHandle.get_c(c, "BOTH", 
+				1, 1, 1, 1, 0, 0, 	// gridx, gridy, gridwidth, gridheight, weightx, weighty
+				0, 0, 0, 0));		// insets top, left, bottom, right
+		
 		
 		String preview_title = s_file.getName().toString() + " - EXTRACTION PREVIEW";
 		ScrollPane_Extraction_Preview preview = new ScrollPane_Extraction_Preview(s_file, r_file, preview_title);
-		// Just to align with left split screen
-		JPanel radio_panel_2 = new JPanel();
-		JRadioButton radio_button_2 = new JRadioButton("");
-		radio_button_2.setEnabled(false);
-		radio_panel_2.add(radio_button_2);
+		FindTextPane textpane_2 =  new FindTextPane(preview.textarea);
+		textpane_2.setBorder(BorderFactory.createBevelBorder(1));
 		JPanel combine_panel_2 = new JPanel();
 		combine_panel_2.setLayout(new GridBagLayout());
 		c = new GridBagConstraints();
 		combine_panel_2.add(preview, GridBagLayoutHandle.get_c(c, "BOTH", 
 				0, 0, 1, 1, 1, 1, 	// gridx, gridy, gridwidth, gridheight, weightx, weighty
 				0, 0, 0, 0));		// insets top, left, bottom, right
-		combine_panel_2.add(radio_panel_2, GridBagLayoutHandle.get_c(c, "BOTH", 
+		combine_panel_2.add(textpane_2, GridBagLayoutHandle.get_c(c, "BOTH", 
 				0, 1, 1, 1, 1, 0, 	// gridx, gridy, gridwidth, gridheight, weightx, weighty
 				0, 0, 0, 0));		// insets top, left, bottom, right
 		
 		setBorder(BorderFactory.createEmptyBorder());
-		setResizeWeight(0.5);
+		setResizeWeight(0.4);
 		setDividerSize(3);
 //		setDividerLocation(250);
 		setOneTouchExpandable(true);
@@ -302,10 +320,14 @@ class ScrollPane_View_PDF extends JScrollPane {
 
 
 class ScrollPane_View_File extends JScrollPane {
+	ColorTextArea textarea;
 	public ScrollPane_View_File(File file, String title) {	
 		// Print to text area------------------	
-		ColorTextArea textarea = new ColorTextArea("icon_tree.png", 75, 75);
+		textarea = new ColorTextArea("icon_tree.png", 75, 75);
+		textarea.setSelectionStart(0);	// scroll to top
+		textarea.setSelectionEnd(0);
 		textarea.setEditable(false);
+		
 		BufferedReader buff = null;
 		try {
 			buff = new BufferedReader(new FileReader(file));
@@ -347,9 +369,12 @@ class ScrollPane_View_File extends JScrollPane {
 }
 
 class ScrollPane_View_Trim_File extends JScrollPane {
+	ColorTextArea textarea;
 	public ScrollPane_View_Trim_File(File file, String title) {	
 		// Print to text area--------------------	
-		ColorTextArea textarea = new ColorTextArea("icon_tree.png", 75, 75);
+		textarea = new ColorTextArea("icon_tree.png", 75, 75);
+		textarea.setSelectionStart(0);	// scroll to top
+		textarea.setSelectionEnd(0);
 		textarea.setEditable(false);
 
 		try {
@@ -388,6 +413,7 @@ class ScrollPane_View_Trim_File extends JScrollPane {
 }
 
 class ScrollPane_Extraction_Preview extends JScrollPane {
+	ColorTextArea textarea;
 	public ScrollPane_Extraction_Preview(File s_file, File r_file, String title) {
 		String[] header1 = new String[] { "date", "national_prepareness_level", "initial_attack_activity",
 				"initial_attack_new_fires", "new_large_incidents", "large_fires_contained",
@@ -401,7 +427,7 @@ class ScrollPane_Extraction_Preview extends JScrollPane {
 				"resources_eng", "resources_heli", "strc_lost", "ctd", "origin_own" };
 		String[] header4 = new String[] { "date", "gacc_name", "incidents", "cumulative_acres", "crews", "engines", "helicopters", "total_personnel", "change_in_personnel" };
 		
-		ColorTextArea textarea = new ColorTextArea("icon_tree.png", 75, 75);	// Print to text area
+		textarea = new ColorTextArea("icon_tree.png", 75, 75);	// Print to text area
 		ISMR_Process ismr = new ISMR_Process(s_file, r_file);
 		textarea.append(ismr.date + "\n");
 		textarea.append(ismr.national_prepareness_level + "\n");

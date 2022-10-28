@@ -5,6 +5,7 @@ import java.awt.GridBagLayout;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -17,16 +18,16 @@ public class FindTextPane extends JPanel {
 
 	public FindTextPane(ColorTextArea textarea) {	// https://stackoverflow.com/questions/13437865/java-scroll-to-specific-text-inside-jtextarea
 		findButton = new JButton("FIND NEXT");
-		findField = new JTextField("", 25);
+		findField = new JTextField("", 5);
 
 		setLayout(new GridBagLayout());
-		GridBagConstraints gbc = new GridBagConstraints();
-		gbc.gridx = 0;
-		gbc.gridy = 0;
-		gbc.anchor = GridBagConstraints.WEST;
-		add(findField, gbc);
-		gbc.gridx++;
-		add(findButton, gbc);
+		GridBagConstraints c = new GridBagConstraints();
+		add(findField, GridBagLayoutHandle.get_c(c, "BOTH", 
+				0, 0, 1, 1, 1, 1, 	// gridx, gridy, gridwidth, gridheight, weightx, weighty
+				0, 0, 0, 0));		// insets top, left, bottom, right
+		add(findButton, GridBagLayoutHandle.get_c(c, "BOTH", 
+				1, 0, 1, 1, 0, 0, 	// gridx, gridy, gridwidth, gridheight, weightx, weighty
+				0, 0, 0, 0));		// insets top, left, bottom, right
 
 		findButton.addActionListener(new ActionListener() {
 			@Override
@@ -45,8 +46,7 @@ public class FindTextPane extends JPanel {
 						if (pos + findLength > document.getLength()) {
 							pos = 0;
 						}
-						// While we haven't reached the end...
-						// "<=" Correction
+						// While we haven't reached the end..."<=" Correction
 						while (pos + findLength <= document.getLength()) {
 							// Extract the text from the document
 							String match = document.getText(pos, findLength).toLowerCase();
@@ -57,7 +57,6 @@ public class FindTextPane extends JPanel {
 							}
 							pos++;
 						}
-
 						// Did we find something...
 						if (found) {
 							// Get the rectangle of the where the text would be visible...
