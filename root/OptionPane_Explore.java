@@ -62,18 +62,16 @@ public class OptionPane_Explore extends JOptionPane {
 }
 
 class Aggregate extends JScrollPane {
-	public Aggregate(File[] s_files, File[] r_files) {		
-		String[] header1 = new String[] { "date", "national_prepareness_level", "initial_attack_activity",
-				"initial_attack_new_fires", "new_large_incidents", "large_fires_contained",
-				"uncontained_large_fires", "area_command_teams_committed", "nimos_committed", "type_1_imts_committed",
-				"type_2_imts_committed" };
-		String[] header2 = new String[] { "date", "gacc", "gacc_priority", "gacc_prepareness_level", "gacc_new_fires",
-				"gacc_new_large_incidents", "gacc_uncontained_large_fires", "gacc_area_command_teams_committed",
-				"gacc_nimos_committed", "gacc_type_1_imts_committed", "gacc_type_2_imts_committed" };
-		String[] header3 = new String[] { "date", "gacc", "gacc_priority", "fire_priority", "incident_name", "unit", "size_acres",
-				"size_chge", "percentage", "ctn_comp", "est", "personnel_total", "personnel_chge", "resources_crw",
-				"resources_eng", "resources_heli", "strc_lost", "ctd", "origin_own" };
-		String[] header4 = new String[] { "date", "gacc_name", "incidents", "cumulative_acres", "crews", "engines", "helicopters", "total_personnel", "change_in_personnel" };
+	public Aggregate(File[] s_files, File[] r_files) {	
+		String[] header1 = new String[] { "date", "preparedness_level", "initial_attack_activity",
+				"new_fires", "new_large_fires", "contained_large_fires", "uncontained_large_fires", "area_command_teams", "nimos", "type_1_imts",
+				"type_2_imts" };
+		String[] header2 = new String[] { "date", "gacc", "gacc_priority", "preparedness_level", "new_fires",
+				"new_large_fires", "uncontained_large_fires", "area_command_teams", "nimos", "type_1_imts", "type_2_imts" };
+		String[] header3 = new String[] { "date", "gacc", "gacc_priority", "fire_priority", "fire", "unit", "size",
+				"size_change", "percent", "ctn_comp", "est_date", "personnel_total", "personnel_change", "crews",
+				"engines", "helicopters", "structures_lost", "ctd", "origin_own" };
+		String[] header4 = new String[] { "date", "gacc", "incidents", "cumulative_size", "crews", "engines", "helicopters", "personnel", "personnel_change" };
 		
 		ISMR_Process[] ismr_process = new ISMR_Process[s_files.length];
 		for (int i = 0; i < s_files.length; i++) {
@@ -389,17 +387,15 @@ class ScrollPane_View_Trim_File extends JScrollPane {
 class ScrollPane_Extraction_Preview extends JScrollPane {
 	ColorTextArea textarea;
 	public ScrollPane_Extraction_Preview(File s_file, File r_file, String title) {
-		String[] header1 = new String[] { "date", "national_prepareness_level", "initial_attack_activity",
-				"initial_attack_new_fires", "new_large_incidents", "large_fires_contained",
-				"uncontained_large_fires", "area_command_teams_committed", "nimos_committed", "type_1_imts_committed",
-				"type_2_imts_committed" };
-		String[] header2 = new String[] { "date", "gacc", "gacc_priority", "gacc_prepareness_level", "gacc_new_fires",
-				"gacc_new_large_incidents", "gacc_uncontained_large_fires", "gacc_area_command_teams_committed",
-				"gacc_nimos_committed", "gacc_type_1_imts_committed", "gacc_type_2_imts_committed" };
-		String[] header3 = new String[] { "date", "gacc", "gacc_priority", "fire_priority", "incident_name", "unit", "size_acres",
-				"size_chge", "percentage", "ctn_comp", "est", "personnel_total", "personnel_chge", "resources_crw",
-				"resources_eng", "resources_heli", "strc_lost", "ctd", "origin_own" };
-		String[] header4 = new String[] { "date", "gacc_name", "incidents", "cumulative_acres", "crews", "engines", "helicopters", "total_personnel", "change_in_personnel" };
+		String[] header1 = new String[] { "date", "preparedness_level", "initial_attack_activity",
+				"new_fires", "new_large_fires", "contained_large_fires", "uncontained_large_fires", "area_command_teams", "nimos", "type_1_imts",
+				"type_2_imts" };
+		String[] header2 = new String[] { "date", "gacc", "gacc_priority", "preparedness_level", "new_fires",
+				"new_large_fires", "uncontained_large_fires", "area_command_teams", "nimos", "type_1_imts", "type_2_imts" };
+		String[] header3 = new String[] { "date", "gacc", "gacc_priority", "fire_priority", "fire", "unit", "size",
+				"size_change", "percent", "ctn_comp", "est_date", "personnel_total", "personnel_change", "crews",
+				"engines", "helicopters", "structures_lost", "ctd", "origin_own" };
+		String[] header4 = new String[] { "date", "gacc", "incidents", "cumulative_size", "crews", "engines", "helicopters", "personnel", "personnel_change" };
 		
 		textarea = new ColorTextArea("icon_tree.png", 75, 75);	// Print to text area
 		ISMR_Process ismr = new ISMR_Process(s_file, r_file);
