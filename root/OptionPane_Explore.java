@@ -52,7 +52,7 @@ public class OptionPane_Explore extends JOptionPane {
 				if (id < s_files.length - 1) id = id + 1;
 			} else if (response == 2) {
 				exit_exploration = true;
-				new Aggregate_Scroll(s_files, r_files); // Aggregate
+				new Aggregate(s_files, r_files); // Aggregate
 			} else {
 				exit_exploration = true;
 			}
@@ -60,8 +60,8 @@ public class OptionPane_Explore extends JOptionPane {
 	}
 }
 
-class Aggregate_Scroll extends JScrollPane {
-	public Aggregate_Scroll(File[] s_files, File[] r_files) {		
+class Aggregate extends JScrollPane {
+	public Aggregate(File[] s_files, File[] r_files) {		
 		String[] header1 = new String[] { "date", "national_prepareness_level", "initial_attack_activity",
 				"initial_attack_new_fires", "new_large_incidents", "large_fires_contained",
 				"uncontained_large_fires", "area_command_teams_committed", "nimos_committed", "type_1_imts_committed",
@@ -78,55 +78,75 @@ class Aggregate_Scroll extends JScrollPane {
 		for (int i = 0; i < s_files.length; i++) {
 			ismr_process[i] = new ISMR_Process(s_files[i], r_files[i]);
 		}
-		TextAreaReadMe textarea = new TextAreaReadMe("icon_tree.png", 75, 75);	// Print to text area
-		textarea.append(String.join("\t", header1)  + "\n");
-		for (ISMR_Process ismr : ismr_process) {
-			textarea.append(String.join("\t", ismr.national_fire_activity)  + "\n");
+		
+		TextAreaReadMe[] textarea = new TextAreaReadMe[4];
+		for (int i = 0; i < 4; i++) {
+			textarea[i] = new TextAreaReadMe("icon_tree.png", 75, 75);
+			textarea[i].setSelectionStart(0);	// scroll to top
+			textarea[i].setSelectionEnd(0);
+			textarea[i].setEditable(false);
 		}
-		textarea.append("--------------------------------------------------------------------" + "\n");
-		textarea.append("--------------------------------------------------------------------" + "\n");
-		textarea.append("--------------------------------------------------------------------" + "\n");
-		textarea.append(String.join("\t", header2)  + "\n");
+		
+		textarea[0].append(String.join("\t", header1)  + "\n");
+		for (ISMR_Process ismr : ismr_process) {
+			textarea[0].append(String.join("\t", ismr.national_fire_activity)  + "\n");
+		}
+		textarea[1].append(String.join("\t", header2)  + "\n");
 		for (ISMR_Process ismr : ismr_process) {
 			for (String st : ismr.gacc_fire_activity) {
-				textarea.append(st + "\n");
+				textarea[1].append(st + "\n");
 			}
 		}
-		textarea.append("--------------------------------------------------------------------" + "\n");
-		textarea.append("--------------------------------------------------------------------" + "\n");
-		textarea.append("--------------------------------------------------------------------" + "\n");
-		textarea.append(String.join("\t", header3)  + "\n");
+		textarea[2].append(String.join("\t", header3)  + "\n");
 		for (ISMR_Process ismr : ismr_process) {
 			for (String fire : ismr.final_fires) {
-				textarea.append(fire + "\n");
+				textarea[2].append(fire + "\n");
 			}
 		}
-		textarea.append("--------------------------------------------------------------------" + "\n");
-		textarea.append("--------------------------------------------------------------------" + "\n");
-		textarea.append("--------------------------------------------------------------------" + "\n");
-		for (ISMR_Process ismr : ismr_process) {
-			if (ismr.final_fires.isEmpty()) {
-				textarea.append(ismr.date + " has no fire" + "\n");
-			}
-		}
-		textarea.append("--------------------------------------------------------------------" + "\n");
-		textarea.append("--------------------------------------------------------------------" + "\n");
-		textarea.append("--------------------------------------------------------------------" + "\n");
-		textarea.append(String.join("\t", header4)  + "\n");
+//		textarea[2].append("--------------------------------------------------------------------" + "\n");
+//		textarea[2].append("--------------------------------------------------------------------" + "\n");
+//		textarea[2].append("--------------------------------------------------------------------" + "\n");
+//		for (ISMR_Process ismr : ismr_process) {
+//			if (ismr.final_fires.isEmpty()) {
+//				textarea[2].append(ismr.date + " has no fire" + "\n");
+//			}
+//		}
+		textarea[3].append(String.join("\t", header4)  + "\n");
 		for (ISMR_Process ismr : ismr_process) {
 			for (String st : ismr.resource_summary) {
-				textarea.append(st + "\n");
+				textarea[3].append(st + "\n");
 			}
 		}
+		JScrollPane view = new JScrollPane();
+		view.setBorder(BorderFactory.createEmptyBorder());
+		view.setViewportView(textarea[0]);
 		
-		textarea.setSelectionStart(0);	// scroll to top
-		textarea.setSelectionEnd(0);
-		textarea.setEditable(false);
+		// Add to GUI
+		JPanel radio_panel = new JPanel();
+		radio_panel.setBorder(BorderFactory.createEmptyBorder());
+		radio_panel.setLayout(new FlowLayout());
+		ButtonGroup radio_button_group = new ButtonGroup();
+		JRadioButton[] radio_button = new JRadioButton[4];
+		radio_button[0]= new JRadioButton("NATIONAL");
+		radio_button[1]= new JRadioButton("GACC");
+		radio_button[2]= new JRadioButton("FIRES");
+		radio_button[3]= new JRadioButton("RESOURCE SUMMARY");
+		for (int i = 0; i < radio_button.length; i++) {
+				radio_button_group.add(radio_button[i]);
+				radio_panel.add(radio_button[i]);
+				final int ii =i;
+				radio_button[i].addActionListener(e -> {
+					view.setViewportView(textarea[ii]);
+				});
+		}	
+		radio_button[0].setSelected(true);
 		
-		TitleScrollPane explore_scrollpane = new TitleScrollPane("", "CENTER", textarea);
-		addHierarchyListener(new HierarchyListener() {	//	These codes make the license_scrollpane resizable --> the Big ScrollPane resizable --> JOptionPane resizable
+		JPanel combine_panel = new JPanel();
+		combine_panel.setBorder(BorderFactory.createBevelBorder(1));
+		combine_panel.setLayout(new GridBagLayout());
+		combine_panel.addHierarchyListener(new HierarchyListener() {	//	These codes make the panel resizable
 		    public void hierarchyChanged(HierarchyEvent e) {
-		        Window window = SwingUtilities.getWindowAncestor(explore_scrollpane);
+		        Window window = SwingUtilities.getWindowAncestor(combine_panel);
 		        if (window instanceof Dialog) {
 		            Dialog dialog = (Dialog)window;
 		            if (!dialog.isResizable()) {
@@ -136,14 +156,20 @@ class Aggregate_Scroll extends JScrollPane {
 		        }
 		    }
 		});
+		GridBagConstraints c = new GridBagConstraints();
+		combine_panel.add(view, GridBagLayoutHandle.get_c(c, "BOTH", 
+				0, 0, 1, 1, 1, 1, 	// gridx, gridy, gridwidth, gridheight, weightx, weighty
+				0, 0, 0, 0));		// insets top, left, bottom, right
+		combine_panel.add(radio_panel, GridBagLayoutHandle.get_c(c, "BOTH", 
+				0, 1, 1, 1, 1, 0, 	// gridx, gridy, gridwidth, gridheight, weightx, weighty
+				0, 0, 0, 0));		// insets top, left, bottom, right
 		
-		// Add the Panel to this Big ScrollPane
-		setBorder(BorderFactory.createEmptyBorder());
-		setViewportView(explore_scrollpane);
+		// Show pop-up panel
+
 		
 		// Add everything to a popup panel
 		String ExitOption[] = { "EXPORT TEXT FILE", "EXPORT DATABASE FILE", "EXPORT TO SQLSERVER", "EXIT" };
-		int response = JOptionPane.showOptionDialog(IMSRmain.get_DesktopPane(), this, "AGRREGATION PREVIEW",
+		int response = JOptionPane.showOptionDialog(IMSRmain.get_DesktopPane(), combine_panel, "AGRREGATION PREVIEW",
 				JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, ExitOption, ExitOption[0]);
 		if (response == 0) {
 			
