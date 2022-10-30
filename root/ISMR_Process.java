@@ -805,7 +805,8 @@ public class ISMR_Process {
 							)		
 						 )
 					  ) {	// is there any fire else?
-					System.out.println( date + ": " + "Is this a fire we did not add when processing raw?   " + r_lines[i]);
+					String this_fire = String.join("\t", r_date, current_area, gacc_priority, fire_priority, r_lines[i]);
+					System.out.println( date + ": " + "Is this a fire we did not add when processing raw?   " + this_fire);
 				}
 			} else { // from 2015 we use this to process data
 				if (line_length >= 14 
@@ -1212,43 +1213,75 @@ public class ISMR_Process {
 		}
 	}
 	
-	private void fire_name_validation_and_adjustmen_old_not_use() {
-		// list to store pattern and id
-		List<String> r_pattern_list = new ArrayList<String>();
-		for (int i = 0; i < r_fires.size(); i++) {
-			String[] r_fire_info = r_fires.get(i).split("\t"); 
-			// pattern = "date", "unit", "size_acres", "size_chge", "percentage", "ctn_comp", "est", "personnel_total", "personnel_chge", "resources_crw", "resources_eng", "resources_heli", "strc_lost", "ctd", "origin_own"
-			String pattern = String.join("\t", r_fire_info[0], r_fire_info[5], r_fire_info[6], r_fire_info[7],
-					r_fire_info[8], r_fire_info[9], r_fire_info[10], r_fire_info[11], r_fire_info[12], r_fire_info[13],
-					r_fire_info[14], r_fire_info[15], r_fire_info[16], r_fire_info[17], r_fire_info[18]);
-			r_pattern_list.add(pattern);
+	private void manual_fire_adjustment(List<String> fires_list, String fire) {
+//		LinkedHashMap<String, String> adjustment = new LinkedHashMap<String, String>();
+//		adjustment.put("* Coal Bank Mtn. KY KYS 527 100 -- 0 0 0 0 NR ST",
+//				"Coal Bank Mtn.	KY-KYS	527	100	---	null	0	0	0	0	NR	ST");
+		if (fire.equals("2007-03-02	SACC	NA	NA	* Coal Bank Mtn. KY KYS 527 100 -- 0 0 0 0 NR ST")) {
+			fires_list.add("2007-03-02	SACC	NA	NA	Coal Bank Mtn.	KY-KYS	527	100	---	---	0	0	0	0	NR	ST");
 		}
-		if (r_fires.size() != s_fires.size()) {
-			System.out.println(date + " has different number of fires between raw and simple2: " + r_fires.size() + " " + s_fires.size());
+		if (fire.equals("2007-10-04	NA	NA	NA	* Phillips Branch KY KYS 125 --- 50 UNK 20 --- 2 1 -0 NR PRI")) {
+			fires_list.add("2007-10-04	NA	NA	NA	Phillips Branch	KY-KYS	125	---	50	UNK	20	---	2	1	---	0	NR	PRI");
 		}
-		
-		// find matching pattern, then if names overlap between raw and simple we can adjust.
-		int rename_count = 0;
-		for (int i = 0; i < s_fires.size(); i++) {
-			String[] s_fire_info = s_fires.get(i).split("\t"); 
-			// pattern = "date", "unit", "size_acres", "size_chge", "percentage", "ctn_comp", "est", "personnel_total", "personnel_chge", "resources_crw", "resources_eng", "resources_heli", "strc_lost", "ctd", "origin_own"
-			String pattern = String.join("\t", s_fire_info[0], s_fire_info[5], s_fire_info[6], s_fire_info[7],
-					s_fire_info[8], s_fire_info[9], s_fire_info[10], s_fire_info[11], s_fire_info[12], s_fire_info[13],
-					s_fire_info[14], s_fire_info[15], s_fire_info[16], s_fire_info[17], s_fire_info[18]);
-			
-			String s_fire_name = s_fire_info[4];
-			String s_last_name = s_fire_name.substring(s_fire_name.lastIndexOf(" ") + 1);
-			int r_id = r_pattern_list.indexOf(pattern);
-			String r_fire_name = (r_id > -1)? r_fires.get(r_id).split("\t")[4] : "-9999";
-			if (r_id > -1 && r_fire_name.contains(s_last_name)) {
-				s_fire_info[4] = r_fire_name;	// adjust fire name
-				rename_count = rename_count + 1;
-			} else {
-				System.out.println(date + " " + s_fire_info[4] + " has not been renamed");
-			}
-			final_fires.add(String.join("\t", s_fire_info));	// adjust fire name
+		if (fire.equals("2007-10-22	OSCC	NA	NA	* Witch CA MVU 10,000 --- 0 UNK 369 --- 22 33 -0 NR ST")) {
+			fires_list.add("2007-10-22	OSCC	NA	NA	Witch	CA-MVU	10,000	---	0	UNK	369	---	22	33	---	0	NR	ST");
 		}
-//		int not_rename_count = s_fires.size() - rename_count;
-//		if (not_rename_count > 0) System.out.println(date + " " + not_rename_count + " has not been renamed");
+		if (fire.equals("2008-04-21	SWCC	NA	NA	Burn Out OK OMA 519 -90 UNK 2 -12 0 1 0 0 0.8K BIA")) {
+			fires_list.add("2008-04-21	SWCC	NA	NA	Burn Out	OK-OMA	519	---	90	UNK	2	-12	0	1	0	0	0.8K	BIA");
+		}
+		if (fire.equals("2008-05-20	SACC	NA	NA	* Juno TX TXS 600 --- 0 UNK 25 --- 4 1 0 NR ST")) {
+			fires_list.add("2008-05-20	SACC	NA	NA	Juno	TX-TXS	600	---	0	UNK	25	---	---	4	1	0	NR	ST");
+		}
+		if (fire.equals("2008-06-21	SWCC	NA	NA	* Stone Coal - WFU -VA VAF 650 --- N/A N/A 45 --- 1 1 1 0 28K FS")) {	// Note next fire name is incorrect, need to remove WFU; Also CLOVER -WFU is a problem
+			fires_list.add("2008-06-21	SWCC	NA	NA	Stone Coal	VA-VAF	650	---	N/A	N/A	45	---	1	1	1	0	28K	FS");
+		}
+		if (fire.equals("2009-04-23	SACC	NA	NA	* Highway 31 SC SCS 15,000 --- 10 4/25 130 --- 10 0 40 NR ST")) {
+			fires_list.add("2009-04-23	SACC	NA	NA	Highway 31	SC-SCS	15,000	---	10	4/25	130	---	---	10	0	40	NR	ST");
+		}
+		if (fire.equals("2009-07-04	NWCC	NA	NA	* Panther Creek WA NCP 123 --- NR 9/30 15 --- 0 0 0 NR NPS")) {
+			fires_list.add("2009-07-04	NWCC	NA	NA	Panther Creek	WA-NCP	123	---	NR	9/30	15	---	---	0	0	0	NR	NPS");
+		}
+		if (fire.equals("2009-08-15	AICC	NA	NA	Rock Slough AK UYD 61,467 --- N/A N/A 0 --- 0 0 0 0 5.1M")) {
+			fires_list.add("2009-08-15	AICC	NA	NA	Rock Slough	AK-UYD	61,467	---	N/A	N/A	0	---	0	0	0	0	5.1M	FWS");
+		}
+		if (fire.equals("2009-08-15	AICC	NA	NA	Rock Slough AK UYD 61,467 --- N/A N/A 0 --- 0 0 0 0 5.1M")) {
+			fires_list.add("2009-08-15	AICC	NA	NA	Rock Slough	AK-UYD	61,467	---	N/A	N/A	0	---	0	0	0	0	5.1M	FWS");
+		}
+		if (fire.equals("2009-09-19	NWCC	NA	NA	Lobert OR WNF 115 2 100 --- 67 -72 6 0 0 64K FS")) {
+			fires_list.add("2009-09-19	NWCC	NA	NA	Lobert	OR-WNF	115	2	100	---	67	-72	---	6	0	0	64K	FS");
+		}
+		if (fire.equals("2010-04-16	SACC	NA	NA	Taylor OK OKS 260 0 100 --- 6 -0 2 0 0 NR ST")) {
+			fires_list.add("2010-04-16	SACC	NA	NA	Taylor	OK-OKS	260	0	100	---	6	---	0	2	0	0	NR	ST");
+		}
+		if (fire.equals("2010-05-29	AICC	NA	NA	--- N/A N/A 0 --- 0 0 0 0 NR FWS")) {
+			fires_list.add("2010-05-29	AICC	NA	NA	Sheenjek 2	AK-UYD	200	---	N/A	N/A	0	---	0	0	0	0	NR	FWS");
+		}
+		if (fire.equals("2010-08-25	RMCC	NA	NA	North Fork 330 SHF 330 0 98 8/25 151 -45 5 0 2 0 850K FS")) {
+			fires_list.add("2010-08-25	RMCC	NA	NA	North Fork	WY-SHF	330	0	98	8/25	151	-45	5	0	2	0	850K	FS");
+		}
+		if (fire.equals("2010-08-26	RMCC	NA	NA	North Fork 330 SHF 330 --- 98 UNK 151 --- 5 0 2 0 850K FS")) {
+			fires_list.add("2010-08-26	RMCC	NA	NA	North Fork	WY-SHF	330	---	98	UNK	151	---	5	0	2	0	850K	FS");
+		}
+		if (fire.equals("2010-08-27	WBCC	NA	NA	Wolf Creek 1,000 HTF 1,000 --- N/A N/A 15 --- 0 0 1 0 1.6M FS")) {
+			fires_list.add("2010-08-27	WBCC	NA	NA	Wolf Creek	NV-HTF	1,000	---	N/A	N/A	15	---	0	0	1	0	1.6M	FS");
+		}
+		if (fire.equals("2012-06-17	OSCC	NA	NA	Ophir Creek UT NWS 1,574 374 100 --- 3 -57 0 0 0 40K ST")) {
+			fires_list.add("2012-06-17	OSCC	NA	NA	Ophir Creek	UT-NWS	1,574	374	100	---	3	-57	0	0	---	0	40K	ST");
+		}
+		if (fire.equals("2012-11-08	RMCC	NA	NA	* Coal Creek SJF 127 127 --- N/A N/A 9 --- 0 0 1 0 24K FS")) {
+			fires_list.add("2012-11-08	RMCC	NA	NA	Coal Creek	CO-SJF	127	---	N/A	N/A	9	---	0	0	1	0	24K	FS");
+		}
+		if (fire.equals("2013-03-08	SACC	NA	NA	* Middle Mountain OK OKS 600 --- 65 3/10 9 0 5 0 0 3K ST")) {
+			fires_list.add("2013-03-08	SACC	NA	NA	Middle Mountain	OK-OKS	600	---	65	3/10	9	---	0	5	0	0	3K	ST");
+		}
+		if (fire.equals("2013-03-08	SACC	NA	NA	* Volunteer AL ALS 300 --- 100 --- 0 -0 0 0 0 3K ST")) {
+			fires_list.add("2013-03-08	SACC	NA	NA	Volunteer	AL-ALS	300	---	100	---	0	---	0	0	0	0	3K	ST");
+		}
+		if (fire.equals("2013-04-12	SACC	NA	NA	KY KYS 125 --- 100 --- 11 0 2 0 0 1K PRI")) {
+			fires_list.add("2013-04-12	SACC	NA	NA	Left Fork Abbott Creek	KY-KYS	125	---	100	---	11	---	0	2	0	0	1K	PRI");
+		}
+		if (fire.equals("2014-05-02	EACC	NA	NA	* Goose Pond PA PAS 350 --- 100 --- 8 --- 0 1 0 0 9K")) {
+			fires_list.add("2014-05-02	EACC	NA	NA	Goose Pond	PA-PAS	350	---	100	---	8	---	0	1	0	0	9K	PRI");
+		}
 	}
 }
