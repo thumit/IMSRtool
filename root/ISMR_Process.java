@@ -924,13 +924,13 @@ public class ISMR_Process {
 					boolean continue_loop = true;
 					int l = i;
 					if (combine_st.startsWith("---0")) {	// special case such as 20180913 in AICC ---0 is shown in the raw txt as 2 lines but actually they are in a single line after reading.
-						combine_st = combine_st.replace("---0", "---" + "\t" + "0");	// this is because line i-1 shown as --- but it is actually not after reading
-						combine_st = String.join("\t", r_lines[i - 2].replace(" ", "\t"), combine_st);
+						combine_st = combine_st.replaceAll("---0", "---" + "\t" + "0");	// this is because line i-1 shown as --- but it is actually not after reading
+						combine_st = String.join("\t", r_lines[i - 2].replaceAll(" ", "\t"), combine_st);
 						fire_name = r_lines[i - 3];
 						l = i - 2;
 					} else 
 					if (combine_st.startsWith("Ctn") && r_lines[i - 1].matches("^-?\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$") && r_lines[i - 2].contains("-")) {	// special case such as Spokane Complex 20180824
-						combine_st = String.join("\t", r_lines[i - 2].replace(" ", "\t"), r_lines[i - 1], combine_st);
+						combine_st = String.join("\t", r_lines[i - 2].replaceAll(" ", "\t"), r_lines[i - 1], combine_st);
 						fire_name = r_lines[i - 3];
 						l = i - 2;
 					}
