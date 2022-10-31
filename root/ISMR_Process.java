@@ -806,7 +806,12 @@ public class ISMR_Process {
 						 )
 					  ) {	// is there any fire else?
 					String this_fire = String.join("\t", r_date, current_area, gacc_priority, fire_priority, r_lines[i]);
-					System.out.println( date + ": " + "Is this a fire we did not add when processing raw?   " + this_fire);
+					if (get_manual_fire_adjustment(this_fire) != null) {
+						this_fire = get_manual_fire_adjustment(this_fire);
+						r_fires.add(this_fire);
+					} else {
+						System.out.println(date + ": " + "Is this a fire we did not add when processing raw?   " + this_fire);
+					}
 				}
 			} else { // from 2015 we use this to process data
 				if (line_length >= 14 
@@ -1011,6 +1016,9 @@ public class ISMR_Process {
 						this_fire = adjust_fire.substring(adjust_fire.indexOf("\t") + 1);	// we need to remove the first tab due to the String Join with the beginning ""
 						if (this_fire.split("\t").length == 19) {
 							r_fires.add(this_fire);
+						} else if (get_manual_fire_adjustment(this_fire) != null) {
+							this_fire = get_manual_fire_adjustment(this_fire);
+							r_fires.add(this_fire);
 						} else {
 							System.out.println( date + ": " +"Is this a fire we did not add (length not 19) when processing raw?   " + this_fire);
 						}
@@ -1069,6 +1077,9 @@ public class ISMR_Process {
 					}
 					
 					if (this_fire.split("\t").length == 19) {
+						r_fires.add(this_fire);
+					} else if (get_manual_fire_adjustment(this_fire) != null) {
+						this_fire = get_manual_fire_adjustment(this_fire);
 						r_fires.add(this_fire);
 					} else {
 						System.out.println(date + ": " +"Is this a fire we did not add (length >=6) when processing raw?   " + this_fire);
@@ -1213,75 +1224,127 @@ public class ISMR_Process {
 		}
 	}
 	
-	private void manual_fire_adjustment(List<String> fires_list, String fire) {
+	private String get_manual_fire_adjustment(String fire) {
 //		LinkedHashMap<String, String> adjustment = new LinkedHashMap<String, String>();
 //		adjustment.put("* Coal Bank Mtn. KY KYS 527 100 -- 0 0 0 0 NR ST",
 //				"Coal Bank Mtn.	KY-KYS	527	100	---	null	0	0	0	0	NR	ST");
 		if (fire.equals("2007-03-02	SACC	NA	NA	* Coal Bank Mtn. KY KYS 527 100 -- 0 0 0 0 NR ST")) {
-			fires_list.add("2007-03-02	SACC	NA	NA	Coal Bank Mtn.	KY-KYS	527	100	---	---	0	0	0	0	NR	ST");
+		return "2007-03-02	SACC	NA	NA	Coal Bank Mtn.	KY-KYS	527	null	100	null	---	---	null	0	0	0	0	NR	ST";
 		}
 		if (fire.equals("2007-10-04	NA	NA	NA	* Phillips Branch KY KYS 125 --- 50 UNK 20 --- 2 1 -0 NR PRI")) {
-			fires_list.add("2007-10-04	NA	NA	NA	Phillips Branch	KY-KYS	125	---	50	UNK	20	---	2	1	---	0	NR	PRI");
+		  return "2007-10-04	SACC	NA	NA	Phillips Branch	KY-KYS	125	---	50	null	UNK	20	---	2	1	---	0	NR	PRI";
 		}
 		if (fire.equals("2007-10-22	OSCC	NA	NA	* Witch CA MVU 10,000 --- 0 UNK 369 --- 22 33 -0 NR ST")) {
-			fires_list.add("2007-10-22	OSCC	NA	NA	Witch	CA-MVU	10,000	---	0	UNK	369	---	22	33	---	0	NR	ST");
+		  return "2007-10-22	OSCC	NA	NA	Witch	CA-MVU	10,000	---	0	null	UNK	369	---	22	33	---	0	NR	ST";
 		}
 		if (fire.equals("2008-04-21	SWCC	NA	NA	Burn Out OK OMA 519 -90 UNK 2 -12 0 1 0 0 0.8K BIA")) {
-			fires_list.add("2008-04-21	SWCC	NA	NA	Burn Out	OK-OMA	519	---	90	UNK	2	-12	0	1	0	0	0.8K	BIA");
+		  return "2008-04-21	SWCC	NA	NA	Burn Out	OK-OMA	519	---	90	null	UNK	2	-12	0	1	0	0	0.8K	BIA";
 		}
 		if (fire.equals("2008-05-20	SACC	NA	NA	* Juno TX TXS 600 --- 0 UNK 25 --- 4 1 0 NR ST")) {
-			fires_list.add("2008-05-20	SACC	NA	NA	Juno	TX-TXS	600	---	0	UNK	25	---	---	4	1	0	NR	ST");
+		  return "2008-05-20	SACC	NA	NA	Juno	TX-TXS	600	---	0	null	UNK	25	---	---	4	1	0	NR	ST";
 		}
-		if (fire.equals("2008-06-21	SWCC	NA	NA	* Stone Coal - WFU -VA VAF 650 --- N/A N/A 45 --- 1 1 1 0 28K FS")) {	// Note next fire name is incorrect, need to remove WFU; Also CLOVER -WFU is a problem
-			fires_list.add("2008-06-21	SWCC	NA	NA	Stone Coal	VA-VAF	650	---	N/A	N/A	45	---	1	1	1	0	28K	FS");
+		if (fire.equals("2008-06-21	SWCC	NA	NA	* Stone Coal -VA VAF 650 --- N/A N/A 45 --- 1 1 1 0 28K FS")) {	// Note next fire name is incorrect, need to remove WFU; Also CLOVER -WFU is a problem
+		  return "2008-06-21	SWCC	NA	NA	Stone Coal - WFU	VA-VAF	650	---	N/A	null	N/A	45	---	1	1	1	0	28K	FS";
 		}
 		if (fire.equals("2009-04-23	SACC	NA	NA	* Highway 31 SC SCS 15,000 --- 10 4/25 130 --- 10 0 40 NR ST")) {
-			fires_list.add("2009-04-23	SACC	NA	NA	Highway 31	SC-SCS	15,000	---	10	4/25	130	---	---	10	0	40	NR	ST");
+		  return "2009-04-23	SACC	NA	NA	Highway 31	SC-SCS	15,000	---	10	null	4/25	130	---	---	10	0	40	NR	ST";
 		}
 		if (fire.equals("2009-07-04	NWCC	NA	NA	* Panther Creek WA NCP 123 --- NR 9/30 15 --- 0 0 0 NR NPS")) {
-			fires_list.add("2009-07-04	NWCC	NA	NA	Panther Creek	WA-NCP	123	---	NR	9/30	15	---	---	0	0	0	NR	NPS");
+		  return "2009-07-04	NWCC	NA	NA	Panther Creek	WA-NCP	123	---	NR	null	9/30	15	---	---	0	0	0	NR	NPS";
 		}
 		if (fire.equals("2009-08-15	AICC	NA	NA	Rock Slough AK UYD 61,467 --- N/A N/A 0 --- 0 0 0 0 5.1M")) {
-			fires_list.add("2009-08-15	AICC	NA	NA	Rock Slough	AK-UYD	61,467	---	N/A	N/A	0	---	0	0	0	0	5.1M	FWS");
-		}
-		if (fire.equals("2009-08-15	AICC	NA	NA	Rock Slough AK UYD 61,467 --- N/A N/A 0 --- 0 0 0 0 5.1M")) {
-			fires_list.add("2009-08-15	AICC	NA	NA	Rock Slough	AK-UYD	61,467	---	N/A	N/A	0	---	0	0	0	0	5.1M	FWS");
+		  return "2009-08-15	AICC	NA	NA	Rock Slough	AK-UYD	61,467	---	N/A	null	N/A	0	---	0	0	0	0	5.1M	FWS";
 		}
 		if (fire.equals("2009-09-19	NWCC	NA	NA	Lobert OR WNF 115 2 100 --- 67 -72 6 0 0 64K FS")) {
-			fires_list.add("2009-09-19	NWCC	NA	NA	Lobert	OR-WNF	115	2	100	---	67	-72	---	6	0	0	64K	FS");
+		  return "2009-09-19	NWCC	NA	NA	Lobert	OR-WNF	115	2	100	null	---	67	-72	---	6	0	0	64K	FS";
 		}
 		if (fire.equals("2010-04-16	SACC	NA	NA	Taylor OK OKS 260 0 100 --- 6 -0 2 0 0 NR ST")) {
-			fires_list.add("2010-04-16	SACC	NA	NA	Taylor	OK-OKS	260	0	100	---	6	---	0	2	0	0	NR	ST");
+		  return "2010-04-16	SACC	NA	NA	Taylor	OK-OKS	260	0	100	null	---	6	---	0	2	0	0	NR	ST";
 		}
 		if (fire.equals("2010-05-29	AICC	NA	NA	--- N/A N/A 0 --- 0 0 0 0 NR FWS")) {
-			fires_list.add("2010-05-29	AICC	NA	NA	Sheenjek 2	AK-UYD	200	---	N/A	N/A	0	---	0	0	0	0	NR	FWS");
+		  return "2010-05-29	AICC	NA	NA	Sheenjek 2	AK-UYD	200	---	N/A	null	N/A	0	---	0	0	0	0	NR	FWS";
 		}
 		if (fire.equals("2010-08-25	RMCC	NA	NA	North Fork 330 SHF 330 0 98 8/25 151 -45 5 0 2 0 850K FS")) {
-			fires_list.add("2010-08-25	RMCC	NA	NA	North Fork	WY-SHF	330	0	98	8/25	151	-45	5	0	2	0	850K	FS");
+		  return "2010-08-25	RMCC	NA	NA	North Fork	WY-SHF	330	0	98	null	8/25	151	-45	5	0	2	0	850K	FS";
 		}
 		if (fire.equals("2010-08-26	RMCC	NA	NA	North Fork 330 SHF 330 --- 98 UNK 151 --- 5 0 2 0 850K FS")) {
-			fires_list.add("2010-08-26	RMCC	NA	NA	North Fork	WY-SHF	330	---	98	UNK	151	---	5	0	2	0	850K	FS");
+		  return "2010-08-26	RMCC	NA	NA	North Fork	WY-SHF	330	---	98	null	UNK	151	---	5	0	2	0	850K	FS";
 		}
 		if (fire.equals("2010-08-27	WBCC	NA	NA	Wolf Creek 1,000 HTF 1,000 --- N/A N/A 15 --- 0 0 1 0 1.6M FS")) {
-			fires_list.add("2010-08-27	WBCC	NA	NA	Wolf Creek	NV-HTF	1,000	---	N/A	N/A	15	---	0	0	1	0	1.6M	FS");
+		  return "2010-08-27	WBCC	NA	NA	Wolf Creek	NV-HTF	1,000	---	N/A	null	N/A	15	---	0	0	1	0	1.6M	FS";
 		}
 		if (fire.equals("2012-06-17	OSCC	NA	NA	Ophir Creek UT NWS 1,574 374 100 --- 3 -57 0 0 0 40K ST")) {
-			fires_list.add("2012-06-17	OSCC	NA	NA	Ophir Creek	UT-NWS	1,574	374	100	---	3	-57	0	0	---	0	40K	ST");
+		  return "2012-06-17	OSCC	NA	NA	Ophir Creek	UT-NWS	1,574	374	100	null	---	3	-57	0	0	---	0	40K	ST";
 		}
 		if (fire.equals("2012-11-08	RMCC	NA	NA	* Coal Creek SJF 127 127 --- N/A N/A 9 --- 0 0 1 0 24K FS")) {
-			fires_list.add("2012-11-08	RMCC	NA	NA	Coal Creek	CO-SJF	127	---	N/A	N/A	9	---	0	0	1	0	24K	FS");
+		  return "2012-11-08	RMCC	NA	NA	Coal Creek	CO-SJF	127	---	N/A	null	N/A	9	---	0	0	1	0	24K	FS";
 		}
 		if (fire.equals("2013-03-08	SACC	NA	NA	* Middle Mountain OK OKS 600 --- 65 3/10 9 0 5 0 0 3K ST")) {
-			fires_list.add("2013-03-08	SACC	NA	NA	Middle Mountain	OK-OKS	600	---	65	3/10	9	---	0	5	0	0	3K	ST");
+		  return "2013-03-08	SACC	NA	NA	Middle Mountain	OK-OKS	600	---	65	null	3/10	9	---	0	5	0	0	3K	ST";
 		}
 		if (fire.equals("2013-03-08	SACC	NA	NA	* Volunteer AL ALS 300 --- 100 --- 0 -0 0 0 0 3K ST")) {
-			fires_list.add("2013-03-08	SACC	NA	NA	Volunteer	AL-ALS	300	---	100	---	0	---	0	0	0	0	3K	ST");
+		  return "2013-03-08	SACC	NA	NA	Volunteer	AL-ALS	300	---	100	null	---	0	---	0	0	0	0	3K	ST";
 		}
 		if (fire.equals("2013-04-12	SACC	NA	NA	KY KYS 125 --- 100 --- 11 0 2 0 0 1K PRI")) {
-			fires_list.add("2013-04-12	SACC	NA	NA	Left Fork Abbott Creek	KY-KYS	125	---	100	---	11	---	0	2	0	0	1K	PRI");
+		  return "2013-04-12	SACC	NA	NA	Left Fork Abbott Creek	KY-KYS	125	---	100	null	---	11	---	0	2	0	0	1K	PRI";
 		}
 		if (fire.equals("2014-05-02	EACC	NA	NA	* Goose Pond PA PAS 350 --- 100 --- 8 --- 0 1 0 0 9K")) {
-			fires_list.add("2014-05-02	EACC	NA	NA	Goose Pond	PA-PAS	350	---	100	---	8	---	0	1	0	0	9K	PRI");
+		  return "2014-05-02	EACC	NA	NA	Goose Pond	PA-PAS	350	---	100	null	---	8	---	0	1	0	0	9K	PRI";
 		}
+		if (fire.equals("2015-06-01	SACC	NA	NA	MUD LAKE COMPLEX	FL-BCP	35,321	0	70	Comp	260	-32	4	7	6	0	7.6M	NPS")) {
+		  return "2015-06-01	SACC	NA	NA	MUD LAKE COMPLEX	FL-BCP	35,321	0	70	Comp	---	260	-32	4	7	6	0	7.6M	NPS";
+		}
+		if (fire.equals("2015-06-01	SACC	NA	NA	BOLIN SLIME PIT	FL-FLS	300	---	95	Ctn	2	---	0	0	0	0	1K	ST")) {
+		  return "2015-06-01	SACC	NA	NA	BOLIN SLIME PIT	FL-FLS	300	---	95	Ctn	---	2	---	0	0	0	0	1K	ST";
+		}
+		if (fire.equals("2017-09-29	ONCC	NA	NA	CA-KNF- 006098 COMPLEX CA-KNF 78,698 .4	0	51	Comp	10/10	318	1	5	11	2	0	44.5M	FS")) {
+		  return "2017-09-29	ONCC	NA	NA	CA-KNF-006098 COMPLEX	CA-KNF	78,698	0	51	Comp	10/10	318	1	5	11	2	0	44.5M	FS";
+		}
+		if (fire.equals("2018-07-18	NWCC	NA	NA	GARNER COMPLEX	OR-712S	539	---	2	7/31	542	---	18	9	8	0	750K	ST")) {
+		  return "2018-07-18	NWCC	NA	NA	GARNER COMPLEX	OR-712S	539	---	2	---	7/31	542	---	18	9	8	0	750K	ST";
+		}
+		if (fire.equals("2020-09-14	ONCC	NA	NA	AUGUST COMPLEX CA-MNF 706,594 - 140,218	30	Ctn	11/15	1,436	-473	21	105	8	35	30.4M	FS")) {
+		  return "2020-09-14	ONCC	NA	NA	AUGUST COMPLEX	CA-MNF	706,594	-140,218	30	Ctn	11/15	1,436	-473	21	105	8	35	30.4M	FS";
+		}
+		if (fire.equals("2020-09-25	RMCC	NA	NA	CAMERON PEAK	CO-ARF 104,79 1	0	27	Ctn	10/31	819	-12	9	52	10	57	49.6M	FS")) {
+		  return "2020-09-25	RMCC	NA	NA	CAMERON PEAK	CO-ARF	104,791	0	27	Ctn	10/31	819	-12	9	52	10	57	49.6M	FS";
+		}
+		if (fire.equals("2021-07-17	NWCC	NA	NA	BOOTLEG OR-FWF 273,582 46,34 8	22	Ctn	10/1	1,921	185	44	195	14	75	15.8M	FS")) {
+		  return "2021-07-17	NWCC	NA	NA	BOOTLEG	OR-FWF	273,582	46,348	22	Ctn	10/1	1,921	185	44	195	14	75	15.8M	FS";
+		}
+		if (fire.equals("2021-07-17	SWCC	NA	NA	Ocotillo AZ-TNF 980 35 Comp 7/30 25 0 1 1 0 50K FS")) {
+		  return "2021-07-17	SWCC	NA	NA	Ocotillo	AZ-TNF	980	---	35	Comp	7/30	25	---	0	1	1	0	50K	FS";
+		}
+		if (fire.equals("2021-07-17	SWCC	NA	NA	Bear AZ-TNF 1,948 50 Comp 7/20 25 0 1 1 0 50K FS")) {
+		  return "2021-07-17	SWCC	NA	NA	Bear	AZ-TNF	1,948	---	50	Comp	7/20	25	---	0	1	1	0	50K	FS";
+		}
+		if (fire.equals("2021-07-17	SWCC	NA	NA	Johnson NM-GNF 88,918 95 Comp 7/23 1 0 0 0 0 10.5M FS")) {
+		  return "2021-07-17	SWCC	NA	NA	Johnson	NM-GNF	88,918	---	95	Comp	7/23	1	---	0	0	0	0	10.5M	FS";
+		}
+		if (fire.equals("2021-07-17	SWCC	NA	NA	Firebox AZ-ASF 1,065 0 Comp 8/9 49 1 2 1 0 80K FS")) {
+		  return "2021-07-17	SWCC	NA	NA	Firebox	AZ-ASF	1,065	---	0	Comp	8/9	49	---	1	2	1	0	80K	FS";
+		}
+		if (fire.equals("2021-08-02	NWCC	NA	NA	BOOTLEG	OR-FWF 413,76 2	28	84	Ctn	10/1	1,780	-98	44	83	10	408	75.6M	FS")) {
+		  return "2021-08-02	NWCC	NA	NA	BOOTLEG	OR-FWF	413,762	28	84	Ctn	10/1	1,780	-98	44	83	10	408	75.6M	FS";
+		}
+		if (fire.equals("2021-08-03	NWCC	NA	NA	BOOTLEG	OR-FWF 413,76 2	0	84	Ctn	10/1	1,617	-163	42	66	11	408	78.4M	FS")) {
+		  return "2021-08-03	NWCC	NA	NA	BOOTLEG	OR-FWF	413,762	0	84	Ctn	10/1	1,617	-163	42	66	11	408	78.4M	FS";
+		}
+		if (fire.equals("2021-08-04	NWCC	NA	NA	BOOTLEG	OR-FWF 413,76 5	3	84	Ctn	10/1	1,493	-124	37	65	11	408	81.5M	FS")) {
+		  return "2021-08-04	NWCC	NA	NA	BOOTLEG	OR-FWF	413,765	3	84	Ctn	10/1	1,493	-124	37	65	11	408	81.5M	FS";
+		}
+		if (fire.equals("2021-08-12	NWCC	NA	NA	Bear Creek WA-NCP 998 5 Comp 10/1 12 1 0 1 0 30K NPS")) {
+		  return "2021-08-12	NWCC	NA	NA	Bear Creek	WA-NCP	998	---	5	Comp	10/1	12	---	1	0	1	0	30K	NPS";
+		}
+		if (fire.equals("2021-08-12	NRCC	NA	NA	Robertson Draw MT-CGF 29,885 90 Ctn 10/1 13 0 2 0 30 13.2M FS")) {
+		  return "2021-08-12	NRCC	NA	NA	Robertson Draw	MT-CGF	29,885	---	90	Ctn	10/1	13	---	0	2	0	30	13.2M	FS";
+		}
+		if (fire.equals("2021-09-11	GBCC	NA	NA	MUD LICK ID-S, USFSCF	20,856	---	70	Comp	9/19	1	---	0	0	0	0	25M	FS")) {		// we use . instead of , in S,USFSCF
+		  return "2021-09-11	GBCC	NA	NA	MUD LICK	ID-S.USFSCF	20,856	---	70	Comp	9/19	1	---	0	0	0	0	25M	FS";
+		}
+		if (fire.equals("2021-08-12	NRCC	NA	NA	Robertson Draw MT-CGF 29,885 90 Ctn 10/1 13 0 2 0 30 13.2M FS")) {
+		  return "2021-08-12	NRCC	NA	NA	Robertson Draw	MT-CGF	29,885	---	90	Ctn	10/1	13	---	0	2	0	30	13.2M	FS";
+		}
+		return null;
 	}
 }
