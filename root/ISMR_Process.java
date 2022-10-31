@@ -1017,7 +1017,7 @@ public class ISMR_Process {
 							}
 						}
 						this_fire = adjust_fire.substring(adjust_fire.indexOf("\t") + 1);	// we need to remove the first tab due to the String Join with the beginning ""
-						if (this_fire.split("\t").length == 19) {
+						if (this_fire.split("\t").length == 19 && this_fire.split("\t")[5].contains("-")) {
 							r_fires.add(this_fire);
 						} else if (manual_fire_adjustment_list.get(this_fire) != null) {
 							this_fire = manual_fire_adjustment_list.get(this_fire);
@@ -1079,7 +1079,7 @@ public class ISMR_Process {
 						}
 					}
 					
-					if (this_fire.split("\t").length == 19) {
+					if (this_fire.split("\t").length == 19 && this_fire.split("\t")[5].contains("-")) {
 						r_fires.add(this_fire);
 					} else if (manual_fire_adjustment_list.get(this_fire) != null) {
 						this_fire = manual_fire_adjustment_list.get(this_fire);
