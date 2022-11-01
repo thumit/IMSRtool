@@ -1161,12 +1161,6 @@ public class ISMR_Process {
 			}
 		}
 		
-		if (fire_in_s_not_in_r.size() > 0) {
-			System.out.println(date + " --------------------------------------- fires in simple2 list but may not be in raw list (check it): " + fire_in_s_not_in_r.size());
-			for (String st : fire_in_s_not_in_r) {
-				System.out.println("simple2:     " + st);
-			}
-		}		
 		//-------------------------------NOW GENERATE FINAL FIRE RESULTS--------------------------------------------
 		//-------------------------------NOW GENERATE FINAL FIRE RESULTS--------------------------------------------
 		//-------------------------------NOW GENERATE FINAL FIRE RESULTS--------------------------------------------
@@ -1215,6 +1209,24 @@ public class ISMR_Process {
 //		if (final_fire_size != original_fire_size) {
 //			System.out.println(date + ": number of duplication records removed: " + String.valueOf(original_fire_size - final_fire_size));
 //		}
+		
+		// Only 1 adjustment needed for 15 years hen comparing between simple2 and raw
+		if (fire_in_s_not_in_r.size() > 0) {
+			for (String st : fire_in_s_not_in_r) {
+				if (st.equals("2010-03-12	EACC	2	5	EXCELSIOR SCHOOL	MO-MOS	126	---	100	null	---	8	---	0	0	0	0	NR	PRI")) {
+					// Exist in raw but with different information, we need to replace this fire
+					final_fires.set(final_fires.indexOf("2010-03-12	EACC	2	5	EXCELSIOR SCHOOL	MO-MOS	126	null	---	null	100	---	null	8	---	0	0	0	0"),
+							"2010-03-12	EACC	2	5	EXCELSIOR SCHOOL	MO-MOS	126	---	100	null	---	8	---	0	0	0	0	NR	PRI");						
+				} else if (st.equals("2015-08-21	SACC	7	2	LANE FIRE	GA-BLR	337	---	85	Comp	8/25	4	---	0	1	0	0	13K	FWS")) {
+					// no need to do anything. This fire is in raw with correct information
+				} else if (st.equals("2020-09-14	ONCC	1	3	- AUGUST COMPLEX	CA-MNF	706,594	140,218	30	Ctn	11/15	1,436	-473	21	105	8	35	30.4M	FS")) {
+					// no need to do anything. This fire is in raw with correct information
+				} else {
+					System.out.println("fires in simple2 but may not be in raw  or may be in raw with different info:");
+					System.out.println(st);
+				}
+			}
+		}	
 	}
 	
 	private void generate_manual_fire_adjustment_list() {
@@ -1364,5 +1376,8 @@ public class ISMR_Process {
 		
 		manual_fire_adjustment_list.put("2021-10-08	NRCC	NA	NA	STATELINE	Complex	ID-IPF	13,199	0	50	Ctn	11/1	46	0	0	0	0	22.5M	FS",
 				  "2021-10-08	NRCC	NA	NA	STATELINE COMPLEX	ID-IPF	13,199	0	50	Ctn	11/1	46	---	0	0	0	0	22.5M	FS");
+		
+		// Below list fix un-matching fire between simple2 and raw (in simple2 but may not be in raw or may be in raw with different information)
+		
 	}
 }
