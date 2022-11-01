@@ -966,6 +966,13 @@ public class ISMR_Process {
 							fire_name = String.join(" ", fire_name, combine_st_arr[j]);	// join by space
 						}
 						fire_name = fire_name.replaceAll("\\*", "").replaceAll("\\s{2,}", " ").trim().toUpperCase();	// This will remove the * (if exist in the name) and change the name to capital (IMPORTANT)
+						// Fix special cases such as 20170629 where part of unit is in fire name (Battle CA- MDF)
+						String st_15 = fire_name.substring(fire_name.lastIndexOf(" ") + 1); // check if fire name contain part of unit
+						if (st_15.length() == 3 && st_15.endsWith("-")) {	// such as 20170629: Battle CA- MDF
+							fire_name = fire_name.substring(0, fire_name.lastIndexOf(" "));
+							combine_st_arr[combine_st_arr.length - 14] = st_15 + combine_st_arr[combine_st_arr.length - 14];	// such as merging "CA-" + "MDF"
+						}
+						
 						for (int j = combine_st_arr.length - 14; j < combine_st_arr.length; j++) {
 							fire_name = String.join("\t", fire_name, combine_st_arr[j]);	// join by space	// this is all the other columns attached after the fire name
 						}
@@ -1226,7 +1233,13 @@ public class ISMR_Process {
 					System.out.println(st);
 				}
 			}
-		}	
+		}
+		
+		for (String st : final_fires) {
+			String[] fs = st.split("\t");
+			if (!fs[5].contains("-")) System.out.println("unit is wrong: " + st);
+//			if (fs.length != 19) System.out.println("unit is wrong: " + st);
+		}
 	}
 	
 	private void generate_manual_fire_adjustment_list() {
