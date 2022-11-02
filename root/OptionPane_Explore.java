@@ -86,17 +86,19 @@ class Aggregate extends JScrollPane {
 			textarea[i].setEditable(false);
 		}
 		
-		textarea[0].append(String.join("\t", header1)  + "\n");
+		textarea[0].append(String.join("\t", header1) + "\n");
 		for (ISMR_Process ismr : ismr_process) {
-			textarea[0].append(String.join("\t", ismr.national_fire_activity)  + "\n");
+			for (String st : ismr.national_activity) {
+				textarea[0].append(st + "\n");
+			}
 		}
-		textarea[1].append(String.join("\t", header2)  + "\n");
+		textarea[1].append(String.join("\t", header2) + "\n");
 		for (ISMR_Process ismr : ismr_process) {
-			for (String st : ismr.gacc_fire_activity) {
+			for (String st : ismr.gacc_activity) {
 				textarea[1].append(st + "\n");
 			}
 		}
-		textarea[2].append(String.join("\t", header3)  + "\n");
+		textarea[2].append(String.join("\t", header3) + "\n");
 		for (ISMR_Process ismr : ismr_process) {
 			for (String fire : ismr.final_fires) {
 				textarea[2].append(fire + "\n");
@@ -412,7 +414,7 @@ class ScrollPane_Extraction_Preview extends JScrollPane {
 		textarea.append(header1[10] + "\t" + "\t" + ismr.type_2_imts_committed + "\n");
 		textarea.append("--------------------------------------------------------------------" + "\n");
 		textarea.append(String.join("\t", header2)  + "\n");
-		for (String st : ismr.gacc_fire_activity) {
+		for (String st : ismr.gacc_activity) {
 			textarea.append(st + "\n");
 		}
 		textarea.append("--------------------------------------------------------------------" + "\n");

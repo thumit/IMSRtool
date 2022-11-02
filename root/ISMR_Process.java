@@ -26,7 +26,7 @@ public class ISMR_Process {
 	String nimos_committed;
 	String type_1_imts_committed;
 	String type_2_imts_committed;
-	List<String> national_fire_activity = new ArrayList<String>();	// store all the above information
+	List<String> national_activity = new ArrayList<String>();	// store all the above information
 	
 //	String gacc_prepareness_level;
 //	String gacc_new_fires;
@@ -36,7 +36,7 @@ public class ISMR_Process {
 //	String gacc_NIMOs_committed;
 //	String gacc_type_1_IMTs_committed;
 //	String gacc_type_2_IMTs_committed;
-	List<String> gacc_fire_activity = new ArrayList<String>();	// almost the same information structure as national activity, but the level is gacc area
+	List<String> gacc_activity = new ArrayList<String>();	// almost the same information structure as national activity, but the level is gacc area
 	
 	List<String> resource_summary = new ArrayList<String>();	// store all active incident resource summary information
 	
@@ -84,6 +84,7 @@ public class ISMR_Process {
 			get_fire_data_simple2_method(s_lines);
 			get_fire_data_raw_method(r_lines);
 			fire_name_validation_and_adjustment();
+			data_cleaning();
 			s_lines_list = null; 	// free memory
 			s_lines = null;			// free memory
 			r_lines_list = null; 	// free memory
@@ -207,17 +208,9 @@ public class ISMR_Process {
 		if (type_1_imts_committed == null || type_1_imts_committed.isBlank()) type_1_imts_committed = null;
 		if (type_2_imts_committed == null || type_2_imts_committed.isBlank()) type_2_imts_committed = null;
 		
-		national_fire_activity.add(date);
-		national_fire_activity.add(national_prepareness_level);
-		national_fire_activity.add(initial_attack_activity);
-		national_fire_activity.add(initial_attack_new_fires);
-		national_fire_activity.add(new_large_incidents);
-		national_fire_activity.add(large_fires_contained);
-		national_fire_activity.add(uncontained_large_fires);
-		national_fire_activity.add(area_command_teams_committed);
-		national_fire_activity.add(nimos_committed);
-		national_fire_activity.add(type_1_imts_committed);
-		national_fire_activity.add(type_2_imts_committed);
+		national_activity.add(String.join("\t", date, national_prepareness_level, initial_attack_activity,
+				initial_attack_new_fires, new_large_incidents, large_fires_contained, uncontained_large_fires,
+				area_command_teams_committed, nimos_committed, type_1_imts_committed, type_2_imts_committed));
 	}
 	
 	private String get_national_next_term(String mstr, String st) {
@@ -366,7 +359,7 @@ public class ISMR_Process {
 				gacc_prepareness_level, gacc_new_fires, gacc_new_large_incidents, gacc_uncontained_large_fires,
 				gacc_area_command_teams_committed, gacc_nimos_committed, gacc_type_1_imts_committed,
 				gacc_type_2_imts_committed);
-		gacc_fire_activity.add(info);
+		gacc_activity.add(info);
 		// IMPORTANT NOTE NOTE NOTE: 20180619: Rocky Mountain Area has uncontained large files but do not printed in pdf file (Erin's excel file got the right number of 4 uncontained)
 	}
 	
@@ -1050,15 +1043,6 @@ public class ISMR_Process {
 							)		
 						 )
 					  ) {	// is there any fire else?
-//					// problem need to fix manually
-//					if (r_lines[i].equals("")) {
-//						System.out.println("this fire is fixed and added manually");
-//						System.out.println("old info:     " + r_lines[i]);
-//						String this_fire =  "";
-//						System.out.println("new info:     " + this_fire);
-//						r_fires.add(this_fire);
-//					}
-					
 					String current_merge_info = r_lines[i].replaceAll("---", "---" + " ").replaceAll("\\s{2,}", " ");			// special case such as "---0" in 20180930
 					// loop back previous lines to join, loop 6 previous lines at max
 					boolean continue_loop = true;
@@ -1237,12 +1221,6 @@ public class ISMR_Process {
 				}
 			}
 		}
-		
-		for (String st : final_fires) {
-			String[] fs = st.split("\t");
-//			if (!fs[5].contains("-")) System.out.println("unit is wrong: " + st);
-//			if (fs.length != 19) System.out.println("unit is wrong: " + st);
-		}
 	}
 	
 	private void generate_manual_fire_adjustment_list() {
@@ -1416,5 +1394,47 @@ public class ISMR_Process {
 		
 		manual_fire_adjustment_list.put("2021-10-08	NRCC	NA	NA	STATELINE	Complex	ID-IPF	13,199	0	50	Ctn	11/1	46	0	0	0	0	22.5M	FS",
 				  "2021-10-08	NRCC	NA	NA	STATELINE COMPLEX	ID-IPF	13,199	0	50	Ctn	11/1	46	---	0	0	0	0	22.5M	FS");
+	}
+	
+	private void data_cleaning() {
+		// clean national activity
+		List<String> cleaned_national_activity = new ArrayList<String>();
+		for (String st : national_activity) {
+			st = st.toUpperCase().replaceAll("NULL", "").replaceAll("\\*", "").replaceAll("\\)", "").replaceAll("\\(", "").replaceAll("\\s+", "");	// some records such as 20190721 still have the (* )
+			cleaned_national_activity.add(st);
+		}
+		national_activity = cleaned_national_activity;
+		
+		// clean gacc activity
+		List<String> cleaned_gacc_activity = new ArrayList<String>();
+		for (String st : gacc_activity) {
+			st = st.toUpperCase().replaceAll("NULL", "");
+			cleaned_gacc_activity.add(st);
+		}
+		gacc_activity = cleaned_gacc_activity;
+		
+		// clean fires
+		List<String> cleaned_fires = new ArrayList<String>();
+		for (String st : final_fires) {
+			st = st.toUpperCase().replaceAll("NULL", "").replaceAll("N/A", "NA").replaceAll("N/R", "NR");
+			cleaned_fires.add(st);
+			final_fires = cleaned_fires;
+		}
+		
+		
+		
+		
+		
+		
+		
+		for (String st : final_fires) {
+//			String[] fs = st.split("\t");
+//			if (fs[fs.length - 2].endsWith("NR") || fs[fs.length - 2].endsWith("K") || fs[fs.length - 2].endsWith("M")) {
+//			} else {
+//				System.out.println("cst missing K or M: " + st);
+//			}
+//			if (!fs[5].contains("-")) System.out.println("unit is wrong: " + st);
+//			if (fs.length != 19) System.out.println("unit is wrong: " + st);
+		}
 	}
 }
