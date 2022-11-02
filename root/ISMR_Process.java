@@ -980,7 +980,10 @@ public class ISMR_Process {
 					} else {
 						this_fire = String.join("\t", this_fire, fire_name, combine_st);
 					}
-					if (this_fire.split("\t").length == 19) {
+					if (this_fire.split("\t").length == 19 && this_fire.split("\t")[5].contains("-")) {
+						r_fires.add(this_fire);
+					} else if (manual_fire_adjustment_list.get(this_fire) != null) {
+						this_fire = manual_fire_adjustment_list.get(this_fire);
 						r_fires.add(this_fire);
 					} else {
 //						// problem need to fix manually: i.e. CA-KNF-006098 Complex 20170929
@@ -1217,7 +1220,7 @@ public class ISMR_Process {
 //			System.out.println(date + ": number of duplication records removed: " + String.valueOf(original_fire_size - final_fire_size));
 //		}
 		
-		// Only 1 adjustment needed for 15 years hen comparing between simple2 and raw
+		// Only 1 adjustment needed for 15 years when comparing between simple2 and raw
 		if (fire_in_s_not_in_r.size() > 0) {
 			for (String st : fire_in_s_not_in_r) {
 				if (st.equals("2010-03-12	EACC	2	5	EXCELSIOR SCHOOL	MO-MOS	126	---	100	null	---	8	---	0	0	0	0	NR	PRI")) {
@@ -1237,7 +1240,7 @@ public class ISMR_Process {
 		
 		for (String st : final_fires) {
 			String[] fs = st.split("\t");
-			if (!fs[5].contains("-")) System.out.println("unit is wrong: " + st);
+//			if (!fs[5].contains("-")) System.out.println("unit is wrong: " + st);
 //			if (fs.length != 19) System.out.println("unit is wrong: " + st);
 		}
 	}
@@ -1312,9 +1315,21 @@ public class ISMR_Process {
 		manual_fire_adjustment_list.put("2015-06-01	SACC	NA	NA	BOLIN SLIME PIT	FL-FLS	300	---	95	Ctn	2	---	0	0	0	0	1K	ST",
 				"2015-06-01	SACC	NA	NA	BOLIN SLIME PIT	FL-FLS	300	---	95	Ctn	---	2	---	0	0	0	0	1K	ST");
 		
+		manual_fire_adjustment_list.put("2015-07-05	AICC	NA	NA		Munsatli	AK-TAD	18,847	1,963	Comp	NR	0	-1	0	0	0	0	1K	ST",
+				"2015-07-05	AICC	NA	NA	MUNSATLI	AK-TAD	18,847	1,963	---	Comp	NR	0	-1	0	0	0	0	1K	ST");
+		
+		manual_fire_adjustment_list.put("2015-08-02	GBCC	NA	NA		Solitude	UT-FIF	1,000	622	25	Comp	133	23	4	4	1	0	324K	FS",
+				"2015-08-02	GBCC	NA	NA	SOLITUDE	UT-FIF	1,000	622	25	Comp	null	133	23	4	4	1	0	324K	FS");
+		
+		manual_fire_adjustment_list.put("2016-08-03	SWCC	NA	NA	PEARSON	#2	NM-CAD	900	---	90	Ctn	UNK	23	0	0	9	0	15K	BLM",
+				"2016-08-03	SWCC	NA	NA	PEARSON #2	NM-CAD	900	---	90	Ctn	UNK	23	0	0	9	0	null	15K	BLM");
+		
 		manual_fire_adjustment_list.put("2017-09-29	ONCC	NA	NA	CA-KNF- 006098 COMPLEX CA-KNF 78,698 .4	0	51	Comp	10/10	318	1	5	11	2	0	44.5M	FS",
 				"2017-09-29	ONCC	NA	NA	CA-KNF-006098 COMPLEX	CA-KNF	78,698	0	51	Comp	10/10	318	1	5	11	2	0	44.5M	FS");
 
+		manual_fire_adjustment_list.put("2017-10-31	ONCC	NA	NA	CENTRAL LNU COMPLEX CA-LNU	110,720	0	99	Ctn	10/31	150	-88	4	5	0	7,010	101	M	ST",
+				"2017-10-31	ONCC	NA	NA	CENTRAL LNU COMPLEX	CA-LNU	110,720	0	99	Ctn	10/31	150	-88	4	5	0	7,010	101M	ST");
+		
 		manual_fire_adjustment_list.put("2018-07-18	NWCC	NA	NA	GARNER COMPLEX	OR-712S	539	---	2	7/31	542	---	18	9	8	0	750K	ST",
 				"2018-07-18	NWCC	NA	NA	GARNER COMPLEX	OR-712S	539	---	2	---	7/31	542	---	18	9	8	0	750K	ST");
 
@@ -1336,8 +1351,20 @@ public class ISMR_Process {
 		manual_fire_adjustment_list.put("2018-09-01	NRCC	NA	NA	SMITH CREEK ID-IPF	971	---	0	Comp	10/3	1	7	---	0	1	0	0	193K	FS",
 				"2018-09-01	NRCC	NA	NA	SMITH CREEK	ID-IPF	971	---	0	Comp	10/31	7	---	0	1	0	0	193K	FS");
 		
+		manual_fire_adjustment_list.put("2019-09-08	ONCC	NA	NA	LIME	CA.KNF	200	---	0	Ctn	10/18	168	---	6	0	2	0	2.1M	FS",
+				"2019-09-08	ONCC	NA	NA	LIME	CA-KNF	200	---	0	Ctn	10/18	168	---	6	0	2	0	2.1M	FS");
+		
+		manual_fire_adjustment_list.put("2019-09-12	ONCC	NA	NA	WALKER CA-PNF	48,	507	1,167	28	Ctn	9/28	1,891	607	39	150	6	0	12.1M	FS",
+				"2019-09-12	ONCC	NA	NA	WALKER	CA-PNF	48,507	1,167	28	Ctn	9/28	1,891	607	39	150	6	0	12.1M	FS");
+		
 		manual_fire_adjustment_list.put("2019-09-13	NRCC	NA	NA	SNOW	Peak	ID-IPF	100	---	0	Comp	10/31	0	0	0	0	0	5K	FS",
 				"2019-09-13	NRCC	NA	NA	SNOW PEAK	ID-IPF	100	---	0	Comp	10/31	0	---	0	0	0	0	5K	FS");
+		
+		manual_fire_adjustment_list.put("2019-10-19	GBCC	NA	NA	SKULL FLAT 2	0710	450	---	0	Comp	11/7	5	---	0	0	0	0	3K	FS",
+				"2019-10-19	GBCC	NA	NA	SKULL FLAT 2	0710	450	---	0	Comp	11/7	5	---	0	0	0	0	3K	FS");	// unit is 0710 in the IMSR and I have no idea if it is correct.
+		
+		manual_fire_adjustment_list.put("2020-07-30	RMCC	NA	NA	BUFFALO	Creek	WY-SHX	326	---	100	Ctn	---	17	---	0	5	0	15K	CNTY",
+				"2020-07-30	RMCC	NA	NA	BUFFALO CREEK	WY-SHX	326	---	100	Ctn	---	17	---	0	5	0	null	15K	CNTY");
 		
 		manual_fire_adjustment_list.put("2020-09-14	ONCC	NA	NA	AUGUST COMPLEX CA-MNF 706,594 - 140,218	30	Ctn	11/15	1,436	-473	21	105	8	35	30.4M	FS",
 				"2020-09-14	ONCC	NA	NA	AUGUST COMPLEX	CA-MNF	706,594	-140,218	30	Ctn	11/15	1,436	-473	21	105	8	35	30.4M	FS");
@@ -1384,13 +1411,10 @@ public class ISMR_Process {
 		manual_fire_adjustment_list.put("2021-09-11	GBCC	NA	NA	MUD LICK ID-S, USFSCF	20,856	---	70	Comp	9/19	1	---	0	0	0	0	25M	FS",		// we use . instead of , in S,USFSCF
 				"2021-09-11	GBCC	NA	NA	MUD LICK	ID-S.USFSCF	20,856	---	70	Comp	9/19	1	---	0	0	0	0	25M	FS");
 		
-		manual_fire_adjustment_list.put("2021-08-12	NRCC	NA	NA	Robertson Draw MT-CGF 29,885 90 Ctn 10/1 13 0 2 0 30 13.2M FS",
-				"2021-08-12	NRCC	NA	NA	ROBERTSON DRAW	MT-CGF	29,885	---	90	Ctn	10/1	13	---	0	2	0	30	13.2M	FS");
+		manual_fire_adjustment_list.put("2021-09-29	EACC	NA	NA		Greenwood	MN-SUF	26,797	80	Ctn	10/14	85	-20	0	4	0	71	21.8M	FS",
+				  "2021-09-29	EACC	NA	NA	GREENWOOD	MN-SUF	26,797	null	80	Ctn	10/14	85	-20	0	4	0	71	21.8M	FS");
 		
 		manual_fire_adjustment_list.put("2021-10-08	NRCC	NA	NA	STATELINE	Complex	ID-IPF	13,199	0	50	Ctn	11/1	46	0	0	0	0	22.5M	FS",
 				  "2021-10-08	NRCC	NA	NA	STATELINE COMPLEX	ID-IPF	13,199	0	50	Ctn	11/1	46	---	0	0	0	0	22.5M	FS");
-		
-		// Below list fix un-matching fire between simple2 and raw (in simple2 but may not be in raw or may be in raw with different information)
-		
 	}
 }
