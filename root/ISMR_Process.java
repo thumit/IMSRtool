@@ -1337,7 +1337,7 @@ public class ISMR_Process {
 				"2019-09-13	NRCC	NA	NA	SNOW PEAK	ID-IPF	100	---	0	Comp	10/31	0	---	0	0	0	0	5K	FS");
 		
 		manual_fire_adjustment_list.put("2019-10-19	GBCC	NA	NA	SKULL FLAT 2	0710	450	---	0	Comp	11/7	5	---	0	0	0	0	3K	FS",
-				"2019-10-19	GBCC	NA	NA	SKULL FLAT 2	0710	450	---	0	Comp	11/7	5	---	0	0	0	0	3K	FS");	// unit is 0710 in the IMSR and I have no idea if it is correct.
+				"2019-10-19	GBCC	NA	NA	SKULL FLAT 2	UT-FIF	450	---	0	Comp	11/7	5	---	0	0	0	0	3K	FS");	// unit is 0710 and should be UT-FIF as in other dates.
 		
 		manual_fire_adjustment_list.put("2020-07-30	RMCC	NA	NA	BUFFALO	Creek	WY-SHX	326	---	100	Ctn	---	17	---	0	5	0	15K	CNTY",
 				"2020-07-30	RMCC	NA	NA	BUFFALO CREEK	WY-SHX	326	---	100	Ctn	---	17	---	0	5	0	null	15K	CNTY");
@@ -1384,14 +1384,16 @@ public class ISMR_Process {
 		manual_fire_adjustment_list.put("2021-09-05	NRCC	NA	NA	STORM THEATRE COMPLEX ID-NCF	22,320	---	10	8	Comp	10/15	29	---	0	3	0	0	4.8M	FS",
 				"2021-09-05	NRCC	NA	NA	STORM THEATRE COMPLEX	ID-NCF	22,320	---	10	Comp	10/15	29	---	0	3	0	0	4.8M	FS");
 
-		manual_fire_adjustment_list.put("2021-09-11	GBCC	NA	NA	MUD LICK ID-S, USFSCF	20,856	---	70	Comp	9/19	1	---	0	0	0	0	25M	FS",		// we use . instead of , in S,USFSCF
-				"2021-09-11	GBCC	NA	NA	MUD LICK	ID-S.USFSCF	20,856	---	70	Comp	9/19	1	---	0	0	0	0	25M	FS");
+		manual_fire_adjustment_list.put("2021-09-11	GBCC	NA	NA	MUD LICK ID-S, USFSCF	20,856	---	70	Comp	9/19	1	---	0	0	0	0	25M	FS",
+				"2021-09-11	GBCC	NA	NA	MUD LICK	ID-SCF	20,856	---	70	Comp	9/19	1	---	0	0	0	0	25M	FS");	// unit is S,USFSCF but should be ID-SCF as in other dates
 		
 		manual_fire_adjustment_list.put("2021-09-29	EACC	NA	NA		Greenwood	MN-SUF	26,797	80	Ctn	10/14	85	-20	0	4	0	71	21.8M	FS",
 				  "2021-09-29	EACC	NA	NA	GREENWOOD	MN-SUF	26,797	null	80	Ctn	10/14	85	-20	0	4	0	71	21.8M	FS");
 		
 		manual_fire_adjustment_list.put("2021-10-08	NRCC	NA	NA	STATELINE	Complex	ID-IPF	13,199	0	50	Ctn	11/1	46	0	0	0	0	22.5M	FS",
 				  "2021-10-08	NRCC	NA	NA	STATELINE COMPLEX	ID-IPF	13,199	0	50	Ctn	11/1	46	---	0	0	0	0	22.5M	FS");
+		
+		// WFU AGUA SI is incorrect and should be changes to AGUA SI. This is not spotted by this program.
 	}
 	
 	private void data_cleaning() {
@@ -1429,7 +1431,11 @@ public class ISMR_Process {
 		
 		
 		
-		
+		for (int i = 1; i < final_fires.size(); i++) {
+			String fire_name_before = final_fires.get(i - 1).split("\t")[4];
+			String fire_name = final_fires.get(i).split("\t")[4];
+			if (fire_name_before.length() >=3 && fire_name.startsWith(fire_name_before.substring(fire_name_before.length() - 3))) System.out.println("check name: " + final_fires.get(i));
+		}
 		
 		
 		
