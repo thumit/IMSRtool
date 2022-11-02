@@ -196,21 +196,29 @@ public class ISMR_Process {
 		if (temp != null) type_2_imts_committed = temp.split(" ")[0];
 		
 		// If no data then make it null
-		if (date == null || date.isBlank()) date = null;
-		if (national_prepareness_level == null || national_prepareness_level.isBlank()) national_prepareness_level = null;
-		if (initial_attack_activity == null || initial_attack_activity.isBlank()) initial_attack_activity = null;
-		if (initial_attack_new_fires == null || initial_attack_new_fires.isBlank()) initial_attack_new_fires = null;
-		if (new_large_incidents == null || new_large_incidents.isBlank()) new_large_incidents = null;
-		if (large_fires_contained == null || large_fires_contained.isBlank()) large_fires_contained = null;
-		if (uncontained_large_fires == null || uncontained_large_fires.isBlank()) uncontained_large_fires = null;
-		if (area_command_teams_committed == null || area_command_teams_committed.isBlank()) area_command_teams_committed = null;
-		if (nimos_committed == null || nimos_committed.isBlank()) nimos_committed = null;
-		if (type_1_imts_committed == null || type_1_imts_committed.isBlank()) type_1_imts_committed = null;
-		if (type_2_imts_committed == null || type_2_imts_committed.isBlank()) type_2_imts_committed = null;
+		if (date == null || date.isBlank()) date = "null";
+		if (national_prepareness_level == null || national_prepareness_level.isBlank()) national_prepareness_level = "null";
+		if (initial_attack_activity == null || initial_attack_activity.isBlank()) initial_attack_activity = "null";
+		if (initial_attack_new_fires == null || initial_attack_new_fires.isBlank()) initial_attack_new_fires = "null";
+		if (new_large_incidents == null || new_large_incidents.isBlank()) new_large_incidents = "null";
+		if (large_fires_contained == null || large_fires_contained.isBlank()) large_fires_contained = "null";
+		if (uncontained_large_fires == null || uncontained_large_fires.isBlank()) uncontained_large_fires = "null";
+		if (area_command_teams_committed == null || area_command_teams_committed.isBlank()) area_command_teams_committed = "null";
+		if (nimos_committed == null || nimos_committed.isBlank()) nimos_committed = "null";
+		if (type_1_imts_committed == null || type_1_imts_committed.isBlank()) type_1_imts_committed = "null";
+		if (type_2_imts_committed == null || type_2_imts_committed.isBlank()) type_2_imts_committed = "null";
 		
-		national_activity.add(String.join("\t", date, national_prepareness_level, initial_attack_activity,
-				initial_attack_new_fires, new_large_incidents, large_fires_contained, uncontained_large_fires,
-				area_command_teams_committed, nimos_committed, type_1_imts_committed, type_2_imts_committed));
+		national_activity.add(date);
+		national_activity.add(national_prepareness_level);
+		national_activity.add(initial_attack_activity);
+		national_activity.add(initial_attack_new_fires);
+		national_activity.add(new_large_incidents);
+		national_activity.add(large_fires_contained);
+		national_activity.add(uncontained_large_fires);
+		national_activity.add(area_command_teams_committed);
+		national_activity.add(nimos_committed);
+		national_activity.add(type_1_imts_committed);
+		national_activity.add(type_2_imts_committed);
 	}
 	
 	private String get_national_next_term(String mstr, String st) {
