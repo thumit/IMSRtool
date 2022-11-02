@@ -141,26 +141,24 @@ public class ISMR_Process {
 				initial_attack_activity = null;
 			} else {
 				initial_attack_activity = temp.split(" ")[0].toUpperCase();
-				if (initial_attack_activity.length() > 1) initial_attack_activity = initial_attack_activity.substring(0, 1) + initial_attack_activity.substring(1).toLowerCase();
 				if (initial_attack_activity.contains("(")) initial_attack_activity = initial_attack_activity.substring(0, initial_attack_activity.indexOf("(")); // special case: 20170620
 				if (temp.split(" ").length > 1) {
 					initial_attack_new_fires = (temp.substring(temp.indexOf("(") + 1, temp.indexOf(")")).replaceAll("new", "").replaceAll("fire", "").replaceAll("s", "")).trim();		// i.e. 20180915 is a special case, 20160626 is also special there are 2))
 				}
 			}
 		}
-		
 		// Fix a special case 20170629: Light (169) --> stupid reversed information that needs to be switch
 		if (initial_attack_activity != null && initial_attack_new_fires != null) {
 			if (initial_attack_activity.matches("-?(0|[1-9]\\d*)") && !initial_attack_new_fires.matches("-?(0|[1-9]\\d*)")) {
-				temp = initial_attack_activity;
+				String swtich_st = initial_attack_activity;
 				initial_attack_activity = initial_attack_new_fires;
-				initial_attack_new_fires = temp;
+				initial_attack_new_fires = swtich_st;
 				if (initial_attack_activity != null && initial_attack_activity.length() > 1) {
 					initial_attack_activity = initial_attack_activity.split(" ")[0].toUpperCase();
-					initial_attack_activity = initial_attack_activity.substring(0, 1) + initial_attack_activity.substring(1).toLowerCase();
 				}
 			}
 		}
+		initial_attack_new_fires = temp.replaceAll("[^0-9.]", "");	// final adjustment for correct number of new fires
 		
 		if (Integer.valueOf(date.replaceAll("-", "")) < 20070425) mstr = mstr.replaceAll("area command teams", "area command teams committed");	// Test
 		if (Integer.valueOf(date.replaceAll("-", "")) == 20070423) mstr = mstr.replaceAll("national incident management 1 organization", "");	// Fix special case
