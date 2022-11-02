@@ -1408,7 +1408,7 @@ public class ISMR_Process {
 		// clean national activity
 		List<String> cleaned_national_activity = new ArrayList<String>();
 		for (String st : national_activity) {
-			st = st.toUpperCase().replaceAll("NULL", "").replaceAll("\\*", "").replaceAll("\\)", "").replaceAll("\\(", "").replaceAll("\\s+", "");	// some records such as 20190721 still have the (* )
+			st = st.toUpperCase().replaceAll(",", "").replaceAll("NULL", "").replaceAll("\\*", "").replaceAll("\\)", "").replaceAll("\\(", "").replaceAll("\\s+", "");	// some records such as 20190721 still have the (* )
 			cleaned_national_activity.add(st);
 		}
 		national_activity = cleaned_national_activity;
@@ -1416,15 +1416,23 @@ public class ISMR_Process {
 		// clean gacc activity
 		List<String> cleaned_gacc_activity = new ArrayList<String>();
 		for (String st : gacc_activity) {
-			st = st.toUpperCase().replaceAll("NULL", "");
+			st = st.toUpperCase().replaceAll(",", "").replaceAll("NULL", "");
 			cleaned_gacc_activity.add(st);
 		}
 		gacc_activity = cleaned_gacc_activity;
 		
+		// clean resource summary
+		List<String> cleaned_resource_summary = new ArrayList<String>();
+		for (String st : resource_summary) {
+			st = st.toUpperCase().replaceAll(",", "");
+			cleaned_resource_summary.add(st);
+		}
+		resource_summary = cleaned_resource_summary;
+				
 		// clean fires
 		List<String> cleaned_fires = new ArrayList<String>();
 		for (String st : final_fires) {
-			st = st.toUpperCase().replaceAll("NULL", "").replaceAll("N/A", "NA").replaceAll("N/R", "NR");
+			st = st.toUpperCase().replaceAll(",", "").replaceAll("NULL", "").replaceAll("N/A", "NA").replaceAll("N/R", "NR");
 			cleaned_fires.add(st);
 			final_fires = cleaned_fires;
 		}
