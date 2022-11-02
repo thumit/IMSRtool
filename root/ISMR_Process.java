@@ -138,14 +138,7 @@ public class ISMR_Process {
 			temp = (temp.substring(temp.indexOf(" ") + 1)).trim();	// remove all characters (such as :) before the first space and then trim
 			if (temp.matches("-?(0|[1-9]\\d*)")) {		// this special case happens in several instance	i.e. 20180813, 20170331			use Regex to check if this is just a number
 				initial_attack_new_fires = temp;
-				int num = Integer.valueOf(temp);
-				if (num <= 199) {
-					initial_attack_activity = "Light";
-				} else if (num >= 200 && num <= 299) {
-					initial_attack_activity = "Moderate";
-				} else if (num >= 300) {
-					initial_attack_activity = "Heavy";
-				}
+				initial_attack_activity = null;
 			} else {
 				initial_attack_activity = temp.split(" ")[0].toUpperCase();
 				if (initial_attack_activity.length() > 1) initial_attack_activity = initial_attack_activity.substring(0, 1) + initial_attack_activity.substring(1).toLowerCase();
@@ -154,7 +147,6 @@ public class ISMR_Process {
 					initial_attack_new_fires = (temp.substring(temp.indexOf("(") + 1, temp.indexOf(")")).replaceAll("new", "").replaceAll("fire", "").replaceAll("s", "")).trim();		// i.e. 20180915 is a special case, 20160626 is also special there are 2))
 				}
 			}
-			if (initial_attack_activity.isBlank()) initial_attack_activity = null;	// Fix when it print out just empty value
 		}
 		
 		// Fix a special case 20170629: Light (169) --> stupid reversed information that needs to be switch
