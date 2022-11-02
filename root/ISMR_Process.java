@@ -476,7 +476,7 @@ public class ISMR_Process {
 			}
 			// in many cases such as 20080201, negative number is represented by - and a space then number. This is to merger the sign and the number.
 			// Also in some cases ctd contains a space between the number and M, we need to join as well
-			if (year_before_2015) s_lines[i] = s_lines[i].replaceAll(" - ", " -").replaceAll(" M ", "- ");
+			if (year_before_2015) s_lines[i] = s_lines[i].replaceAll(" - ", " -").replaceAll(" M ", "M ");
 		}
 		//------------------------------------------------------------
 		
@@ -657,7 +657,7 @@ public class ISMR_Process {
 				r_lines[i] = "";
 			}
 			// Also in some cases ctd contains a space between the number and M, we need to join as well
-			if (year_before_2015) r_lines[i] = r_lines[i].replaceAll(" - ", " -").replaceAll(" M ", "- ");
+			if (year_before_2015) r_lines[i] = r_lines[i].replaceAll(" - ", " -").replaceAll(" M ", "M ");
 		}
 		//------------------------------------------------------------
 		
@@ -943,7 +943,7 @@ public class ISMR_Process {
 								String last_word = r_lines[l].substring(r_lines[l].lastIndexOf(" ") + 1, r_lines[l].length());
 								String final_word = "";
 								if (last_word.equals("-")) { // such as "Michael - " in 20181022
-									final_word = String.join(" ", previous_words, last_word);
+									final_word = String.join(" - ", previous_words, last_word);
 								} else if (last_word.contains("-")) {	// this is unit
 									final_word = String.join("\t", previous_words, last_word);
 								} else {
