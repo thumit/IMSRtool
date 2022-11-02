@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -97,19 +98,14 @@ class Aggregate extends JScrollPane {
 			}
 		}
 		textarea[2].append(String.join("\t", header3)  + "\n");
+		List<String> final_fires = new ArrayList<String>();
 		for (ISMR_Process ismr : ismr_process) {
-			for (String fire : ismr.final_fires) {
-				textarea[2].append(fire + "\n");
-			}
+			final_fires.addAll(ismr.final_fires);
 		}
-//		textarea[2].append("--------------------------------------------------------------------" + "\n");
-//		textarea[2].append("--------------------------------------------------------------------" + "\n");
-//		textarea[2].append("--------------------------------------------------------------------" + "\n");
-//		for (ISMR_Process ismr : ismr_process) {
-//			if (ismr.final_fires.isEmpty()) {
-//				textarea[2].append(ismr.date + " has no fire" + "\n");
-//			}
-//		}
+		fix_ctd(final_fires);
+		for (String fire : final_fires) {
+			textarea[2].append(fire + "\n");
+		}
 		textarea[3].append(String.join("\t", header4)  + "\n");
 		for (ISMR_Process ismr : ismr_process) {
 			for (String st : ismr.resource_summary) {
@@ -186,6 +182,70 @@ class Aggregate extends JScrollPane {
 			
 		} else {
 		}
+	}
+	
+	private void fix_ctd(List<String> final_fires) {	// Fix ctd
+		// Fix using previous fire
+		for (int i = 0; i < final_fires.size(); i++) {
+			String[] fs = final_fires.get(i).split("\t");
+			if (fs[17].equals("NA") || fs[17].equals("NR") || fs[17].equals("---") || fs[17].endsWith("K") || fs[17].endsWith("M") || fs[17].length() <= 1) {
+				
+			} else {	// these are records with ctd problem
+				// ctd that does not end with K or M can be fixed by checking the same fire in most recent previous date.
+//				System.out.println("ctd missing K or M: " + final_fires.get(i));
+				boolean continue_loop = true;
+				int l = i;
+				do {
+					l = l - 1;
+					String[] previous_fs = final_fires.get(l).split("\t");
+					if (previous_fs[4].equals(fs[4]) && (previous_fs[17].endsWith("K") || previous_fs[17].endsWith("M"))) {		// found this fire in the previous date, now add K or M
+						double previous_ctd = Double.valueOf(previous_fs[17].substring(0, previous_fs[17].length() - 1));
+						double ctd = Double.valueOf(fs[17]);
+						if (previous_ctd <= ctd) {
+							fs[17] = fs[17] + previous_fs[17].substring(previous_fs[17].length() - 1);		// add the K or M of the previous ctd to this ctd
+						} else {
+							fs[17] = fs[17] + "M";	// definitely ad M in this case
+						}
+						// Now we use set function to replace this fire in the final_fires list
+						String adjusted_fire = String.join("\t", fs);
+						final_fires.set(final_fires.indexOf(final_fires.get(i)), adjusted_fire);
+						System.out.println("new ctd with added K or M: " + adjusted_fire);
+						continue_loop = false;
+					}
+				} while (continue_loop && l > 0);
+			}
+		}
+		// Fix using next fire, because previous fire does not exist
+		for (int i = final_fires.size() - 1; i >= 0; i--) {
+			String[] fs = final_fires.get(i).split("\t");
+			if (fs[17].equals("NA") || fs[17].equals("NR") || fs[17].equals("---") || fs[17].endsWith("K") || fs[17].endsWith("M") || fs[17].length() <= 1) {
+				
+			} else {	// these are records with ctd problem
+				// ctd that does not end with K or M can be fixed by checking the same fire in most recent next date.
+//				System.out.println("ctd missing K or M: " + final_fires.get(i));
+				boolean continue_loop = true;
+				int l = i;
+				do {
+					l = l + 1;
+					String[] next_fs = final_fires.get(l).split("\t");
+					if (next_fs[4].equals(fs[4]) && (next_fs[17].endsWith("K") || next_fs[17].endsWith("M"))) {		// found this fire in the next date, now add K or M
+						double next_ctd = Double.valueOf(next_fs[17].substring(0, next_fs[17].length() - 1));
+						double ctd = Double.valueOf(fs[17]);
+						if (next_ctd >= ctd) {
+							fs[17] = fs[17] + next_fs[17].substring(next_fs[17].length() - 1);		// add the K or M of the next ctd to this ctd
+						} else {
+							fs[17] = fs[17] + "K";	// definitely ad K in this case
+						}
+						// Now we use set function to replace this fire in the final_fires list
+						String adjusted_fire = String.join("\t", fs);
+						final_fires.set(final_fires.indexOf(final_fires.get(i)), adjusted_fire);
+						System.out.println("new ctd with added K or M: " + adjusted_fire);
+						continue_loop = false;
+					}
+				} while (continue_loop && l < final_fires.size() - 1);
+			}
+		}
+		// Note that only 79/152 ctd are fixed. The other cannot be fixed because the fire exists in only a single date.
 	}
 }
 

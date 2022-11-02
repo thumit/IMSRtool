@@ -1460,28 +1460,9 @@ public class ISMR_Process {
 					String adjusted_fire = String.join("\t", fs);
 					final_fires.set(final_fires.indexOf(final_fires.get(i)), adjusted_fire);
 					System.out.println("new ctd with last non-numeric character removed: " + final_fires.get(i));
-				} else {	// ctd that does not end with K or M can be fixed only if we can check the same fire in most recent previous date. Unfortunately, this is not possible here
-					System.out.println("ctd missing K or M: " + final_fires.get(i));
-//					boolean continue_loop = true;
-//					int l = i;
-//					do {
-//						l = l - 1;
-//						String[] previous_fs = final_fires.get(i).split("\t");
-//						if (previous_fs[4].equals(fs[4]) && (previous_fs[17].endsWith("K") || previous_fs[17].endsWith("M"))) {		// found this fire in the previous date, now add K or M
-//							double previous_ctd = Double.valueOf(previous_fs[17].substring(0, previous_fs[17].length() - 1));
-//							double ctd = Double.valueOf(fs[17]);
-//							if (previous_ctd <= ctd) {
-//								fs[17] = fs[17] + previous_fs[17].substring(previous_fs[17].length() - 1);		// add the K or M of the previous ctd to this ctd
-//							} else {
-//								fs[17] = fs[17] + "M";	// definitely ad M in this case
-//							}
-//							continue_loop = false;
-//						}
-//					} while (continue_loop && l > 0);
-//					// Now we use set function to replace this fire in the final_fires list
-//					String adjusted_fire = String.join("\t", fs);
-//					final_fires.set(final_fires.indexOf(final_fires.get(i)), adjusted_fire);
-//					System.out.println("new ctd with added K or M: " + adjusted_fire);
+				} else {	
+					// ctd that does not end with K or M can be fixed only if we can check the same fire in most recent previous date.
+					// This is not possible here, but it will be donw when aggregating results. See Option_Pane_Explore class
 				}
 			}
 		}
