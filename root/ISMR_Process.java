@@ -1422,7 +1422,7 @@ public class ISMR_Process {
 		// clean fires
 		List<String> cleaned_fires = new ArrayList<String>();
 		for (String st : final_fires) {
-			st = st.toUpperCase().replaceAll(",", "").replaceAll("NULL", "").replaceAll("N/A", "NA").replaceAll("N/R", "NR");
+			st = st.toUpperCase().replaceAll(",", "").replaceAll("/", "-").replaceAll(" -", "-").replaceAll("- ", "-").replaceAll("NULL", "").replaceAll("N/A", "NA").replaceAll("N/R", "NR");
 			cleaned_fires.add(st);
 			final_fires = cleaned_fires;
 		}
