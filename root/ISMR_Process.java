@@ -1416,7 +1416,7 @@ public class ISMR_Process {
 		// clean resource summary
 		List<String> cleaned_resource_summary = new ArrayList<String>();
 		for (String st : resource_summary) {
-			st = st.toUpperCase().replaceAll(",", "");
+			st = st.toUpperCase().replaceAll(",", "").replaceAll("NULL", "");
 			cleaned_resource_summary.add(st);
 		}
 		resource_summary = cleaned_resource_summary;
@@ -1424,18 +1424,68 @@ public class ISMR_Process {
 		// clean fires
 		List<String> cleaned_fires = new ArrayList<String>();
 		for (String st : final_fires) {
-			st = st.toUpperCase().replaceAll(",", "").replaceAll("/", "-").replaceAll(" -", "-").replaceAll("- ", "-").replaceAll("NULL", "").replaceAll("N/A", "NA").replaceAll("N/R", "NR");
+			st = st.toUpperCase().replaceAll(",", "").replaceAll("NULL", "").replaceAll("N/A", "NA").replaceAll("N/R", "NR").replaceAll("/", "-").replaceAll(" -", "-").replaceAll("- ", "-");
 			cleaned_fires.add(st);
 			final_fires = cleaned_fires;
 		}
-		
-		
-		
-		for (int i = 1; i < final_fires.size(); i++) {
-			String fire_name_before = final_fires.get(i - 1).split("\t")[4];
-			String fire_name = final_fires.get(i).split("\t")[4];
-			if (fire_name_before.length() >=3 && fire_name.startsWith(fire_name_before.substring(fire_name_before.length() - 3))) System.out.println("check name: " + final_fires.get(i));
+
+		// Fix ctd 
+		for (int i = 0; i < final_fires.size(); i++) {
+			String[] fs = final_fires.get(i).split("\t");
+			if (fs[17].equals("NA") || fs[17].equals("NR") || fs[17].equals("---") || fs[17].endsWith("K") || fs[17].endsWith("M") || fs[17].length() <= 1) {
+				
+			} else {	// these are records with ctd problem
+				if (fs[17].equals("0")) {	// several records (4) have this, we need to replace it to NR
+					fs[17] = "0K";
+					String adjusted_fire = String.join("\t", fs);
+					final_fires.set(final_fires.indexOf(final_fires.get(i)), adjusted_fire);
+					System.out.println("new ctd with 0 replaced by 0K: " + final_fires.get(i));
+				} else if (fs[17].equals("NF")) {	// several records (4) have this, we need to replace it to NR
+					fs[17] = "NR";
+					String adjusted_fire = String.join("\t", fs);
+					final_fires.set(final_fires.indexOf(final_fires.get(i)), adjusted_fire);
+					System.out.println("new ctd with NF replaced by NR: " + final_fires.get(i));
+				} else if (fs[17].startsWith("$")) {	// such as 2008-04-04 STATE LINE
+					fs[17] = fs[17].substring(1);
+					String adjusted_fire = String.join("\t", fs);
+					final_fires.set(final_fires.indexOf(final_fires.get(i)), adjusted_fire);
+					System.out.println("new ctd with $ removed: " + final_fires.get(i));
+				}  else if (fs[17].startsWith(".")) {	// such as 2011-03-17 HIGHLINE
+					fs[17] = "0" + fs[17];
+					String adjusted_fire = String.join("\t", fs);
+					final_fires.set(final_fires.indexOf(final_fires.get(i)), adjusted_fire);
+					System.out.println("new ctd with . change to 0.: " + final_fires.get(i));
+				} else if (fs[17].endsWith("J") || fs[17].endsWith("L")) {	// such as 2018-08-27 AIRPORT	135J
+					fs[17] = fs[17].substring(0, fs[17].length() - 1);
+					String adjusted_fire = String.join("\t", fs);
+					final_fires.set(final_fires.indexOf(final_fires.get(i)), adjusted_fire);
+					System.out.println("new ctd with last non-numeric character removed: " + final_fires.get(i));
+				} else {	// ctd that does not end with K or M can be fixed only if we can check the same fire in most recent previous date. Unfortunately, this is not possible here
+					System.out.println("ctd missing K or M: " + final_fires.get(i));
+//					boolean continue_loop = true;
+//					int l = i;
+//					do {
+//						l = l - 1;
+//						String[] previous_fs = final_fires.get(i).split("\t");
+//						if (previous_fs[4].equals(fs[4]) && (previous_fs[17].endsWith("K") || previous_fs[17].endsWith("M"))) {		// found this fire in the previous date, now add K or M
+//							double previous_ctd = Double.valueOf(previous_fs[17].substring(0, previous_fs[17].length() - 1));
+//							double ctd = Double.valueOf(fs[17]);
+//							if (previous_ctd <= ctd) {
+//								fs[17] = fs[17] + previous_fs[17].substring(previous_fs[17].length() - 1);		// add the K or M of the previous ctd to this ctd
+//							} else {
+//								fs[17] = fs[17] + "M";	// definitely ad M in this case
+//							}
+//							continue_loop = false;
+//						}
+//					} while (continue_loop && l > 0);
+//					// Now we use set function to replace this fire in the final_fires list
+//					String adjusted_fire = String.join("\t", fs);
+//					final_fires.set(final_fires.indexOf(final_fires.get(i)), adjusted_fire);
+//					System.out.println("new ctd with added K or M: " + adjusted_fire);
+				}
+			}
 		}
+		
 		
 		
 		
