@@ -185,13 +185,12 @@ class Aggregate extends JScrollPane {
 	}
 	
 	private void fix_ctd(List<String> final_fires) {	// Fix ctd
-		// Fix using previous fire
+		// Loop forward and fix using previous fire
 		for (int i = 0; i < final_fires.size(); i++) {
 			String[] fs = final_fires.get(i).split("\t");
 			if (fs[17].equals("NA") || fs[17].equals("NR") || fs[17].equals("---") || fs[17].endsWith("K") || fs[17].endsWith("M") || fs[17].length() <= 1) {
 				
-			} else {	// these are records with ctd problem
-				// ctd that does not end with K or M can be fixed by checking the same fire in most recent previous date.
+			} else {	// these are records with ctd problem. ctd that does not end with K or M can be fixed by checking the same fire in most recent previous date.
 //				System.out.println("ctd missing K or M: " + final_fires.get(i));
 				boolean continue_loop = true;
 				int l = i;
@@ -208,20 +207,19 @@ class Aggregate extends JScrollPane {
 						}
 						// Now we use set function to replace this fire in the final_fires list
 						String adjusted_fire = String.join("\t", fs);
-						final_fires.set(final_fires.indexOf(final_fires.get(i)), adjusted_fire);
+						final_fires.set(i, adjusted_fire);
 						System.out.println("new ctd with added K or M: " + adjusted_fire);
 						continue_loop = false;
 					}
 				} while (continue_loop && l > 0);
 			}
 		}
-		// Fix using next fire, because previous fire does not exist
+		// Loop backward and fix using next fire, because previous fire does not exist
 		for (int i = final_fires.size() - 1; i >= 0; i--) {
 			String[] fs = final_fires.get(i).split("\t");
 			if (fs[17].equals("NA") || fs[17].equals("NR") || fs[17].equals("---") || fs[17].endsWith("K") || fs[17].endsWith("M") || fs[17].length() <= 1) {
 				
-			} else {	// these are records with ctd problem
-				// ctd that does not end with K or M can be fixed by checking the same fire in most recent next date.
+			} else {	// these are records with ctd problem. ctd that does not end with K or M can be fixed by checking the same fire in most recent next date.
 //				System.out.println("ctd missing K or M: " + final_fires.get(i));
 				boolean continue_loop = true;
 				int l = i;
@@ -238,7 +236,7 @@ class Aggregate extends JScrollPane {
 						}
 						// Now we use set function to replace this fire in the final_fires list
 						String adjusted_fire = String.join("\t", fs);
-						final_fires.set(final_fires.indexOf(final_fires.get(i)), adjusted_fire);
+						final_fires.set(i, adjusted_fire);
 						System.out.println("new ctd with added K or M: " + adjusted_fire);
 						continue_loop = false;
 					}

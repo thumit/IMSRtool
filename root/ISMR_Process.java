@@ -1421,63 +1421,48 @@ public class ISMR_Process {
 		}
 		resource_summary = cleaned_resource_summary;
 				
-		// clean fires
-		List<String> cleaned_fires = new ArrayList<String>();
-		for (String st : final_fires) {
-			st = st.toUpperCase().replaceAll(",", "").replaceAll("NULL", "").replaceAll("N/A", "NA").replaceAll("N/R", "NR").replaceAll("/", "-").replaceAll(" -", "-").replaceAll("- ", "-");
-			cleaned_fires.add(st);
-			final_fires = cleaned_fires;
-		}
-
-		// Fix ctd 
+		// clean fires 
 		for (int i = 0; i < final_fires.size(); i++) {
-			String[] fs = final_fires.get(i).split("\t");
+			String st = final_fires.get(i).toUpperCase().replaceAll(",", "").replaceAll("NULL", "").replaceAll("N/A", "NA").replaceAll("N/R", "NR")
+														.replaceAll("/", "-").replaceAll(" -", "-").replaceAll("- ", "-").replaceAll("#", "");
+			final_fires.set(i, st);	// replace fire
+			
+			// Fix ctd 
+			String[] fs = st.split("\t");
 			if (fs[17].equals("NA") || fs[17].equals("NR") || fs[17].equals("---") || fs[17].endsWith("K") || fs[17].endsWith("M") || fs[17].length() <= 1) {
 				
 			} else {	// these are records with ctd problem
 				if (fs[17].equals("0")) {	// several records (4) have this, we need to replace it to NR
 					fs[17] = "0K";
 					String adjusted_fire = String.join("\t", fs);
-					final_fires.set(final_fires.indexOf(final_fires.get(i)), adjusted_fire);
+					final_fires.set(i, adjusted_fire);
 					System.out.println("new ctd with 0 replaced by 0K: " + final_fires.get(i));
 				} else if (fs[17].equals("NF")) {	// several records (4) have this, we need to replace it to NR
 					fs[17] = "NR";
 					String adjusted_fire = String.join("\t", fs);
-					final_fires.set(final_fires.indexOf(final_fires.get(i)), adjusted_fire);
+					final_fires.set(i, adjusted_fire);
 					System.out.println("new ctd with NF replaced by NR: " + final_fires.get(i));
 				} else if (fs[17].startsWith("$")) {	// such as 2008-04-04 STATE LINE
 					fs[17] = fs[17].substring(1);
 					String adjusted_fire = String.join("\t", fs);
-					final_fires.set(final_fires.indexOf(final_fires.get(i)), adjusted_fire);
+					final_fires.set(i, adjusted_fire);
 					System.out.println("new ctd with $ removed: " + final_fires.get(i));
 				}  else if (fs[17].startsWith(".")) {	// such as 2011-03-17 HIGHLINE
 					fs[17] = "0" + fs[17];
 					String adjusted_fire = String.join("\t", fs);
-					final_fires.set(final_fires.indexOf(final_fires.get(i)), adjusted_fire);
+					final_fires.set(i, adjusted_fire);
 					System.out.println("new ctd with . change to 0.: " + final_fires.get(i));
 				} else if (fs[17].endsWith("J") || fs[17].endsWith("L")) {	// such as 2018-08-27 AIRPORT	135J
 					fs[17] = fs[17].substring(0, fs[17].length() - 1);
 					String adjusted_fire = String.join("\t", fs);
-					final_fires.set(final_fires.indexOf(final_fires.get(i)), adjusted_fire);
+					final_fires.set(i, adjusted_fire);
 					System.out.println("new ctd with last non-numeric character removed: " + final_fires.get(i));
 				} else {	
-					// ctd that does not end with K or M can be fixed only if we can check the same fire in most recent previous date.
-					// This is not possible here, but it will be donw when aggregating results. See Option_Pane_Explore class
+					// ctd that does not end with K or M can be fixed only if we can check the same fire in most recent previous date or next date.
+					// this is not possible here, but it will be done when aggregating results. See Option_Pane_Explore class
 				}
 			}
 		}
 		
-		
-		
-		
-		for (String st : final_fires) {
-//			String[] fs = st.split("\t");
-//			if (fs[fs.length - 2].endsWith("NR") || fs[fs.length - 2].endsWith("K") || fs[fs.length - 2].endsWith("M")) {
-//			} else {
-//				System.out.println("cst missing K or M: " + st);
-//			}
-//			if (!fs[5].contains("-")) System.out.println("unit is wrong: " + st);
-//			if (fs.length != 19) System.out.println("unit is wrong: " + st);
-		}
 	}
 }
