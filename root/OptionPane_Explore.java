@@ -1,4 +1,5 @@
 package root;
+import java.awt.BorderLayout;
 import java.awt.Desktop;
 import java.awt.Dialog;
 import java.awt.Dimension;
@@ -24,6 +25,7 @@ import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
+import javax.swing.JInternalFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
@@ -58,7 +60,7 @@ public class OptionPane_Explore extends JOptionPane {
 				if (id < s_files.length - 1) id = id + 1;
 			} else if (response == 2) {
 				exit_exploration = true;
-				new Aggregate(s_files, r_files); // Aggregate
+				new Get_Console_Text_While_Aggregating(s_files, r_files); // Aggregate
 			} else {
 				exit_exploration = true;
 			}
@@ -523,6 +525,18 @@ class Get_Console_Text_While_Aggregating {
 		});
 		textarea_view.setViewportView(textarea);
 		
+		JInternalFrame frame = new JInternalFrame("AGRREGATING - PLEASE WAIT", true /*resizable*/, true, /*closable*/true/*maximizable*/, true/*iconifiable*/);	
+		IMSRmain.get_DesktopPane().add(frame, BorderLayout.CENTER); // attach internal frame
+		frame.setSize((int) (IMSRmain.get_main().getWidth()/1.2),(int) (IMSRmain.get_main().getHeight()/1.2));		
+		frame.setLocation((int) ((IMSRmain.get_main().getWidth() - frame.getWidth())/2),
+										((int) ((IMSRmain.get_main().getHeight() - frame.getHeight())/3.5)));	//Set the frame near the center of the Main frame
+		if (IMSRmain.get_DesktopPane().getSelectedFrame() != null) {	// Or set the frame near the recently opened JInternalFrame
+			frame.setLocation(IMSRmain.get_DesktopPane().getSelectedFrame().getX() + 25, IMSRmain.get_DesktopPane().getSelectedFrame().getY() + 25);
+		}
+		frame.add(textarea_view, BorderLayout.CENTER);
+		frame.setVisible(true); // show internal frame	
+		
+		// Multi-threads
 		if (solvingstatus == false) {
 			// Open 2 new parallel threads: 1 for aggregating result, 1 for redirecting console to displayTextArea
 			Thread thread2 = new Thread() {
@@ -573,12 +587,7 @@ class Get_Console_Text_While_Aggregating {
 			solvingstatus = true;
 			thread2.start();
 			thread1.start();	// Note: Pipe broken due to disconnects before receiving responses. (safe Exception)	
-			try {
-				thread2.join();
-				thread1.join();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}		
+			// Do not join threads because it will not work
 		}
 	}
 }
