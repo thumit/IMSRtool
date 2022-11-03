@@ -12,6 +12,10 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
+import java.io.PrintStream;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -491,5 +495,90 @@ class ScrollPane_Extraction_Preview extends JScrollPane {
 		// Add the Panel to this Big ScrollPane
 		setBorder(BorderFactory.createEmptyBorder());
 		setViewportView(explore_scrollpane);			
+	}
+}
+
+class Get_Console_Text_While_Aggregating {
+	private ColorTextArea textarea;
+	private boolean solvingstatus;
+	public Get_Console_Text_While_Aggregating(File[] s_files, File[] r_files) {	
+		textarea = new ColorTextArea("icon_tree.png", 75, 75);
+		textarea.setSelectionStart(0);	// scroll to top
+		textarea.setSelectionEnd(0);
+		textarea.setEditable(false);
+		
+		JScrollPane textarea_view = new JScrollPane();
+		textarea_view.setBorder(BorderFactory.createBevelBorder(1));
+		textarea_view.addHierarchyListener(new HierarchyListener() {	//	These codes make the panel resizable
+		    public void hierarchyChanged(HierarchyEvent e) {
+		        Window window = SwingUtilities.getWindowAncestor(textarea_view);
+		        if (window instanceof Dialog) {
+		            Dialog dialog = (Dialog)window;
+		            if (!dialog.isResizable()) {
+		                dialog.setResizable(true);
+		                dialog.setPreferredSize(new Dimension((int) (IMSRmain.get_main().getWidth() / 1.1), (int) (IMSRmain.get_main().getHeight() / 1.21)));
+		            }
+		        }
+		    }
+		});
+		textarea_view.setViewportView(textarea);
+		
+		if (solvingstatus == false) {
+			// Open 2 new parallel threads: 1 for aggregating result, 1 for redirecting console to displayTextArea
+			Thread thread2 = new Thread() {
+				public void run() {
+					try {
+						//redirect console to JTextArea
+						PipedOutputStream pOut = new PipedOutputStream();
+						System.setOut(new PrintStream(pOut));
+						System.setErr(new PrintStream(pOut));
+						PipedInputStream pIn = new PipedInputStream(pOut);
+						BufferedReader reader = new BufferedReader(new InputStreamReader(pIn));
+						while (solvingstatus == true) {
+							try {
+								String line = reader.readLine();
+								if (line != null) {
+									textarea.append(line + "\n");	// Write line to displayTextArea
+								}
+						    } catch (IOException ex) {
+						    	System.err.println("Aggregate - Thread 2 error - " + ex.getClass().getName() + ": " + ex.getMessage());
+						    }
+						}
+						textarea.append("--------------------------------------------------------------" + "\n");
+						textarea.append("--------------------------------------------------------------" + "\n");
+						textarea.append("AGGREGATION IS COMPLETED" + "\n");
+						textarea.append("--------------------------------------------------------------" + "\n");
+						textarea.append("--------------------------------------------------------------" + "\n");
+						reader.close();
+						pIn.close();
+						pOut.close();
+					} catch (IOException e) {
+						System.err.println("Aggregate - Thread 2 error - " + e.getClass().getName() + ": " + e.getMessage());
+					}
+				}
+			};
+							
+			Thread thread1 = new Thread() {
+				public void run() {
+					new Aggregate(s_files, r_files); // Aggregate
+					try {
+						sleep(1000);			//sleep 1 second to so thread 2 can still print out report
+						thread2.interrupt();
+					} catch (InterruptedException e) {
+						System.err.println("Aggregate - Thread 1 sleep error - " + e.getClass().getName() + ": " + e.getMessage());
+					}
+					solvingstatus = false;
+				}
+			};
+			solvingstatus = true;
+			thread2.start();
+			thread1.start();	// Note: Pipe broken due to disconnects before receiving responses. (safe Exception)	
+			try {
+				thread2.join();
+				thread1.join();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}		
+		}
 	}
 }
