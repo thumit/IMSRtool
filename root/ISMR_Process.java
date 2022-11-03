@@ -1423,8 +1423,8 @@ public class ISMR_Process {
 				
 		// clean fires 
 		for (int i = 0; i < final_fires.size(); i++) {
-			String st = final_fires.get(i).toUpperCase().replaceAll(",", "").replaceAll("NULL", "").replaceAll("N/A", "NA").replaceAll("N/R", "NR")
-														.replaceAll("/", "-").replaceAll(" -", "-").replaceAll("- ", "-").replaceAll("#", "");
+			String st = final_fires.get(i).toUpperCase().replaceAll(",", "").replaceAll("NULL", "").replaceAll("N/A", "NA").replaceAll("N/R", "NR").replaceAll("\\$", "")		// such as 2008-04-04 STATE LINE that has $ sign in ctd
+														.replaceAll(" /", "/").replaceAll("/ ", "/").replaceAll(" -", "-").replaceAll("- ", "-");
 			final_fires.set(i, st);	// replace fire
 			
 			// Fix ctd 
@@ -1442,12 +1442,7 @@ public class ISMR_Process {
 					String adjusted_fire = String.join("\t", fs);
 					final_fires.set(i, adjusted_fire);
 					System.out.println("new ctd with NF replaced by NR: " + final_fires.get(i));
-				} else if (fs[17].startsWith("$")) {	// such as 2008-04-04 STATE LINE
-					fs[17] = fs[17].substring(1);
-					String adjusted_fire = String.join("\t", fs);
-					final_fires.set(i, adjusted_fire);
-					System.out.println("new ctd with $ removed: " + final_fires.get(i));
-				}  else if (fs[17].startsWith(".")) {	// such as 2011-03-17 HIGHLINE
+				} else if (fs[17].startsWith(".")) {	// such as 2011-03-17 HIGHLINE
 					fs[17] = "0" + fs[17];
 					String adjusted_fire = String.join("\t", fs);
 					final_fires.set(i, adjusted_fire);
