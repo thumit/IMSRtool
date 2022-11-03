@@ -542,7 +542,7 @@ class ScrollPane_Extraction_Preview extends JScrollPane {
 		textarea.append(header1[8] + "\t" + "\t" + ismr.nimos_committed + "\n");
 		textarea.append(header1[9] + "\t" + "\t" + ismr.type_1_imts_committed + "\n");
 		textarea.append(header1[10] + "\t" + "\t" + ismr.type_2_imts_committed + "\n");
-		textarea.append(header1[10] + "\t" + "\t" + ismr.fire_use_teams_committed + "\n");
+		textarea.append(header1[11] + "\t" + "\t" + ismr.fire_use_teams_committed + "\n");
 		textarea.append("--------------------------------------------------------------------" + "\n");
 		textarea.append(String.join("\t", header2)  + "\n");
 		for (String st : ismr.gacc_activity) {
