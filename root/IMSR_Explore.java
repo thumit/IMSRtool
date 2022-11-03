@@ -73,7 +73,7 @@ class Aggregate {
 	public Aggregate(File[] s_files, File[] r_files) {	
 		String[] header1 = new String[] { "date", "preparedness_level", "initial_attack_activity",
 				"new_fires", "new_large_fires", "contained_large_fires", "uncontained_large_fires", "area_command_teams", "nimos", "type_1_imts",
-				"type_2_imts" };
+				"type_2_imts", "fire_use_teams" };
 		String[] header2 = new String[] { "date", "gacc", "gacc_priority", "preparedness_level", "new_fires",
 				"new_large_fires", "uncontained_large_fires", "area_command_teams", "nimos", "type_1_imts", "type_2_imts" };
 		String[] header3 = new String[] { "date", "gacc", "gacc_priority", "fire_priority", "fire", "unit", "size",
@@ -521,7 +521,7 @@ class ScrollPane_Extraction_Preview extends JScrollPane {
 	public ScrollPane_Extraction_Preview(File s_file, File r_file, String title) {
 		String[] header1 = new String[] { "date", "preparedness_level", "initial_attack_activity",
 				"new_fires", "new_large_fires", "contained_large_fires", "uncontained_large_fires", "area_command_teams", "nimos", "type_1_imts",
-				"type_2_imts" };
+				"type_2_imts", "fire_use_teams" };
 		String[] header2 = new String[] { "date", "gacc", "gacc_priority", "preparedness_level", "new_fires",
 				"new_large_fires", "uncontained_large_fires", "area_command_teams", "nimos", "type_1_imts", "type_2_imts" };
 		String[] header3 = new String[] { "date", "gacc", "gacc_priority", "fire_priority", "fire", "unit", "size",

@@ -26,6 +26,7 @@ public class ISMR_Process {
 	String nimos_committed;
 	String type_1_imts_committed;
 	String type_2_imts_committed;
+	String fire_use_teams_committed;
 	List<String> national_activity = new ArrayList<String>();	// store all the above information
 	
 //	String gacc_prepareness_level;
@@ -36,6 +37,7 @@ public class ISMR_Process {
 //	String gacc_NIMOs_committed;
 //	String gacc_type_1_IMTs_committed;
 //	String gacc_type_2_IMTs_committed;
+//	String gacc_fire_use_teams_committed;
 	List<String> gacc_activity = new ArrayList<String>();	// almost the same information structure as national activity, but the level is gacc area
 	
 	List<String> resource_summary = new ArrayList<String>();	// store all active incident resource summary information
@@ -96,32 +98,32 @@ public class ISMR_Process {
 	}
 	
 	private void get_national_data(String[] s_lines) {
-		int mergeCount = 0;
-		for (int i = 0; i < s_lines.length; i++) {
-			if (s_lines[i].contains("Active Incident Resource Summary")
-					|| s_lines[i].contains("GACC")		// Special case 20200110: "Active Incident Resource Summary" is not written correctly --> Use GACC
-					|| s_lines[i].contains("Geographic Area daily reports")		// Special case 2012
-					|| s_lines[i].contains("WFU")) {		// Special case 2008 first 4 months
-				for (int j = 0; j < i; j++) {
-					if (s_lines[j].contains("Type 2 IMTs")) {
-						// Merge up to this mergeline. Some special cases are j+3 or j+2, usually j+1 or j in most cases)
-						if (s_lines[j].substring(s_lines[j].lastIndexOf(" ") + 1).matches("-?(0|[1-9]\\d*)")) {
-							mergeCount = j;			// many cases
-						} else if (s_lines[j + 1].substring(s_lines[j + 1].lastIndexOf(" ") + 1).matches("-?(0|[1-9]\\d*)")) {
-							mergeCount = j + 1;		// many cases
-						} else if (s_lines[j + 2].substring(s_lines[j + 2].lastIndexOf(" ") + 1).matches("-?(0|[1-9]\\d*)")) {
-							mergeCount = j + 2;		// 20200110
-						} else if (s_lines[j + 3].substring(s_lines[j + 3].lastIndexOf(" ") + 1).matches("-?(0|[1-9]\\d*)")) {
-							mergeCount = j + 3;		// 20200518
-						} else {	// Type 2 IMTs may have nothing, no space as well, such as in 20070417
-							mergeCount = j;
-						}
-					}
-				}
+		boolean continue_loop = true;
+		int mergeCount = 0; 
+		int l = -1;
+		do {
+			l = l + 1;
+			if (s_lines[l].contains("Type 2 IMTs")) {
+				mergeCount = l;
+				continue_loop = false;
+			} else {
 			}
-		}
+		} while (continue_loop && l < s_lines.length - 1);
+		
+		continue_loop = true;
+		l = mergeCount;
+		do {
+			l = l + 1;
+			if (s_lines[l].contains("Fire Use Teams")) {
+				mergeCount = l;
+				continue_loop = false;
+			} else {
+			}
+		} while (continue_loop && l < s_lines.length - 1);
+		
 		String[] merge_lines = Arrays.copyOfRange(s_lines, 0, mergeCount + 1);
-		String mstr = String.join(" ", merge_lines).toLowerCase().trim();
+		String mstr = String.join(" ", merge_lines).toLowerCase().trim(); 
+		mstr = mstr.replaceAll("fire use teams:", "fire use teams committed:");
 		SubstringBetween sb = new SubstringBetween();
 		
 		String st = "national preparedness level";
@@ -182,8 +184,20 @@ public class ISMR_Process {
 		temp = sb.substringBetween(mstr, st, get_national_next_term(mstr, st)); 
 		if (temp != null) type_1_imts_committed = (temp.substring(temp.indexOf(" ") + 1)).trim();
 		st = "type 2 imts committed";
-		temp = (mstr.substring(mstr.indexOf(st) + 22)).trim();		// Note: different from above, not use sub string between
-		if (temp != null) type_2_imts_committed = temp.split(" ")[0];
+		if (mstr.indexOf(st) != - 1) {	// type 2 teams always exist
+			temp = (mstr.substring(mstr.indexOf(st) + 22)).trim();		// Note: different from above, not use sub string between
+			if (temp != null) type_2_imts_committed = temp.split(" ")[0];
+		}
+		if (l < s_lines.length - 1) {	// if fire use teams committed exists, we also need to read type 2 team in a different way
+			st = "type 2 imts committed";
+			temp = sb.substringBetween(mstr, st, get_national_next_term(mstr, st)); 
+			if (temp != null) type_2_imts_committed = (temp.substring(temp.indexOf(" ") + 1)).trim();
+			st = "fire use teams committed";
+			if (mstr.indexOf(st) != - 1) {
+				temp = (mstr.substring(mstr.indexOf(st) + 25)).trim();		// Note: different from above, not use sub string between
+				if (temp != null) fire_use_teams_committed = temp.split(" ")[0];
+			}
+		}
 		
 		// If no data then make it null
 		if (date == null || date.isBlank()) date = "null";
@@ -197,6 +211,7 @@ public class ISMR_Process {
 		if (nimos_committed == null || nimos_committed.isBlank()) nimos_committed = "null";
 		if (type_1_imts_committed == null || type_1_imts_committed.isBlank()) type_1_imts_committed = "null";
 		if (type_2_imts_committed == null || type_2_imts_committed.isBlank()) type_2_imts_committed = "null";
+		if (fire_use_teams_committed == null || fire_use_teams_committed.isBlank()) fire_use_teams_committed = "null";
 		
 		national_activity.add(date);
 		national_activity.add(national_prepareness_level);
@@ -209,13 +224,14 @@ public class ISMR_Process {
 		national_activity.add(nimos_committed);
 		national_activity.add(type_1_imts_committed);
 		national_activity.add(type_2_imts_committed);
+		national_activity.add(fire_use_teams_committed);
 	}
 	
 	private String get_national_next_term(String mstr, String st) {
 		String temp = (mstr.substring(mstr.indexOf(st) + 1)).trim(); // remove 1 leading character then use it to find next term
 		String[] term = new String[] { "national prepareness level", "national fire activity",
-				"initial attack activity", "new large incidents", "new large fires", "large fires contained", "uncontained large fires",
-				"area command teams committed", "nimos committed", "type 1 imts committed", "type 2 imts committed" };		// "new large fires" is a special case used for 2014 data instead of "new large incidents"
+				"initial attack activity", "new large incidents", "new large fires", "large fires contained", "uncontained large fires",			// "new large fires" is a special case used for 2014 data instead of "new large incidents"
+				"area command teams committed", "nimos committed", "type 1 imts committed", "type 2 imts committed", "fire use teams committed" };
 		int start_id = 0;
 		for (int i = 0; i < term.length; i++) {
 			if (term[i].contains(st)) {
