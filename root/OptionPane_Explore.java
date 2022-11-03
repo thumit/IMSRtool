@@ -60,7 +60,7 @@ public class OptionPane_Explore extends JOptionPane {
 				if (id < s_files.length - 1) id = id + 1;
 			} else if (response == 2) {
 				exit_exploration = true;
-				new Get_Console_Text_While_Aggregating(s_files, r_files); // Aggregate
+				new Aggregate(s_files, r_files); // Aggregate
 			} else {
 				exit_exploration = true;
 			}
@@ -69,6 +69,7 @@ public class OptionPane_Explore extends JOptionPane {
 }
 
 class Aggregate extends JScrollPane {
+	private boolean solvingstatus;
 	public Aggregate(File[] s_files, File[] r_files) {	
 		String[] header1 = new String[] { "date", "preparedness_level", "initial_attack_activity",
 				"new_fires", "new_large_fires", "contained_large_fires", "uncontained_large_fires", "area_command_teams", "nimos", "type_1_imts",
@@ -80,77 +81,51 @@ class Aggregate extends JScrollPane {
 				"engines", "helicopters", "structures_lost", "ctd", "origin_own" };
 		String[] header4 = new String[] { "date", "gacc", "incidents", "cumulative_size", "crews", "engines", "helicopters", "personnel", "personnel_change" };
 		
-		ISMR_Process[] ismr_process = new ISMR_Process[s_files.length];
-		for (int i = 0; i < s_files.length; i++) {
-			ismr_process[i] = new ISMR_Process(s_files[i], r_files[i]);
-		}
-		
-		ColorTextArea[] textarea = new ColorTextArea[4];
-		for (int i = 0; i < 4; i++) {
+		ColorTextArea[] textarea = new ColorTextArea[5];
+		for (int i = 0; i < 5; i++) {
 			textarea[i] = new ColorTextArea("icon_tree.png", 75, 75);
 			textarea[i].setSelectionStart(0);	// scroll to top
 			textarea[i].setSelectionEnd(0);
 			textarea[i].setEditable(false);
 		}
 		
-		textarea[0].append(String.join("\t", header1)  + "\n");
-		for (ISMR_Process ismr : ismr_process) {
-			textarea[0].append(String.join("\t", ismr.national_activity)  + "\n");
-		}
-		textarea[1].append(String.join("\t", header2)  + "\n");
-		for (ISMR_Process ismr : ismr_process) {
-			for (String st : ismr.gacc_activity) {
-				textarea[1].append(st + "\n");
-			}
-		}
-		textarea[2].append(String.join("\t", header3)  + "\n");
-		List<String> final_fires = new ArrayList<String>();
-		for (ISMR_Process ismr : ismr_process) {
-			final_fires.addAll(ismr.final_fires);
-		}
-		fix_ctd(final_fires);
-		for (String fire : final_fires) {
-			textarea[2].append(fire + "\n");
-		}
-		textarea[3].append(String.join("\t", header4)  + "\n");
-		for (ISMR_Process ismr : ismr_process) {
-			for (String st : ismr.resource_summary) {
-				textarea[3].append(st + "\n");
-			}
-		}
 		JScrollPane textarea_view = new JScrollPane();
 		textarea_view.setBorder(BorderFactory.createEmptyBorder());
-		textarea_view.setViewportView(textarea[0]);
+		textarea_view.setViewportView(textarea[4]);
 		
-		FindTextPane[] textpane = new FindTextPane[4];
+		FindTextPane[] textpane = new FindTextPane[5];
 		textpane[0] = new FindTextPane(textarea[0]);
 		textpane[1] = new FindTextPane(textarea[1]);
 		textpane[2] = new FindTextPane(textarea[2]);
 		textpane[3] = new FindTextPane(textarea[3]);
+		textpane[4] = new FindTextPane(textarea[4]);
 		JScrollPane textpane_view = new JScrollPane();
 		textpane_view.setBorder(BorderFactory.createEtchedBorder());
-		textpane_view.setViewportView(textpane[0]);
+		textpane_view.setViewportView(textpane[4]);
 		
 		// Add to GUI
 		JPanel radio_panel = new JPanel();
 		radio_panel.setBorder(BorderFactory.createEtchedBorder());
 		radio_panel.setLayout(new FlowLayout());
 		ButtonGroup radio_button_group = new ButtonGroup();
-		JRadioButton[] radio_button = new JRadioButton[4];
+		JRadioButton[] radio_button = new JRadioButton[5];
 		radio_button[0]= new JRadioButton("NATIONAL ACTIVITY");
 		radio_button[1]= new JRadioButton("GACC ACTIVITY");
 		radio_button[2]= new JRadioButton("WILDFIRE ACTIVITY");
 		radio_button[3]= new JRadioButton("RESOURCE SUMMARY");
+		radio_button[4]= new JRadioButton("CONSOLE");
 		for (int i = 0; i < radio_button.length; i++) {
-				radio_button_group.add(radio_button[i]);
-				radio_panel.add(radio_button[i]);
-				final int ii =i;
-				radio_button[i].addActionListener(e -> {
-					textarea_view.setViewportView(textarea[ii]);
-					textpane_view.setViewportView(textpane[ii]);
-				});
+			radio_button_group.add(radio_button[i]);
+			radio_panel.add(radio_button[i]);
+			final int ii =i;
+			radio_button[i].addActionListener(e -> {
+				textarea_view.setViewportView(textarea[ii]);
+				textpane_view.setViewportView(textpane[ii]);
+			});
+			radio_button[i].setEnabled(false);	// disable it until the corresponding textarea is finished appending
 		}	
-		radio_button[0].setSelected(true);
+		radio_button[4].setEnabled(true);
+		radio_button[4].setSelected(true);
 		
 		JPanel combine_panel = new JPanel();
 		combine_panel.setBorder(BorderFactory.createBevelBorder(1));
@@ -178,15 +153,108 @@ class Aggregate extends JScrollPane {
 				1, 1, 1, 1, 1, 0, 	// gridx, gridy, gridwidth, gridheight, weightx, weighty
 				0, 0, 0, 0));		// insets top, left, bottom, right
 		
-		// Add everything to a popup panel
-		String ExitOption[] = { "EXPORT TEXT FILE", "EXPORT DATABASE FILE", "EXPORT TO SQLSERVER", "EXIT" };
-		int response = JOptionPane.showOptionDialog(IMSRmain.get_DesktopPane(), combine_panel, "AGRREGATION PREVIEW",
-				JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, ExitOption, ExitOption[0]);
-		if (response == 0) {
-			
-		} else if (response == 1) {
-			
-		} else {
+		// Add all to an internal frame --------------------------------------------------------------------------
+		JInternalFrame frame = new JInternalFrame("AGRREGATING - PLEASE WAIT", true /*resizable*/, true, /*closable*/true/*maximizable*/, true/*iconifiable*/);	
+		IMSRmain.get_DesktopPane().add(frame, BorderLayout.CENTER); // attach internal frame
+		frame.setSize((int) (IMSRmain.get_main().getWidth()/1.2),(int) (IMSRmain.get_main().getHeight()/1.2));		
+		frame.setLocation((int) ((IMSRmain.get_main().getWidth() - frame.getWidth())/2),
+										((int) ((IMSRmain.get_main().getHeight() - frame.getHeight())/3.5)));	//Set the frame near the center of the Main frame
+		if (IMSRmain.get_DesktopPane().getSelectedFrame() != null) {	// Or set the frame near the recently opened JInternalFrame
+			frame.setLocation(IMSRmain.get_DesktopPane().getSelectedFrame().getX() + 25, IMSRmain.get_DesktopPane().getSelectedFrame().getY() + 25);
+		}
+		frame.add(combine_panel, BorderLayout.CENTER);
+		frame.setVisible(true); // show internal frame	
+		
+		// Multi-threads ------------------------------------------------------------------------------------------
+		if (solvingstatus == false) {
+			// Open 2 new parallel threads: 1 for aggregating result, 1 for redirecting console to displayTextArea
+			Thread thread2 = new Thread() {
+				public void run() {
+					try {
+						//redirect console to JTextArea
+						PipedOutputStream pOut = new PipedOutputStream();
+						System.setOut(new PrintStream(pOut));
+						System.setErr(new PrintStream(pOut));
+						PipedInputStream pIn = new PipedInputStream(pOut);
+						BufferedReader reader = new BufferedReader(new InputStreamReader(pIn));
+						while (solvingstatus == true) {
+							try {
+								String line = reader.readLine();
+								if (line != null) {
+									textarea[4].append(line + "\n");	// Write line to displayTextArea
+								}
+						    } catch (IOException ex) {
+						    	System.err.println("Aggregate - Thread 2 error - " + ex.getClass().getName() + ": " + ex.getMessage());
+						    }
+						}
+						textarea[4].append("----------------------------------------------------------------------------------------------------------------------------" + "\n");
+						textarea[4].append("----------------------------------------------------------------------------------------------------------------------------" + "\n");
+						textarea[4].append("AGGREGATION IS COMPLETED - ALL RESULTS ARE READY FOR EXPORTATION" + "\n");
+						textarea[4].append("----------------------------------------------------------------------------------------------------------------------------" + "\n");
+						textarea[4].append("----------------------------------------------------------------------------------------------------------------------------" + "\n");
+						reader.close();
+						pIn.close();
+						pOut.close();
+					} catch (IOException e) {
+						System.err.println("Aggregate - Thread 2 error - " + e.getClass().getName() + ": " + e.getMessage());
+					}
+				}
+			};
+							
+			Thread thread1 = new Thread() {
+				public void run() {
+					ISMR_Process[] ismr_process = new ISMR_Process[s_files.length];
+					for (int i = 0; i < s_files.length; i++) {
+						ismr_process[i] = new ISMR_Process(s_files[i], r_files[i]);
+					}
+					
+					textarea[0].append(String.join("\t", header1)  + "\n");
+					for (ISMR_Process ismr : ismr_process) {
+						textarea[0].append(String.join("\t", ismr.national_activity)  + "\n");
+					}
+					radio_button[0].setEnabled(true);
+					
+					textarea[1].append(String.join("\t", header2)  + "\n");
+					for (ISMR_Process ismr : ismr_process) {
+						for (String st : ismr.gacc_activity) {
+							textarea[1].append(st + "\n");
+						}
+					}
+					radio_button[1].setEnabled(true);
+					
+					textarea[3].append(String.join("\t", header4)  + "\n");
+					for (ISMR_Process ismr : ismr_process) {
+						for (String st : ismr.resource_summary) {
+							textarea[3].append(st + "\n");
+						}
+					}
+					radio_button[3].setEnabled(true);
+					
+					textarea[2].append(String.join("\t", header3)  + "\n");
+					List<String> final_fires = new ArrayList<String>();
+					for (ISMR_Process ismr : ismr_process) {
+						final_fires.addAll(ismr.final_fires);
+					}
+					fix_ctd(final_fires);
+					for (String fire : final_fires) {
+						textarea[2].append(fire + "\n");
+					}
+					radio_button[2].setEnabled(true);
+					
+					frame.setTitle("AGGREGATION RESULTS");
+					try {
+						sleep(1000);			//sleep 1 second to so thread 2 can still print out report
+						thread2.interrupt();
+					} catch (InterruptedException e) {
+						System.err.println("Aggregate - Thread 1 sleep error - " + e.getClass().getName() + ": " + e.getMessage());
+					}
+					solvingstatus = false;
+				}
+			};
+			solvingstatus = true;
+			thread2.start();
+			thread1.start();	// Note: Pipe broken due to disconnects before receiving responses. (safe Exception)	
+			// Do not join threads because it will not work
 		}
 	}
 	
@@ -497,97 +565,5 @@ class ScrollPane_Extraction_Preview extends JScrollPane {
 		// Add the Panel to this Big ScrollPane
 		setBorder(BorderFactory.createEmptyBorder());
 		setViewportView(explore_scrollpane);			
-	}
-}
-
-class Get_Console_Text_While_Aggregating {
-	private ColorTextArea textarea;
-	private boolean solvingstatus;
-	public Get_Console_Text_While_Aggregating(File[] s_files, File[] r_files) {	
-		textarea = new ColorTextArea("icon_tree.png", 75, 75);
-		textarea.setSelectionStart(0);	// scroll to top
-		textarea.setSelectionEnd(0);
-		textarea.setEditable(false);
-		
-		JScrollPane textarea_view = new JScrollPane();
-		textarea_view.setBorder(BorderFactory.createBevelBorder(1));
-		textarea_view.addHierarchyListener(new HierarchyListener() {	//	These codes make the panel resizable
-		    public void hierarchyChanged(HierarchyEvent e) {
-		        Window window = SwingUtilities.getWindowAncestor(textarea_view);
-		        if (window instanceof Dialog) {
-		            Dialog dialog = (Dialog)window;
-		            if (!dialog.isResizable()) {
-		                dialog.setResizable(true);
-		                dialog.setPreferredSize(new Dimension((int) (IMSRmain.get_main().getWidth() / 1.1), (int) (IMSRmain.get_main().getHeight() / 1.21)));
-		            }
-		        }
-		    }
-		});
-		textarea_view.setViewportView(textarea);
-		
-		JInternalFrame frame = new JInternalFrame("AGRREGATING - PLEASE WAIT", true /*resizable*/, true, /*closable*/true/*maximizable*/, true/*iconifiable*/);	
-		IMSRmain.get_DesktopPane().add(frame, BorderLayout.CENTER); // attach internal frame
-		frame.setSize((int) (IMSRmain.get_main().getWidth()/1.2),(int) (IMSRmain.get_main().getHeight()/1.2));		
-		frame.setLocation((int) ((IMSRmain.get_main().getWidth() - frame.getWidth())/2),
-										((int) ((IMSRmain.get_main().getHeight() - frame.getHeight())/3.5)));	//Set the frame near the center of the Main frame
-		if (IMSRmain.get_DesktopPane().getSelectedFrame() != null) {	// Or set the frame near the recently opened JInternalFrame
-			frame.setLocation(IMSRmain.get_DesktopPane().getSelectedFrame().getX() + 25, IMSRmain.get_DesktopPane().getSelectedFrame().getY() + 25);
-		}
-		frame.add(textarea_view, BorderLayout.CENTER);
-		frame.setVisible(true); // show internal frame	
-		
-		// Multi-threads
-		if (solvingstatus == false) {
-			// Open 2 new parallel threads: 1 for aggregating result, 1 for redirecting console to displayTextArea
-			Thread thread2 = new Thread() {
-				public void run() {
-					try {
-						//redirect console to JTextArea
-						PipedOutputStream pOut = new PipedOutputStream();
-						System.setOut(new PrintStream(pOut));
-						System.setErr(new PrintStream(pOut));
-						PipedInputStream pIn = new PipedInputStream(pOut);
-						BufferedReader reader = new BufferedReader(new InputStreamReader(pIn));
-						while (solvingstatus == true) {
-							try {
-								String line = reader.readLine();
-								if (line != null) {
-									textarea.append(line + "\n");	// Write line to displayTextArea
-								}
-						    } catch (IOException ex) {
-						    	System.err.println("Aggregate - Thread 2 error - " + ex.getClass().getName() + ": " + ex.getMessage());
-						    }
-						}
-						textarea.append("--------------------------------------------------------------" + "\n");
-						textarea.append("--------------------------------------------------------------" + "\n");
-						textarea.append("AGGREGATION IS COMPLETED" + "\n");
-						textarea.append("--------------------------------------------------------------" + "\n");
-						textarea.append("--------------------------------------------------------------" + "\n");
-						reader.close();
-						pIn.close();
-						pOut.close();
-					} catch (IOException e) {
-						System.err.println("Aggregate - Thread 2 error - " + e.getClass().getName() + ": " + e.getMessage());
-					}
-				}
-			};
-							
-			Thread thread1 = new Thread() {
-				public void run() {
-					new Aggregate(s_files, r_files); // Aggregate
-					try {
-						sleep(1000);			//sleep 1 second to so thread 2 can still print out report
-						thread2.interrupt();
-					} catch (InterruptedException e) {
-						System.err.println("Aggregate - Thread 1 sleep error - " + e.getClass().getName() + ": " + e.getMessage());
-					}
-					solvingstatus = false;
-				}
-			};
-			solvingstatus = true;
-			thread2.start();
-			thread1.start();	// Note: Pipe broken due to disconnects before receiving responses. (safe Exception)	
-			// Do not join threads because it will not work
-		}
 	}
 }
