@@ -325,6 +325,7 @@ public class ISMR_Process {
 		String gacc_nimos_committed = null;
 		String gacc_type_1_imts_committed = null;
 		String gacc_type_2_imts_committed = null;
+		String gacc_fire_use_teams_committed = null;
 		
 		if (s_lines[start_line].indexOf(")") == -1) {
 			System.out.println(date + " missing gacc preparedness information");
@@ -351,6 +352,7 @@ public class ISMR_Process {
 		if (mstr.contains("nimos committed")) term.add("nimos committed");
 		if (mstr.contains("type 1 imts committed") || mstr.contains("type 1 teams committed")) term.add("type 1 imts committed");		// i.e. 20180704 uses "type 1 teams committed"
 		if (mstr.contains("type 2 imts committed") || mstr.contains("type 2 teams committed")) term.add("type 2 imts committed");		// i.e. 20180704 uses "type 2 teams committed"
+		if (mstr.contains("fire use teams committed") || mstr.contains("fire use teams")) term.add("fire use teams committed");	
 		List<String> value = new ArrayList<String>();
 		String[] split_value = (mstr.replaceAll("type 1", "").replaceAll("type 2", "")).split(" ");	// remove the number 1 and 2
 		for (String st : split_value) {
@@ -367,12 +369,13 @@ public class ISMR_Process {
 			if (term.get(j).equals("nimos committed")) gacc_nimos_committed = value.get(j);
 			if (term.get(j).equals("type 1 imts committed")) gacc_type_1_imts_committed = value.get(j);	
 			if (term.get(j).equals("type 2 imts committed")) gacc_type_2_imts_committed = value.get(j);
+			if (term.get(j).equals("fire use teams committed")) gacc_fire_use_teams_committed = value.get(j);
 		}
 		
 		info = String.join("\t", date, current_area, String.valueOf(gacc_priority), 
 				gacc_prepareness_level, gacc_new_fires, gacc_new_large_incidents, gacc_uncontained_large_fires,
 				gacc_area_command_teams_committed, gacc_nimos_committed, gacc_type_1_imts_committed,
-				gacc_type_2_imts_committed);
+				gacc_type_2_imts_committed, gacc_fire_use_teams_committed);
 		gacc_activity.add(info);
 		// IMPORTANT NOTE NOTE NOTE: 20180619: Rocky Mountain Area has uncontained large files but do not printed in pdf file (Erin's excel file got the right number of 4 uncontained)
 	}

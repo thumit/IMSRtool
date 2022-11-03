@@ -75,7 +75,7 @@ class Aggregate {
 				"new_fires", "new_large_fires", "contained_large_fires", "uncontained_large_fires", "area_command_teams", "nimos", "type_1_imts",
 				"type_2_imts", "fire_use_teams" };
 		String[] header2 = new String[] { "date", "gacc", "gacc_priority", "preparedness_level", "new_fires",
-				"new_large_fires", "uncontained_large_fires", "area_command_teams", "nimos", "type_1_imts", "type_2_imts" };
+				"new_large_fires", "uncontained_large_fires", "area_command_teams", "nimos", "type_1_imts", "type_2_imts", "fire_use_teams" };
 		String[] header3 = new String[] { "date", "gacc", "gacc_priority", "fire_priority", "fire", "unit", "size",
 				"size_change", "percent", "ctn_comp", "est_date", "personnel", "personnel_change", "crews",
 				"engines", "helicopters", "structures_lost", "ctd", "origin_own" };
@@ -523,7 +523,7 @@ class ScrollPane_Extraction_Preview extends JScrollPane {
 				"new_fires", "new_large_fires", "contained_large_fires", "uncontained_large_fires", "area_command_teams", "nimos", "type_1_imts",
 				"type_2_imts", "fire_use_teams" };
 		String[] header2 = new String[] { "date", "gacc", "gacc_priority", "preparedness_level", "new_fires",
-				"new_large_fires", "uncontained_large_fires", "area_command_teams", "nimos", "type_1_imts", "type_2_imts" };
+				"new_large_fires", "uncontained_large_fires", "area_command_teams", "nimos", "type_1_imts", "type_2_imts", "fire_use_teams" };
 		String[] header3 = new String[] { "date", "gacc", "gacc_priority", "fire_priority", "fire", "unit", "size",
 				"size_change", "percent", "ctn_comp", "est_date", "personnel", "personnel_change", "crews",
 				"engines", "helicopters", "structures_lost", "ctd", "origin_own" };
@@ -542,6 +542,7 @@ class ScrollPane_Extraction_Preview extends JScrollPane {
 		textarea.append(header1[8] + "\t" + "\t" + ismr.nimos_committed + "\n");
 		textarea.append(header1[9] + "\t" + "\t" + ismr.type_1_imts_committed + "\n");
 		textarea.append(header1[10] + "\t" + "\t" + ismr.type_2_imts_committed + "\n");
+		textarea.append(header1[10] + "\t" + "\t" + ismr.fire_use_teams_committed + "\n");
 		textarea.append("--------------------------------------------------------------------" + "\n");
 		textarea.append(String.join("\t", header2)  + "\n");
 		for (String st : ismr.gacc_activity) {
