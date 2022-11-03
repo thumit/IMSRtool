@@ -22,12 +22,12 @@ import javax.swing.border.TitledBorder;
 import convenience_classes.ColorUtil;
 import sql.Calculate_Final_Ranking;
 
-public class SIT_CUSTOMIZATION_PANE extends JLayeredPane {
+public class SIT_Customization_Pane extends JLayeredPane {
 	private JSplitPane splitPanel;
 	private JScrollPane scrollPane_Left;
 	private JScrollPane scrollPane_Right;
 	
-	public SIT_CUSTOMIZATION_PANE() {
+	public SIT_Customization_Pane() {
 		this.setLayout(new BorderLayout(0, 0));
 		ToolTipManager.sharedInstance().setInitialDelay(0);		//Show toolTip immediately
 

@@ -70,7 +70,7 @@ public class Utility {
 					input_r_files[i] = new File(inputFolder + "/raw/" + selected_pdf_files[i].getName().replace(".pdf", ".txt"));
 					input_s_files[i] = new File(inputFolder + "/simple2/" + selected_pdf_files[i].getName().replace(".pdf", ".txt"));
 				}
-				new OptionPane_Explore(selected_pdf_files, input_s_files, input_r_files);
+				new IMSR_Explore(selected_pdf_files, input_s_files, input_r_files);
 			}
 		}
 	}

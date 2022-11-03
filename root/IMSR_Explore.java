@@ -39,8 +39,8 @@ import convenience_classes.FindTextPane;
 import convenience_classes.GridBagLayoutHandle;
 import convenience_classes.TitleScrollPane;
 
-public class OptionPane_Explore extends JOptionPane {
-	public OptionPane_Explore(File[] pdf_files, File[] s_files, File[] r_files) {
+public class IMSR_Explore {
+	public IMSR_Explore(File[] pdf_files, File[] s_files, File[] r_files) {
 		int id = 0;
 		boolean exit_exploration = false;
 		do {
@@ -68,7 +68,7 @@ public class OptionPane_Explore extends JOptionPane {
 	}
 }
 
-class Aggregate extends JScrollPane {
+class Aggregate {
 	private boolean solvingstatus;
 	public Aggregate(File[] s_files, File[] r_files) {	
 		String[] header1 = new String[] { "date", "preparedness_level", "initial_attack_activity",

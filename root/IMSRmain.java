@@ -220,7 +220,7 @@ public class IMSRmain extends JFrame {
 						if (main.get_DesktopPane().getSelectedFrame() != null) {	// Or set the frame near the recently opened JInternalFrame
 							frame.setLocation(main.get_DesktopPane().getSelectedFrame().getX() + 25, main.get_DesktopPane().getSelectedFrame().getY() + 25);
 						}
-						frame.add(new SIT_CUSTOMIZATION_PANE(), BorderLayout.CENTER);
+						frame.add(new SIT_Customization_Pane(), BorderLayout.CENTER);
 						frame.setVisible(true); // show internal frame	
 					}
 				});	
