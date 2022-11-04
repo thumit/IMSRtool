@@ -1419,7 +1419,8 @@ public class ISMR_Process {
 		// clean national activity
 		List<String> cleaned_national_activity = new ArrayList<String>();
 		for (String st : national_activity) {
-			st = st.toUpperCase().replaceAll(",", "").replaceAll("NULL", "").replaceAll("\\*", "").replaceAll("\\)", "").replaceAll("\\(", "").replaceAll("\\s+", "");	// some records such as 20190721 still have the (* )
+			st = st.toUpperCase().replaceAll(",", "").replaceAll("NULL", "").replaceAll("\\`", "")	// 20070809 has the 3`
+					.replaceAll("\\*", "").replaceAll("\\)", "").replaceAll("\\(", "").replaceAll("\\s+", "");	// some records such as 20190721 still have the (* )
 			cleaned_national_activity.add(st);
 		}
 		national_activity = cleaned_national_activity;
