@@ -259,12 +259,12 @@ class Aggregate {
 	}
 	
 	private void fix_ctd(List<String> final_fires) {	// Fix ctd
+		String raw_number_record_list = "";
 		// Loop forward and fix using previous fire
 		for (int i = 0; i < final_fires.size(); i++) {
 			String[] fs = final_fires.get(i).split("\t");
 			// these are records with ctd problem. ctd that does not end with K or M can be fixed by checking the same fire in most recent previous date.
 			if (!(fs[18].equals("NA") || fs[18].equals("NR") || fs[18].equals("---") || fs[18].endsWith("K") || fs[18].endsWith("M"))) {
-//				System.out.println("ctd missing K or M: " + final_fires.get(i));
 				boolean continue_loop = true;
 				int l = i;
 				do {
@@ -281,7 +281,7 @@ class Aggregate {
 						// Now we use set function to replace this fire in the final_fires list
 						String adjusted_fire = String.join("\t", fs);
 						final_fires.set(i, adjusted_fire);
-						System.out.println("new ctd with added K or M: " + adjusted_fire);
+						System.out.println(String.join("\t", fs[0], fs[1], fs[4], fs[5], "cost _to_date: K or M added"));
 						continue_loop = false;
 					}
 				} while (continue_loop && l > 0);
@@ -292,7 +292,6 @@ class Aggregate {
 			String[] fs = final_fires.get(i).split("\t");
 			// these are records with ctd problem. ctd that does not end with K or M can be fixed by checking the same fire in most recent next date.
 			if (!(fs[18].equals("NA") || fs[18].equals("NR") || fs[18].equals("---") || fs[18].endsWith("K") || fs[18].endsWith("M"))) {
-//				System.out.println("ctd missing K or M: " + final_fires.get(i));
 				boolean continue_loop = true;
 				int l = i;
 				do {
@@ -309,13 +308,17 @@ class Aggregate {
 						// Now we use set function to replace this fire in the final_fires list
 						String adjusted_fire = String.join("\t", fs);
 						final_fires.set(i, adjusted_fire);
-						System.out.println("new ctd with added K or M: " + adjusted_fire);
+						System.out.println(String.join("\t", fs[0], fs[1], fs[4], fs[5], "cost _to_date: K or M added"));
 						continue_loop = false;
 					}
 				} while (continue_loop && l < final_fires.size() - 1);
+				if (continue_loop) {
+					String raw_number_record = String.join("\t", fs[0], fs[1], fs[4], fs[5], "cost _to_date: unchanged because cannot identify K or M");
+					raw_number_record_list = String.join("\n", raw_number_record_list, raw_number_record);
+				}
 			}
 		}
-		// Note that only 79/152 ctd are fixed. The other cannot be fixed because the fire exists in only a single date.
+		System.out.println(raw_number_record_list);
 	}
 }
 
