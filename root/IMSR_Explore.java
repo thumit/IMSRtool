@@ -71,15 +71,15 @@ public class IMSR_Explore {
 class Aggregate {
 	private boolean solvingstatus;
 	public Aggregate(File[] s_files, File[] r_files) {	
-		String[] header1 = new String[] { "date", "preparedness_level", "initial_attack_activity",
-				"new_fires", "new_large_fires", "contained_large_fires", "uncontained_large_fires", "area_command_teams", "nimos", "type_1_imts",
-				"type_2_imts", "fire_use_teams" };
-		String[] header2 = new String[] { "date", "gacc", "gacc_priority", "preparedness_level", "new_fires",
-				"new_large_fires", "uncontained_large_fires", "area_command_teams", "nimos", "type_1_imts", "type_2_imts", "fire_use_teams" };
-		String[] header3 = new String[] { "date", "gacc", "gacc_priority", "fire_priority", "fire", "unit", "size",
-				"size_change", "percent", "ctn_comp", "est_date", "personnel", "personnel_change", "crews",
-				"engines", "helicopters", "structures_lost", "ctd", "origin_own" };
-		String[] header4 = new String[] { "date", "gacc", "incidents", "cumulative_size", "crews", "engines", "helicopters", "personnel", "personnel_change" };
+		String[] header1 = new String[] { "imsr_date", "preparedness_level", "initial_attack_activity",
+				"new_fires", "new_large_fires", "contained_large_fires", "uncontained_large_fires", "area_command_teams", "nimos", "type_1_teams",
+				"type_2_teams", "fire_use_teams" };
+		String[] header2 = new String[] { "imsr_date", "gacc", "gacc_priority", "preparedness_level", "new_fires",
+				"new_large_fires", "uncontained_large_fires", "area_command_teams", "nimos", "type_1_teams", "type_2_teams", "fire_use_teams" };
+		String[] header3 = new String[] { "imsr_date", "gacc", "gacc_priority", "fire_priority", "new_large_fire_mark", "fire_name", "unit", "fire_size",
+				"fire_size_change", "percent_containment", "contained_completed", "estimated_containment_date", "personnel", "personnel_change", "crews",
+				"engines", "helicopters", "structures_lost", "cost_to_date", "origin_ownership" };
+		String[] header4 = new String[] { "imsr_date", "gacc", "incidents", "cumulative_size", "crews", "engines", "helicopters", "personnel", "personnel_change" };
 		
 		ColorTextArea[] textarea = new ColorTextArea[5];
 		for (int i = 0; i < 5; i++) {
@@ -262,22 +262,21 @@ class Aggregate {
 		// Loop forward and fix using previous fire
 		for (int i = 0; i < final_fires.size(); i++) {
 			String[] fs = final_fires.get(i).split("\t");
-			if (fs[17].equals("NA") || fs[17].equals("NR") || fs[17].equals("---") || fs[17].endsWith("K") || fs[17].endsWith("M")) {
-				
-			} else {	// these are records with ctd problem. ctd that does not end with K or M can be fixed by checking the same fire in most recent previous date.
+			// these are records with ctd problem. ctd that does not end with K or M can be fixed by checking the same fire in most recent previous date.
+			if (!(fs[18].equals("NA") || fs[18].equals("NR") || fs[18].equals("---") || fs[18].endsWith("K") || fs[18].endsWith("M"))) {
 //				System.out.println("ctd missing K or M: " + final_fires.get(i));
 				boolean continue_loop = true;
 				int l = i;
 				do {
 					l = l - 1;
 					String[] previous_fs = final_fires.get(l).split("\t");
-					if (previous_fs[4].equals(fs[4]) && (previous_fs[17].endsWith("K") || previous_fs[17].endsWith("M"))) {		// found this fire in the previous date, now add K or M
-						double previous_ctd = Double.valueOf(previous_fs[17].substring(0, previous_fs[17].length() - 1));
-						double ctd = Double.valueOf(fs[17]);
+					if (previous_fs[5].equals(fs[5]) && (previous_fs[18].endsWith("K") || previous_fs[18].endsWith("M"))) {		// found this fire in the previous date, now add K or M
+						double previous_ctd = Double.valueOf(previous_fs[18].substring(0, previous_fs[18].length() - 1));
+						double ctd = Double.valueOf(fs[18]);
 						if (previous_ctd <= ctd) {
-							fs[17] = fs[17] + previous_fs[17].substring(previous_fs[17].length() - 1);		// add the K or M of the previous ctd to this ctd
+							fs[18] = fs[18] + previous_fs[18].substring(previous_fs[18].length() - 1);		// add the K or M of the previous ctd to this ctd
 						} else {
-							fs[17] = fs[17] + "M";	// definitely ad M in this case
+							fs[18] = fs[18] + "M";	// definitely ad M in this case
 						}
 						// Now we use set function to replace this fire in the final_fires list
 						String adjusted_fire = String.join("\t", fs);
@@ -291,22 +290,21 @@ class Aggregate {
 		// Loop backward and fix using next fire, because previous fire does not exist
 		for (int i = final_fires.size() - 1; i >= 0; i--) {
 			String[] fs = final_fires.get(i).split("\t");
-			if (fs[17].equals("NA") || fs[17].equals("NR") || fs[17].equals("---") || fs[17].endsWith("K") || fs[17].endsWith("M") || fs[17].length() <= 1) {
-				
-			} else {	// these are records with ctd problem. ctd that does not end with K or M can be fixed by checking the same fire in most recent next date.
+			// these are records with ctd problem. ctd that does not end with K or M can be fixed by checking the same fire in most recent next date.
+			if (!(fs[18].equals("NA") || fs[18].equals("NR") || fs[18].equals("---") || fs[18].endsWith("K") || fs[18].endsWith("M"))) {
 //				System.out.println("ctd missing K or M: " + final_fires.get(i));
 				boolean continue_loop = true;
 				int l = i;
 				do {
 					l = l + 1;
 					String[] next_fs = final_fires.get(l).split("\t");
-					if (next_fs[4].equals(fs[4]) && (next_fs[17].endsWith("K") || next_fs[17].endsWith("M"))) {		// found this fire in the next date, now add K or M
-						double next_ctd = Double.valueOf(next_fs[17].substring(0, next_fs[17].length() - 1));
-						double ctd = Double.valueOf(fs[17]);
+					if (next_fs[5].equals(fs[5]) && (next_fs[18].endsWith("K") || next_fs[18].endsWith("M"))) {		// found this fire in the next date, now add K or M
+						double next_ctd = Double.valueOf(next_fs[18].substring(0, next_fs[18].length() - 1));
+						double ctd = Double.valueOf(fs[18]);
 						if (next_ctd >= ctd) {
-							fs[17] = fs[17] + next_fs[17].substring(next_fs[17].length() - 1);		// add the K or M of the next ctd to this ctd
+							fs[18] = fs[18] + next_fs[18].substring(next_fs[18].length() - 1);		// add the K or M of the next ctd to this ctd
 						} else {
-							fs[17] = fs[17] + "K";	// definitely ad K in this case
+							fs[18] = fs[18] + "K";	// definitely ad K in this case
 						}
 						// Now we use set function to replace this fire in the final_fires list
 						String adjusted_fire = String.join("\t", fs);
@@ -519,15 +517,15 @@ class ScrollPane_View_Trim_File extends JScrollPane {
 class ScrollPane_Extraction_Preview extends JScrollPane {
 	ColorTextArea textarea;
 	public ScrollPane_Extraction_Preview(File s_file, File r_file, String title) {
-		String[] header1 = new String[] { "date", "preparedness_level", "initial_attack_activity",
-				"new_fires", "new_large_fires", "contained_large_fires", "uncontained_large_fires", "area_command_teams", "nimos", "type_1_imts",
-				"type_2_imts", "fire_use_teams" };
-		String[] header2 = new String[] { "date", "gacc", "gacc_priority", "preparedness_level", "new_fires",
-				"new_large_fires", "uncontained_large_fires", "area_command_teams", "nimos", "type_1_imts", "type_2_imts", "fire_use_teams" };
-		String[] header3 = new String[] { "date", "gacc", "gacc_priority", "fire_priority", "fire", "unit", "size",
-				"size_change", "percent", "ctn_comp", "est_date", "personnel", "personnel_change", "crews",
-				"engines", "helicopters", "structures_lost", "ctd", "origin_own" };
-		String[] header4 = new String[] { "date", "gacc", "incidents", "cumulative_size", "crews", "engines", "helicopters", "personnel", "personnel_change" };
+		String[] header1 = new String[] { "imsr_date", "preparedness_level", "initial_attack_activity",
+				"new_fires", "new_large_fires", "contained_large_fires", "uncontained_large_fires", "area_command_teams", "nimos", "type_1_teams",
+				"type_2_teams", "fire_use_teams" };
+		String[] header2 = new String[] { "imsr_date", "gacc", "gacc_priority", "preparedness_level", "new_fires",
+				"new_large_fires", "uncontained_large_fires", "area_command_teams", "nimos", "type_1_teams", "type_2_teams", "fire_use_teams" };
+		String[] header3 = new String[] { "imsr_date", "gacc", "gacc_priority", "fire_priority", "new_large_fire_mark", "fire_name", "unit", "fire_size",
+				"fire_size_change", "percent_containment", "contained_completed", "estimated_containment_date", "personnel", "personnel_change", "crews",
+				"engines", "helicopters", "structures_lost", "cost_to_date", "origin_ownership" };
+		String[] header4 = new String[] { "imsr_date", "gacc", "incidents", "cumulative_size", "crews", "engines", "helicopters", "personnel", "personnel_change" };
 		
 		textarea = new ColorTextArea("icon_tree.png", 75, 75);	// Print to text area
 		ISMR_Process ismr = new ISMR_Process(s_file, r_file);

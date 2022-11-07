@@ -1197,7 +1197,6 @@ public class ISMR_Process {
 		final_fires = new ArrayList<>(unique_fires_set);
 		
 		// recalculate priority for gacc and fire
-		Set<String> gacc_set = new LinkedHashSet<String>();
 		LinkedHashMap<String, Integer> map_gacc_to_priority = new LinkedHashMap<String, Integer>();
 		int gacc_priority = 0;
 		int fire_priority = 0;
@@ -1242,28 +1241,28 @@ public class ISMR_Process {
 	
 	private void generate_manual_fire_adjustment_list() {
 		manual_fire_adjustment_list.put("2007-03-02	SACC	NA	NA	* Coal Bank Mtn. KY KYS 527 100 -- 0 0 0 0 NR ST",
-				"2007-03-02	SACC	NA	NA	COAL BANK MTN.	KY-KYS	527	null	100	null	---	---	null	0	0	0	0	NR	ST");
+				"2007-03-02	SACC	NA	NA	* COAL BANK MTN.	KY-KYS	527	null	100	null	---	---	null	0	0	0	0	NR	ST");
 		
 		manual_fire_adjustment_list.put("2007-10-04	NA	NA	NA	* Phillips Branch KY KYS 125 --- 50 UNK 20 --- 2 1 -0 NR PRI",
-				"2007-10-04	SACC	NA	NA	PHILLIPS BRANCH	KY-KYS	125	---	50	null	UNK	20	---	2	1	---	0	NR	PRI");
+				"2007-10-04	SACC	NA	NA	* PHILLIPS BRANCH	KY-KYS	125	---	50	null	UNK	20	---	2	1	---	0	NR	PRI");
 		
 		manual_fire_adjustment_list.put("2007-10-22	OSCC	NA	NA	* Witch CA MVU 10,000 --- 0 UNK 369 --- 22 33 -0 NR ST",
-				"2007-10-22	OSCC	NA	NA	WITCH	CA-MVU	10,000	---	0	null	UNK	369	---	22	33	---	0	NR	ST");
+				"2007-10-22	OSCC	NA	NA	* WITCH	CA-MVU	10,000	---	0	null	UNK	369	---	22	33	---	0	NR	ST");
 		
 		manual_fire_adjustment_list.put("2008-04-21	SWCC	NA	NA	Burn Out OK OMA 519 -90 UNK 2 -12 0 1 0 0 0.8K BIA",
 				"2008-04-21	SWCC	NA	NA	BURN OUT	OK-OMA	519	---	90	null	UNK	2	-12	0	1	0	0	0.8K	BIA");
 		
 		manual_fire_adjustment_list.put("2008-05-20	SACC	NA	NA	* Juno TX TXS 600 --- 0 UNK 25 --- 4 1 0 NR ST",
-				"2008-05-20	SACC	NA	NA	JUNO	TX-TXS	600	---	0	null	UNK	25	---	---	4	1	0	NR	ST");
+				"2008-05-20	SACC	NA	NA	* JUNO	TX-TXS	600	---	0	null	UNK	25	---	---	4	1	0	NR	ST");
 		
 		manual_fire_adjustment_list.put("2008-06-21	SWCC	NA	NA	* Stone Coal -VA VAF 650 --- N/A N/A 45 --- 1 1 1 0 28K FS",	// Note next fire name is incorrect, need to remove WFU; Also CLOVER -WFU is a problem
-				"2008-06-21	SWCC	NA	NA	STONE COAL - WFU	VA-VAF	650	---	N/A	null	N/A	45	---	1	1	1	0	28K	FS");
+				"2008-06-21	SWCC	NA	NA	* STONE COAL - WFU	VA-VAF	650	---	N/A	null	N/A	45	---	1	1	1	0	28K	FS");
 		
 		manual_fire_adjustment_list.put("2009-04-23	SACC	NA	NA	* Highway 31 SC SCS 15,000 --- 10 4/25 130 --- 10 0 40 NR ST",
-				"2009-04-23	SACC	NA	NA	HIGHWAY 31	SC-SCS	15,000	---	10	null	4/25	130	---	---	10	0	40	NR	ST");
+				"2009-04-23	SACC	NA	NA	* HIGHWAY 31	SC-SCS	15,000	---	10	null	4/25	130	---	---	10	0	40	NR	ST");
 
 		manual_fire_adjustment_list.put("2009-07-04	NWCC	NA	NA	* Panther Creek WA NCP 123 --- NR 9/30 15 --- 0 0 0 NR NPS",
-				"2009-07-04	NWCC	NA	NA	PANTHER CREEK	WA-NCP	123	---	NR	null	9/30	15	---	---	0	0	0	NR	NPS");
+				"2009-07-04	NWCC	NA	NA	* PANTHER CREEK	WA-NCP	123	---	NR	null	9/30	15	---	---	0	0	0	NR	NPS");
 		
 		manual_fire_adjustment_list.put("2009-08-15	AICC	NA	NA	Rock Slough AK UYD 61,467 --- N/A N/A 0 --- 0 0 0 0 5.1M",
 				"2009-08-15	AICC	NA	NA	ROCK SLOUGH	AK-UYD	61,467	---	N/A	null	N/A	0	---	0	0	0	0	5.1M	FWS");
@@ -1275,7 +1274,7 @@ public class ISMR_Process {
 				"2010-04-16	SACC	NA	NA	TAYLOR	OK-OKS	260	0	100	null	---	6	---	0	2	0	0	NR	ST");
 		
 		manual_fire_adjustment_list.put("2010-05-29	AICC	NA	NA	--- N/A N/A 0 --- 0 0 0 0 NR FWS",
-				"2010-05-29	AICC	NA	NA	SHEENJEK 2	AK-UYD	200	---	N/A	null	N/A	0	---	0	0	0	0	NR	FWS");
+				"2010-05-29	AICC	NA	NA	* SHEENJEK 2	AK-UYD	200	---	N/A	null	N/A	0	---	0	0	0	0	NR	FWS");
 		
 		manual_fire_adjustment_list.put("2010-08-25	RMCC	NA	NA	North Fork 330 SHF 330 0 98 8/25 151 -45 5 0 2 0 850K FS",
 				"2010-08-25	RMCC	NA	NA	NORTH FORK	WY-SHF	330	0	98	null	8/25	151	-45	5	0	2	0	850K	FS");
@@ -1290,19 +1289,19 @@ public class ISMR_Process {
 				"2012-06-17	OSCC	NA	NA	OPHIR CREEK	UT-NWS	1,574	374	100	null	---	3	-57	0	0	---	0	40K	ST");
 
 		manual_fire_adjustment_list.put("2012-11-08	RMCC	NA	NA	* Coal Creek SJF 127 127 --- N/A N/A 9 --- 0 0 1 0 24K FS",
-				"2012-11-08	RMCC	NA	NA	COAL CREEK	CO-SJF	127	---	N/A	null	N/A	9	---	0	0	1	0	24K	FS");
+				"2012-11-08	RMCC	NA	NA	* COAL CREEK	CO-SJF	127	---	N/A	null	N/A	9	---	0	0	1	0	24K	FS");
 		
 		manual_fire_adjustment_list.put("2013-03-08	SACC	NA	NA	* Middle Mountain OK OKS 600 --- 65 3/10 9 0 5 0 0 3K ST",
-				"2013-03-08	SACC	NA	NA	MIDDLE MOUNTAIN	OK-OKS	600	---	65	null	3/10	9	---	0	5	0	0	3K	ST");
+				"2013-03-08	SACC	NA	NA	* MIDDLE MOUNTAIN	OK-OKS	600	---	65	null	3/10	9	---	0	5	0	0	3K	ST");
 		
 		manual_fire_adjustment_list.put("2013-03-08	SACC	NA	NA	* Volunteer AL ALS 300 --- 100 --- 0 -0 0 0 0 3K ST",
-				"2013-03-08	SACC	NA	NA	VOLUNTEER	AL-ALS	300	---	100	null	---	0	---	0	0	0	0	3K	ST");
+				"2013-03-08	SACC	NA	NA	* VOLUNTEER	AL-ALS	300	---	100	null	---	0	---	0	0	0	0	3K	ST");
 		
 		manual_fire_adjustment_list.put("2013-04-12	SACC	NA	NA	KY KYS 125 --- 100 --- 11 0 2 0 0 1K PRI",
-				"2013-04-12	SACC	NA	NA	LEFT FORK ABBOTT CREEK	KY-KYS	125	---	100	null	---	11	---	0	2	0	0	1K	PRI");
+				"2013-04-12	SACC	NA	NA	* LEFT FORK ABBOTT CREEK	KY-KYS	125	---	100	null	---	11	---	0	2	0	0	1K	PRI");
 
 		manual_fire_adjustment_list.put("2014-05-02	EACC	NA	NA	* Goose Pond PA PAS 350 --- 100 --- 8 --- 0 1 0 0 9K",
-				"2014-05-02	EACC	NA	NA	GOOSE POND	PA-PAS	350	---	100	null	---	8	---	0	1	0	0	9K	PRI");
+				"2014-05-02	EACC	NA	NA	* GOOSE POND	PA-PAS	350	---	100	null	---	8	---	0	1	0	0	9K	PRI");
 		
 		manual_fire_adjustment_list.put("2015-06-01	SACC	NA	NA	MUD LAKE COMPLEX	FL-BCP	35,321	0	70	Comp	260	-32	4	7	6	0	7.6M	NPS",
 				"2015-06-01	SACC	NA	NA	MUD LAKE COMPLEX	FL-BCP	35,321	0	70	Comp	---	260	-32	4	7	6	0	7.6M	NPS");
@@ -1445,39 +1444,40 @@ public class ISMR_Process {
 		for (int i = 0; i < final_fires.size(); i++) {
 			String st = final_fires.get(i).toUpperCase().replaceAll(",", "").replaceAll("NULL", "").replaceAll("N/A", "NA").replaceAll("N/R", "NR")
 														.replaceAll("\\$", "").replaceAll("\\`", "").replaceAll("\\=", "")
+														.replaceAll("\\.\\.\\.", "---").replaceAll("\\_\\_\\_", "---").replaceAll("\\_\\_", "---")
 														.replaceAll(" /", "/").replaceAll("/ ", "/").replaceAll(" -", "-").replaceAll("- ", "-");
-			final_fires.set(i, st);	// replace fire
-			
-			// Fix ctd 
 			String[] fs = st.split("\t");
-			if (fs[17].equals("NA") || fs[17].equals("NR") || fs[17].equals("---") || fs[17].endsWith("K") || fs[17].endsWith("M") || fs[17].length() <= 1) {
-				
-			} else {	// these are records with ctd problem
+			
+			// move * i "fire_name" to another column "new_large_fire_mark"
+			if (fs[4].contains("*")) {
+				fs[4] = "*" + "\t" + fs[4].replaceAll("\\*", "").trim(); 
+			} else {
+				fs[4] = "" + "\t" + fs[4].replaceAll("\\*", "").trim(); 
+			}
+			
+			// fix "cost_to_date"
+			if (!(fs[17].equals("NA") || fs[17].equals("NR") || fs[17].equals("---") || fs[17].endsWith("K") || fs[17].endsWith("M") || fs[17].length() <= 1)) {
 				if (fs[17].equals("0")) {	// several records (4) have this, we need to replace it to NR
 					fs[17] = "0K";
-					String adjusted_fire = String.join("\t", fs);
-					final_fires.set(i, adjusted_fire);
 					System.out.println("new ctd with 0 replaced by 0K: " + final_fires.get(i));
 				} else if (fs[17].equals("NF")) {	// several records (4) have this, we need to replace it to NR
 					fs[17] = "NR";
-					String adjusted_fire = String.join("\t", fs);
-					final_fires.set(i, adjusted_fire);
 					System.out.println("new ctd with NF replaced by NR: " + final_fires.get(i));
 				} else if (fs[17].startsWith(".")) {	// such as 2011-03-17 HIGHLINE
 					fs[17] = "0" + fs[17];
-					String adjusted_fire = String.join("\t", fs);
-					final_fires.set(i, adjusted_fire);
 					System.out.println("new ctd with . change to 0.: " + final_fires.get(i));
 				} else if (fs[17].endsWith("J") || fs[17].endsWith("L")) {	// such as 2018-08-27 AIRPORT	135J
 					fs[17] = fs[17].substring(0, fs[17].length() - 1);
-					String adjusted_fire = String.join("\t", fs);
-					final_fires.set(i, adjusted_fire);
 					System.out.println("new ctd with last non-numeric character removed: " + final_fires.get(i));
 				} else {	
 					// ctd that does not end with K or M can be fixed only if we can check the same fire in most recent previous date or next date.
 					// this is not possible here, but it will be done when aggregating results. See Option_Pane_Explore class
 				}
 			}
+			
+			// apply all changes
+			String adjusted_fire = String.join("\t", fs);
+			final_fires.set(i, adjusted_fire);
 		}
 		
 	}
