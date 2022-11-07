@@ -567,7 +567,7 @@ public class ISMR_Process {
 						}
 					}
 					
-					fire_name = fire_name.replaceAll("\\*", "").replaceAll("\\s{2,}", " ").trim().toUpperCase();	// This will remove the * (if exist in the name) and change the name to capital (IMPORTANT)
+					fire_name = fire_name.replaceAll("\\s{2,}", " ").trim().toUpperCase();	// This will remove the * (if exist in the name) and change the name to capital (IMPORTANT)
 					this_fire = String.join("\t", this_fire, fire_name);
 					for (int id = unit_id; id < line_split.get(i).length; id++) {
 						if (id == line_split.get(i).length - 9) {	// add a column that exists in 2015 and later (Ctn/Comp) but not exist in 2014 and earlier
@@ -603,7 +603,7 @@ public class ISMR_Process {
 						}
 					}
 					
-					fire_name = fire_name.replaceAll("\\*", "").replaceAll("\\s{2,}", " ").trim().toUpperCase();	// This will remove the * (if exist in the name) and change the name to capital (IMPORTANT)
+					fire_name = fire_name.replaceAll("\\s{2,}", " ").trim().toUpperCase();	// This will remove the * (if exist in the name) and change the name to capital (IMPORTANT)
 					this_fire = String.join("\t", this_fire, fire_name);
 					for (int id = unit_id; id < line_split.get(i).length; id++) {
 						if (id == line_split.get(i).length - 6) {	// add a column that exists in 2015 and later (Personnel Chge) but not in this case. 
@@ -644,7 +644,7 @@ public class ISMR_Process {
 						fire_name = String.join(" ", line_split.get(i - 1)) + " " + fire_name;	// join by space
 					}
 					
-					fire_name = fire_name.replaceAll("\\*", "").replaceAll("\\s{2,}", " ").trim().toUpperCase();	// This will remove the * (if exist in the name) and change the name to capital (IMPORTANT)
+					fire_name = fire_name.replaceAll("\\s{2,}", " ").trim().toUpperCase();	// This will remove the * (if exist in the name) and change the name to capital (IMPORTANT)
 					this_fire = String.join("\t", this_fire, fire_name);
 					for (int id = unit_id; id < line_split.get(i).length; id++) {
 						this_fire = String.join("\t", this_fire, line_split.get(i)[id]);	// this is all information in one whole line of this fire
@@ -745,7 +745,7 @@ public class ISMR_Process {
 							}
 						}
 					} while (continue_loop);
-					fire_name = fire_name.replaceAll("\\*", "").replaceAll("\\s{2,}", " ").trim().toUpperCase();	// This will remove the * (if exist in the name) and change the name to capital (IMPORTANT)
+					fire_name = fire_name.replaceAll("\\s{2,}", " ").trim().toUpperCase();	// This will remove the * (if exist in the name) and change the name to capital (IMPORTANT)
 					
 					this_fire = String.join("\t", this_fire, fire_name);
 					for (int id = unit_id; id < line_split.get(i).length; id++) {
@@ -784,7 +784,7 @@ public class ISMR_Process {
 							continue_loop = false;
 						}
 					} while (continue_loop);
-					fire_name = fire_name.replaceAll("\\*", "").replaceAll("\\s{2,}", " ").trim().toUpperCase();	// This will remove the * (if exist in the name) and change the name to capital (IMPORTANT)
+					fire_name = fire_name.replaceAll("\\s{2,}", " ").trim().toUpperCase();	// This will remove the * (if exist in the name) and change the name to capital (IMPORTANT)
 					
 					this_fire = String.join("\t", this_fire, fire_name);
 					for (int id = unit_id; id < line_split.get(i).length; id++) {
@@ -852,7 +852,7 @@ public class ISMR_Process {
 							continue_loop = false;
 						}
 					} while (continue_loop);
-					fire_name = fire_name.replaceAll("\\*", "").replaceAll("\\s{2,}", " ").trim().toUpperCase();	// This will remove the * (if exist in the name) and change the name to capital (IMPORTANT)
+					fire_name = fire_name.replaceAll("\\s{2,}", " ").trim().toUpperCase();	// This will remove the * (if exist in the name) and change the name to capital (IMPORTANT)
 					
 					this_fire = String.join("\t", this_fire, fire_name);
 					for (int id = unit_id; id < line_split.get(i).length; id++) {
@@ -877,7 +877,7 @@ public class ISMR_Process {
 					// Check above lines, if length <=5 etc, then add to fire name
 					String fire_name = "";
 					// fix the special case: Trestle 20180727 where unit still cotain part of fire name
-					String[] unit_contain_fire_name = unit_name.replaceAll("\\*", "").trim().split(" ");	// replace * and trim to handle special case such as Cranston in 20180726
+					String[] unit_contain_fire_name = unit_name.trim().split(" ");	// replace * and trim to handle special case such as Cranston in 20180726
 					if (unit_contain_fire_name.length == 2) {
 						fire_name = unit_contain_fire_name[0];
 						unit_name = unit_contain_fire_name[1];
@@ -899,7 +899,7 @@ public class ISMR_Process {
 							continue_loop = false;
 						}
 					} while (continue_loop);
-					fire_name = fire_name.replaceAll("\\*", "").replaceAll("\\s{2,}", " ").trim().toUpperCase();	// This will remove the * (if exist in the name) and change the name to capital (IMPORTANT)
+					fire_name = fire_name.replaceAll("\\s{2,}", " ").trim().toUpperCase();	// This will remove the * (if exist in the name) and change the name to capital (IMPORTANT)
 					
 					this_fire = String.join("\t", this_fire, fire_name, unit_name);
 					int size_id = line_split.get(i).length - 13;
@@ -968,14 +968,14 @@ public class ISMR_Process {
 						}
 					} while (continue_loop);
 					
-					fire_name = fire_name.replaceAll("\\*", "").replaceAll("\\s{2,}", " ").trim().toUpperCase();	// This will remove the * (if exist in the name) and change the name to capital (IMPORTANT)
+					fire_name = fire_name.replaceAll("\\s{2,}", " ").trim().toUpperCase();	// This will remove the * (if exist in the name) and change the name to capital (IMPORTANT)
 					// if combine_st has length > 14 then part of fire_name is in it. We need to adjust the name
 					String[] combine_st_arr = combine_st.split("\t");
 					if (combine_st_arr.length > 14) {
 						for (int j = 0; j < combine_st_arr.length - 14; j++) {
 							fire_name = String.join(" ", fire_name, combine_st_arr[j]);	// join by space
 						}
-						fire_name = fire_name.replaceAll("\\*", "").replaceAll("\\s{2,}", " ").trim().toUpperCase();	// This will remove the * (if exist in the name) and change the name to capital (IMPORTANT)
+						fire_name = fire_name.replaceAll("\\s{2,}", " ").trim().toUpperCase();	// This will remove the * (if exist in the name) and change the name to capital (IMPORTANT)
 						// Fix special cases such as 20170629 where part of unit is in fire name (Battle CA- MDF)
 						String st_15 = fire_name.substring(fire_name.lastIndexOf(" ") + 1); // check if fire name contain part of unit
 						if (st_15.length() == 3 && st_15.endsWith("-")) {	// such as 20170629: Battle CA- MDF
@@ -1083,7 +1083,7 @@ public class ISMR_Process {
 						for (int k = 0; k < info_split.length - 14; k++) {
 							fire_name = String.join(" ", fire_name, info_split[k]);	// This is part of fire name
 						}
-						fire_name = fire_name.replaceAll("\\*", "").replaceAll("\\s{2,}", " ").trim().toUpperCase();	// This will remove the * (if exist in the name) and change the name to capital (IMPORTANT)
+						fire_name = fire_name.replaceAll("\\s{2,}", " ").trim().toUpperCase();	// This will remove the * (if exist in the name) and change the name to capital (IMPORTANT)
 						this_fire = String.join("\t", this_fire, fire_name);
 						for (int k = info_split.length - 14; k < info_split.length; k++) {
 							this_fire = String.join("\t", this_fire, info_split[k]);
@@ -1224,10 +1224,10 @@ public class ISMR_Process {
 		// Only 1 adjustment needed for 15 years when comparing between simple2 and raw
 		if (fire_in_s_not_in_r.size() > 0) {
 			for (String st : fire_in_s_not_in_r) {
-				if (st.equals("2010-03-12	EACC	2	5	EXCELSIOR SCHOOL	MO-MOS	126	---	100	null	---	8	---	0	0	0	0	NR	PRI")) {
+				if (st.equals("2010-03-12	EACC	2	5	* EXCELSIOR SCHOOL	MO-MOS	126	---	100	null	---	8	---	0	0	0	0	NR	PRI")) {
 					// Exist in raw but with different information, we need to replace this fire
-					final_fires.set(final_fires.indexOf("2010-03-12	EACC	2	5	EXCELSIOR SCHOOL	MO-MOS	126	null	---	null	100	---	null	8	---	0	0	0	0"),
-							"2010-03-12	EACC	2	5	EXCELSIOR SCHOOL	MO-MOS	126	---	100	null	---	8	---	0	0	0	0	NR	PRI");						
+					final_fires.set(final_fires.indexOf("2010-03-12	EACC	2	5	* EXCELSIOR SCHOOL	MO-MOS	126	null	---	null	100	---	null	8	---	0	0	0	0"),
+							"2010-03-12	EACC	2	5	* EXCELSIOR SCHOOL	MO-MOS	126	---	100	null	---	8	---	0	0	0	0	NR	PRI");						
 				} else if (st.equals("2015-08-21	SACC	7	2	LANE FIRE	GA-BLR	337	---	85	Comp	8/25	4	---	0	1	0	0	13K	FWS")) {
 					// no need to do anything. This fire is in raw with correct information
 				} else if (st.equals("2020-09-14	ONCC	1	3	- AUGUST COMPLEX	CA-MNF	706,594	140,218	30	Ctn	11/15	1,436	-473	21	105	8	35	30.4M	FS")) {
@@ -1307,8 +1307,8 @@ public class ISMR_Process {
 		manual_fire_adjustment_list.put("2015-06-01	SACC	NA	NA	MUD LAKE COMPLEX	FL-BCP	35,321	0	70	Comp	260	-32	4	7	6	0	7.6M	NPS",
 				"2015-06-01	SACC	NA	NA	MUD LAKE COMPLEX	FL-BCP	35,321	0	70	Comp	---	260	-32	4	7	6	0	7.6M	NPS");
 		
-		manual_fire_adjustment_list.put("2015-06-01	SACC	NA	NA	BOLIN SLIME PIT	FL-FLS	300	---	95	Ctn	2	---	0	0	0	0	1K	ST",
-				"2015-06-01	SACC	NA	NA	BOLIN SLIME PIT	FL-FLS	300	---	95	Ctn	---	2	---	0	0	0	0	1K	ST");
+		manual_fire_adjustment_list.put("2015-06-01	SACC	NA	NA	* BOLIN SLIME PIT	FL-FLS	300	---	95	Ctn	2	---	0	0	0	0	1K	ST",
+				"2015-06-01	SACC	NA	NA	* BOLIN SLIME PIT	FL-FLS	300	---	95	Ctn	---	2	---	0	0	0	0	1K	ST");
 		
 		manual_fire_adjustment_list.put("2015-07-05	AICC	NA	NA		Munsatli	AK-TAD	18,847	1,963	Comp	NR	0	-1	0	0	0	0	1K	ST",
 				"2015-07-05	AICC	NA	NA	MUNSATLI	AK-TAD	18,847	1,963	---	Comp	NR	0	-1	0	0	0	0	1K	ST");
@@ -1316,8 +1316,8 @@ public class ISMR_Process {
 		manual_fire_adjustment_list.put("2015-08-02	GBCC	NA	NA		Solitude	UT-FIF	1,000	622	25	Comp	133	23	4	4	1	0	324K	FS",
 				"2015-08-02	GBCC	NA	NA	SOLITUDE	UT-FIF	1,000	622	25	Comp	null	133	23	4	4	1	0	324K	FS");
 		
-		manual_fire_adjustment_list.put("2016-08-03	SWCC	NA	NA	PEARSON	#2	NM-CAD	900	---	90	Ctn	UNK	23	0	0	9	0	15K	BLM",
-				"2016-08-03	SWCC	NA	NA	PEARSON #2	NM-CAD	900	---	90	Ctn	UNK	23	0	0	9	0	null	15K	BLM");
+		manual_fire_adjustment_list.put("2016-08-03	SWCC	NA	NA	* PEARSON	#2	NM-CAD	900	---	90	Ctn	UNK	23	0	0	9	0	15K	BLM",
+				"2016-08-03	SWCC	NA	NA	* PEARSON #2	NM-CAD	900	---	90	Ctn	UNK	23	0	0	9	0	null	15K	BLM");
 		
 		manual_fire_adjustment_list.put("2017-09-29	ONCC	NA	NA	CA-KNF- 006098 COMPLEX CA-KNF 78,698 .4	0	51	Comp	10/10	318	1	5	11	2	0	44.5M	FS",
 				"2017-09-29	ONCC	NA	NA	CA-KNF-006098 COMPLEX	CA-KNF	78,698	0	51	Comp	10/10	318	1	5	11	2	0	44.5M	FS");
@@ -1325,8 +1325,8 @@ public class ISMR_Process {
 		manual_fire_adjustment_list.put("2017-10-31	ONCC	NA	NA	CENTRAL LNU COMPLEX CA-LNU	110,720	0	99	Ctn	10/31	150	-88	4	5	0	7,010	101	M	ST",
 				"2017-10-31	ONCC	NA	NA	CENTRAL LNU COMPLEX	CA-LNU	110,720	0	99	Ctn	10/31	150	-88	4	5	0	7,010	101M	ST");
 		
-		manual_fire_adjustment_list.put("2018-07-18	NWCC	NA	NA	GARNER COMPLEX	OR-712S	539	---	2	7/31	542	---	18	9	8	0	750K	ST",
-				"2018-07-18	NWCC	NA	NA	GARNER COMPLEX	OR-712S	539	---	2	---	7/31	542	---	18	9	8	0	750K	ST");
+		manual_fire_adjustment_list.put("2018-07-18	NWCC	NA	NA	* GARNER COMPLEX	OR-712S	539	---	2	7/31	542	---	18	9	8	0	750K	ST",
+				"2018-07-18	NWCC	NA	NA	* GARNER COMPLEX	OR-712S	539	---	2	---	7/31	542	---	18	9	8	0	750K	ST");
 
 		manual_fire_adjustment_list.put("2018-09-01	NRCC	NA	NA	GOLD HILL MT-KNF	3,512	0	1	Ctn	10/1	5	316	-21	8	10	0	0	7M	FS",
 				"2018-09-01	NRCC	NA	NA	GOLD HILL	MT-KNF	3,512	0	1	Ctn	10/15	316	-21	8	10	0	0	7M	FS");
@@ -1346,8 +1346,8 @@ public class ISMR_Process {
 		manual_fire_adjustment_list.put("2018-09-01	NRCC	NA	NA	SMITH CREEK ID-IPF	971	---	0	Comp	10/3	1	7	---	0	1	0	0	193K	FS",
 				"2018-09-01	NRCC	NA	NA	SMITH CREEK	ID-IPF	971	---	0	Comp	10/31	7	---	0	1	0	0	193K	FS");
 		
-		manual_fire_adjustment_list.put("2019-09-08	ONCC	NA	NA	LIME	CA.KNF	200	---	0	Ctn	10/18	168	---	6	0	2	0	2.1M	FS",
-				"2019-09-08	ONCC	NA	NA	LIME	CA-KNF	200	---	0	Ctn	10/18	168	---	6	0	2	0	2.1M	FS");
+		manual_fire_adjustment_list.put("2019-09-08	ONCC	NA	NA	* LIME	CA.KNF	200	---	0	Ctn	10/18	168	---	6	0	2	0	2.1M	FS",
+				"2019-09-08	ONCC	NA	NA	* LIME	CA-KNF	200	---	0	Ctn	10/18	168	---	6	0	2	0	2.1M	FS");
 		
 		manual_fire_adjustment_list.put("2019-09-12	ONCC	NA	NA	WALKER CA-PNF	48,	507	1,167	28	Ctn	9/28	1,891	607	39	150	6	0	12.1M	FS",
 				"2019-09-12	ONCC	NA	NA	WALKER	CA-PNF	48,507	1,167	28	Ctn	9/28	1,891	607	39	150	6	0	12.1M	FS");
@@ -1358,8 +1358,8 @@ public class ISMR_Process {
 		manual_fire_adjustment_list.put("2019-10-19	GBCC	NA	NA	SKULL FLAT 2	0710	450	---	0	Comp	11/7	5	---	0	0	0	0	3K	FS",
 				"2019-10-19	GBCC	NA	NA	SKULL FLAT 2	UT-FIF	450	---	0	Comp	11/7	5	---	0	0	0	0	3K	FS");	// unit is 0710 and should be UT-FIF as in other dates.
 		
-		manual_fire_adjustment_list.put("2020-07-30	RMCC	NA	NA	BUFFALO	Creek	WY-SHX	326	---	100	Ctn	---	17	---	0	5	0	15K	CNTY",
-				"2020-07-30	RMCC	NA	NA	BUFFALO CREEK	WY-SHX	326	---	100	Ctn	---	17	---	0	5	0	null	15K	CNTY");
+		manual_fire_adjustment_list.put("2020-07-30	RMCC	NA	NA	* BUFFALO	Creek	WY-SHX	326	---	100	Ctn	---	17	---	0	5	0	15K	CNTY",
+				"2020-07-30	RMCC	NA	NA	* BUFFALO CREEK	WY-SHX	326	---	100	Ctn	---	17	---	0	5	0	null	15K	CNTY");
 		
 		manual_fire_adjustment_list.put("2020-09-14	ONCC	NA	NA	AUGUST COMPLEX CA-MNF 706,594 - 140,218	30	Ctn	11/15	1,436	-473	21	105	8	35	30.4M	FS",
 				"2020-09-14	ONCC	NA	NA	AUGUST COMPLEX	CA-MNF	706,594	-140,218	30	Ctn	11/15	1,436	-473	21	105	8	35	30.4M	FS");
@@ -1443,7 +1443,8 @@ public class ISMR_Process {
 				
 		// clean fires 
 		for (int i = 0; i < final_fires.size(); i++) {
-			String st = final_fires.get(i).toUpperCase().replaceAll(",", "").replaceAll("NULL", "").replaceAll("N/A", "NA").replaceAll("N/R", "NR").replaceAll("\\$", "")		// such as 2008-04-04 STATE LINE that has $ sign in ctd
+			String st = final_fires.get(i).toUpperCase().replaceAll(",", "").replaceAll("NULL", "").replaceAll("N/A", "NA").replaceAll("N/R", "NR")
+														.replaceAll("\\$", "").replaceAll("\\`", "").replaceAll("\\=", "")
 														.replaceAll(" /", "/").replaceAll("/ ", "/").replaceAll(" -", "-").replaceAll("- ", "-");
 			final_fires.set(i, st);	// replace fire
 			

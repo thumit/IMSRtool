@@ -262,7 +262,7 @@ class Aggregate {
 		// Loop forward and fix using previous fire
 		for (int i = 0; i < final_fires.size(); i++) {
 			String[] fs = final_fires.get(i).split("\t");
-			if (fs[17].equals("NA") || fs[17].equals("NR") || fs[17].equals("---") || fs[17].endsWith("K") || fs[17].endsWith("M") || fs[17].length() <= 1) {
+			if (fs[17].equals("NA") || fs[17].equals("NR") || fs[17].equals("---") || fs[17].endsWith("K") || fs[17].endsWith("M")) {
 				
 			} else {	// these are records with ctd problem. ctd that does not end with K or M can be fixed by checking the same fire in most recent previous date.
 //				System.out.println("ctd missing K or M: " + final_fires.get(i));
