@@ -1482,9 +1482,9 @@ public class ISMR_Process {
 			else if (fs[0].equals("2010-06-11") && fs[6].equals("18.952")) { fs[6] = "18952"; System.out.println(String.join("\t", fs[0], fs[1], fs[4], "fire_size: replaced by 18952")); }
 			else if (fs[0].equals("2015-07-03") && fs[6].equals("2893.2")) { fs[6] = "2893"; System.out.println(String.join("\t", fs[0], fs[1], fs[4], "fire_size: replaced by 2893")); }
 			else if (fs[0].equals("2012-05-24") && fs[6].equals("2.200")) { fs[6] = "2200"; System.out.println(String.join("\t", fs[0], fs[1], fs[4], "fire_size: replaced by 2200")); }
-			else if (fs[0].equals("2007-05-10") && fs[6].equals("2400")) { fs[6] = "2400"; System.out.println(String.join("\t", fs[0], fs[1], fs[4], "fire_size: replaced by 2400")); }
-			else if (fs[0].equals("2007-05-11") && fs[6].equals("2400")) { fs[6] = "2400"; System.out.println(String.join("\t", fs[0], fs[1], fs[4], "fire_size: replaced by 2400")); }
-			else if (fs[0].equals("2009-04-13") && fs[6].equals("2600")) { fs[6] = "2600"; System.out.println(String.join("\t", fs[0], fs[1], fs[4], "fire_size: replaced by 2600")); }
+			else if (fs[0].equals("2007-05-10") && fs[6].equals("2.400")) { fs[6] = "2400"; System.out.println(String.join("\t", fs[0], fs[1], fs[4], "fire_size: replaced by 2400")); }
+			else if (fs[0].equals("2007-05-11") && fs[6].equals("2.400")) { fs[6] = "2400"; System.out.println(String.join("\t", fs[0], fs[1], fs[4], "fire_size: replaced by 2400")); }
+			else if (fs[0].equals("2009-04-13") && fs[6].equals("2.600")) { fs[6] = "2600"; System.out.println(String.join("\t", fs[0], fs[1], fs[4], "fire_size: replaced by 2600")); }
 			else if (fs[0].equals("2015-07-03") && fs[6].equals("3036.6")) { fs[6] = "3037"; System.out.println(String.join("\t", fs[0], fs[1], fs[4], "fire_size: replaced by 3037")); }
 			else if (fs[0].equals("2018-08-21") && fs[6].equals("34.518")) { fs[6] = "34518"; System.out.println(String.join("\t", fs[0], fs[1], fs[4], "fire_size: replaced by 34518")); }
 			else if (fs[0].equals("2015-08-16") && fs[6].equals("361.7")) { fs[6] = "362"; System.out.println(String.join("\t", fs[0], fs[1], fs[4], "fire_size: replaced by 362")); }
