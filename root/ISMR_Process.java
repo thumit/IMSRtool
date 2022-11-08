@@ -1458,8 +1458,71 @@ public class ISMR_Process {
 			
 			// fix "contained_completed"
 			fs[9] = fs[9].replaceAll("CNT", "CTN").replaceAll("\\.", "");
-			// fix "estimated_containment_date"
+			// fix "estimated_containment_date" typos
 			fs[10] = fs[10].replaceAll("ÚNK", "UNK").replaceAll("UKN", "UNK");
+			// fix "estimated_containment_date" non-date format
+			if (fs[10].equals("0")) { fs[10] = ""; }
+			else if (fs[10].equals("100")) { fs[10] = ""; System.out.println(String.join("\t", fs[0], fs[1], fs[4], "estimated_containment_date: removed")); }
+			else if (fs[10].equals("1017")) { fs[10] = "10/17"; System.out.println(String.join("\t", fs[0], fs[1], fs[4], "estimated_containment_date: replaced by 10/17")); }
+			else if (fs[10].equals("40")) { fs[10] = ""; System.out.println(String.join("\t", fs[0], fs[1], fs[4], "estimated_containment_date: removed"));  }
+			else if (fs[10].equals("6")) { fs[10] = ""; System.out.println(String.join("\t", fs[0], fs[1], fs[4], "estimated_containment_date: removed"));  }
+			else if (fs[10].equals("8.21")) { fs[10] = "8/21"; System.out.println(String.join("\t", fs[0], fs[1], fs[4], "estimated_containment_date: replaced by 8/21")); }
+			else if (fs[10].equals("915")) { fs[10] = "9/15"; System.out.println(String.join("\t", fs[0], fs[1], fs[4], "estimated_containment_date: replaced by 9/15")); }
+			// fix "origin_ownership" wrong numeric representing name
+			if (fs[18].equals("48")) { fs[18] = "ST"; System.out.println(String.join("\t", fs[0], fs[1], fs[4], "origin_ownership: replaced by ST")); }
+			else if (fs[18].equals("157")) { fs[18] = "FS"; System.out.println(String.join("\t", fs[0], fs[1], fs[4], "origin_ownership: replaced by FS")); }
+		
+			// fix non-integer in several fields: “fire_size” (30), “fire_size_change” (2), “percent_containment” (2), “personnel” (4), “personnel_change” (1), and “structures_lost” (11)
+			if (fs[0].equals("2012-06-07") && fs[6].equals("1.350")) { fs[6] = "1350"; System.out.println(String.join("\t", fs[0], fs[1], fs[4], "fire_size: replaced by 1350")); }
+			else if (fs[0].equals("2008-06-12") && fs[6].equals("10.800")) { fs[6] = "10800"; System.out.println(String.join("\t", fs[0], fs[1], fs[4], "fire_size: replaced by 10800")); }
+			else if (fs[0].equals("2015-07-03") && fs[6].equals("11278.1")) { fs[6] = "11278"; System.out.println(String.join("\t", fs[0], fs[1], fs[4], "fire_size: replaced by 11278")); }
+			else if (fs[0].equals("2015-09-30") && fs[6].equals("121.6")) { fs[6] = "122"; System.out.println(String.join("\t", fs[0], fs[1], fs[4], "fire_size: replaced by 122")); }
+			else if (fs[0].equals("2015-07-02") && fs[6].equals("13650.4")) { fs[6] = "13650"; System.out.println(String.join("\t", fs[0], fs[1], fs[4], "fire_size: replaced by 13650")); }
+			else if (fs[0].equals("2015-07-02") && fs[6].equals("14855.8")) { fs[6] = "14856"; System.out.println(String.join("\t", fs[0], fs[1], fs[4], "fire_size: replaced by 14856")); }
+			else if (fs[0].equals("2010-06-11") && fs[6].equals("18.952")) { fs[6] = "18952"; System.out.println(String.join("\t", fs[0], fs[1], fs[4], "fire_size: replaced by 18952")); }
+			else if (fs[0].equals("2015-07-03") && fs[6].equals("2893.2")) { fs[6] = "2893"; System.out.println(String.join("\t", fs[0], fs[1], fs[4], "fire_size: replaced by 2893")); }
+			else if (fs[0].equals("2012-05-24") && fs[6].equals("2.200")) { fs[6] = "2200"; System.out.println(String.join("\t", fs[0], fs[1], fs[4], "fire_size: replaced by 2200")); }
+			else if (fs[0].equals("2007-05-10") && fs[6].equals("2400")) { fs[6] = "2400"; System.out.println(String.join("\t", fs[0], fs[1], fs[4], "fire_size: replaced by 2400")); }
+			else if (fs[0].equals("2007-05-11") && fs[6].equals("2400")) { fs[6] = "2400"; System.out.println(String.join("\t", fs[0], fs[1], fs[4], "fire_size: replaced by 2400")); }
+			else if (fs[0].equals("2009-04-13") && fs[6].equals("2600")) { fs[6] = "2600"; System.out.println(String.join("\t", fs[0], fs[1], fs[4], "fire_size: replaced by 2600")); }
+			else if (fs[0].equals("2015-07-03") && fs[6].equals("3036.6")) { fs[6] = "3037"; System.out.println(String.join("\t", fs[0], fs[1], fs[4], "fire_size: replaced by 3037")); }
+			else if (fs[0].equals("2018-08-21") && fs[6].equals("34.518")) { fs[6] = "34518"; System.out.println(String.join("\t", fs[0], fs[1], fs[4], "fire_size: replaced by 34518")); }
+			else if (fs[0].equals("2015-08-16") && fs[6].equals("361.7")) { fs[6] = "362"; System.out.println(String.join("\t", fs[0], fs[1], fs[4], "fire_size: replaced by 362")); }
+			else if (fs[0].equals("2015-08-18") && fs[6].equals("432.8")) { fs[6] = "432"; System.out.println(String.join("\t", fs[0], fs[1], fs[4], "fire_size: replaced by 432")); }
+			else if (fs[0].equals("2015-08-20") && fs[6].equals("432.8")) { fs[6] = "432"; System.out.println(String.join("\t", fs[0], fs[1], fs[4], "fire_size: replaced by 432")); }
+			else if (fs[0].equals("2015-08-21") && fs[6].equals("432.8")) { fs[6] = "432"; System.out.println(String.join("\t", fs[0], fs[1], fs[4], "fire_size: replaced by 432")); }
+			else if (fs[0].equals("2015-07-02") && fs[6].equals("442.5")) { fs[6] = "442"; System.out.println(String.join("\t", fs[0], fs[1], fs[4], "fire_size: replaced by 442")); }
+			else if (fs[0].equals("2017-08-11") && fs[6].equals("5264.4")) { fs[6] = "5264"; System.out.println(String.join("\t", fs[0], fs[1], fs[4], "fire_size: replaced by 5264")); }
+			else if (fs[0].equals("2015-06-29") && fs[6].equals("5493.1")) { fs[6] = "5493"; System.out.println(String.join("\t", fs[0], fs[1], fs[4], "fire_size: replaced by 5493")); }
+			else if (fs[0].equals("2011-08-23") && fs[6].equals("5.623")) { fs[6] = "5623"; System.out.println(String.join("\t", fs[0], fs[1], fs[4], "fire_size: replaced by 5623")); }
+			else if (fs[0].equals("2015-07-03") && fs[6].equals("7569.3")) { fs[6] = "7569"; System.out.println(String.join("\t", fs[0], fs[1], fs[4], "fire_size: replaced by 7569")); }
+			else if (fs[0].equals("2011-03-13") && fs[6].equals("7.555")) { fs[6] = "7555"; System.out.println(String.join("\t", fs[0], fs[1], fs[4], "fire_size: replaced by 7555")); }
+			else if (fs[0].equals("2011-03-14") && fs[6].equals("7.555")) { fs[6] = "7555"; System.out.println(String.join("\t", fs[0], fs[1], fs[4], "fire_size: replaced by 7555")); }
+			else if (fs[0].equals("2011-03-15") && fs[6].equals("7.555")) { fs[6] = "7555"; System.out.println(String.join("\t", fs[0], fs[1], fs[4], "fire_size: replaced by 7555")); }
+			else if (fs[0].equals("2011-03-16") && fs[6].equals("7.555")) { fs[6] = "7555"; System.out.println(String.join("\t", fs[0], fs[1], fs[4], "fire_size: replaced by 7555")); }
+			else if (fs[0].equals("2011-03-17") && fs[6].equals("7.555")) { fs[6] = "7555"; System.out.println(String.join("\t", fs[0], fs[1], fs[4], "fire_size: replaced by 7555")); }
+			else if (fs[0].equals("2008-10-06") && fs[6].equals("72.344")) { fs[6] = "72344"; System.out.println(String.join("\t", fs[0], fs[1], fs[4], "fire_size: replaced by 72344")); }
+			else if (fs[0].equals("2007-07-23") && fs[6].equals("8.200")) { fs[6] = "8200"; fs[7] = "3700"; System.out.println(String.join("\t", fs[0], fs[1], fs[4], "fire_size and fire_size_change: replaced by 8200 and 3700")); }
+			if (fs[0].equals("2011-06-03") && fs[7].equals("2.700")) { fs[7] = "2700"; System.out.println(String.join("\t", fs[0], fs[1], fs[4], "fire_size_change: replaced by 2700")); }
+			else if (fs[0].equals("2007-08-21") && fs[7].equals("3.525")) { fs[7] = "3525"; System.out.println(String.join("\t", fs[0], fs[1], fs[4], "fire_size_change: replaced by 2700")); }
+			if (fs[0].equals("2010-08-30") && fs[8].equals("10-")) { fs[8] = "100"; System.out.println(String.join("\t", fs[0], fs[1], fs[4], "percent_containment: replaced by 100")); }
+			else if (fs[0].equals("2017-05-21") && fs[8].equals("CTN")) { fs[8] = "---"; System.out.println(String.join("\t", fs[0], fs[1], fs[4], "percent_containment: replaced by ---")); }
+			if (fs[0].equals("2016-08-06") && fs[11].equals("1.506")) { fs[11] = "1506"; System.out.println(String.join("\t", fs[0], fs[1], fs[4], "personnel: replaced by 1506")); }
+			else if (fs[0].equals("2008-07-11") && fs[11].equals("2.092")) { fs[11] = "2092"; System.out.println(String.join("\t", fs[0], fs[1], fs[4], "personnel: replaced by 2092")); }
+			else if (fs[0].equals("2008-07-12") && fs[11].equals("2.092")) { fs[11] = "2092"; System.out.println(String.join("\t", fs[0], fs[1], fs[4], "personnel: replaced by 2092")); }
+			else if (fs[0].equals("2018-08-16") && fs[11].equals("3.831")) { fs[11] = "3831"; System.out.println(String.join("\t", fs[0], fs[1], fs[4], "personnel: replaced by 3831")); }
+			if (fs[0].equals("2012-05-30") && fs[12].equals("---3")) { fs[12] = "-3"; System.out.println(String.join("\t", fs[0], fs[1], fs[4], "personnel_change: replaced by -3")); }
+			if (fs[0].equals("2010-07-01") && fs[16].equals("1.9M")) { fs[16] = "0"; fs[17] = "1.9M"; System.out.println(String.join("\t", fs[0], fs[1], fs[4], "structures_lost and cost_to_date: replaced by 0 and 1.9M")); }
+			else if (fs[0].equals("2012-06-29") && fs[16].equals("110K")) { fs[16] = "0"; fs[17] = "110K"; System.out.println(String.join("\t", fs[0], fs[1], fs[4], "structures_lost: replaced by 0 and 110K")); }
+			else if (fs[0].equals("2008-08-08") && fs[16].equals("162K")) { fs[16] = "0"; System.out.println(String.join("\t", fs[0], fs[1], fs[4], "structures_lost: replaced by 0")); }
+			else if (fs[0].equals("2013-07-01") && fs[16].equals("650K")) { fs[16] = "0"; fs[17] = "650K"; System.out.println(String.join("\t", fs[0], fs[1], fs[4], "structures_lost and cost_to_date: replaced by 0 and 650K")); }
+			else if (fs[0].equals("2008-01-18") && fs[16].equals("6K")) { fs[16] = "0"; System.out.println(String.join("\t", fs[0], fs[1], fs[4], "structures_lost: replaced by 0")); }
+			else if (fs[0].equals("2010-05-11") && fs[16].equals("80K")) { fs[16] = "0"; fs[17] = "80K"; System.out.println(String.join("\t", fs[0], fs[1], fs[4], "structures_lost and cost_to_date: replaced by 0 and 80K")); }
+			else if (fs[0].equals("2020-05-15") && fs[16].equals("O")) { fs[16] = "0"; System.out.println(String.join("\t", fs[0], fs[1], fs[4], "structures_lost: replaced by 0")); }
+			else if (fs[0].equals("2011-05-29") && fs[16].equals("O")) { fs[16] = "0"; System.out.println(String.join("\t", fs[0], fs[1], fs[4], "structures_lost: replaced by 0")); }
+			else if (fs[0].equals("2011-05-30") && fs[16].equals("O")) { fs[16] = "0"; System.out.println(String.join("\t", fs[0], fs[1], fs[4], "structures_lost: replaced by 0")); }
+			else if (fs[0].equals("2008-03-07") && fs[16].equals("O")) { fs[16] = "0"; System.out.println(String.join("\t", fs[0], fs[1], fs[4], "structures_lost: replaced by 0")); }
+			else if (fs[0].equals("2021-11-26") && fs[16].equals("ST")) { fs[16] = ""; System.out.println(String.join("\t", fs[0], fs[1], fs[4], "structures_lost: replaced by 0")); }
 			
 			// fix "cost_to_date"
 			if (!(fs[17].equals("NA") || fs[17].equals("NR") || fs[17].equals("---") || fs[17].endsWith("K") || fs[17].endsWith("M") || fs[17].length() <= 1)) {

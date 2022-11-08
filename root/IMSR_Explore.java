@@ -315,6 +315,7 @@ class Aggregate {
 				if (continue_loop) {
 					String raw_number_record = String.join("\t", fs[0], fs[1], fs[4], fs[5], "cost _to_date: unchanged because cannot identify K or M");
 					raw_number_record_list = String.join("\n", raw_number_record_list, raw_number_record);
+					raw_number_record_list = raw_number_record_list.substring(raw_number_record_list.indexOf("\t") + 1);	// remove first tab
 				}
 			}
 		}
