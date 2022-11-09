@@ -1468,6 +1468,9 @@ public class ISMR_Process {
 					this_fire_name[1] = "";
 					fs[4] = String.join(" ", this_fire_name).replaceAll("\\s+", " ").trim();
 					System.out.println(String.join("\t", fs[0], fs[1], fs[4], "fire name contains origin_ownership: fixed"));
+				} else if (fs[4].startsWith("HEL I ")) {	// only 3 cases in 2018 such as 2018-05-13 to 15
+					fs[4] = fs[4].substring(5);
+					System.out.println(String.join("\t", fs[0], fs[1], fs[4], "fire name contains table header Hel i: fixed"));
 				}
 			}
 		}
