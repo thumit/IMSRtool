@@ -63,23 +63,28 @@ public class ISMR_Process {
 		try {
 			generate_manual_fire_adjustment_list();
 			
+			s_date = String.join("-", s_file.getName().substring(0, 4), s_file.getName().substring(4, 6), s_file.getName().substring(6, 8));	// use this data format yyyy-mm-dd to join easily with Ross data
+			r_date = String.join("-", r_file.getName().substring(0, 4), r_file.getName().substring(4, 6), r_file.getName().substring(6, 8));	// use this data format yyyy-mm-dd to join easily with Ross data
+			date = s_date;
+			
 //			List<String> lines_list = Files.readAllLines(Paths.get(file.getAbsolutePath()), StandardCharsets.UTF_8);		// Not sure why this UTF_8 fail
 			List<String> s_lines_list = Files.readAllLines(Paths.get(s_file.getAbsolutePath()), Charset.defaultCharset());		// Therefore I use default
 			String[] s_lines = s_lines_list.stream().toArray(String[] ::new);
 			for (int i = 0; i < s_lines.length; i++) {
 				s_lines[i] = s_lines[i].replaceAll("\\s{2,}", " ").trim(); // 2 or more spaces will be replaced by one space, then leading and ending spaces will be removed
 			}
-//			date = file.getName().substring(0, 8);
-			s_date = String.join("-", s_file.getName().substring(0, 4), s_file.getName().substring(4, 6), s_file.getName().substring(6, 8));	// use this data format yyyy-mm-dd to join easily with Ross data
 			
 			List<String> r_lines_list = Files.readAllLines(Paths.get(r_file.getAbsolutePath()), Charset.defaultCharset());
 			String[] r_lines = r_lines_list.stream().toArray(String[] ::new);
 			for (int i = 0; i < r_lines.length; i++) {
+				// this is a very important change because fire name may contain the page number so we need to remove it here
+				if (r_lines[i].length() <= 3 && r_lines[i].startsWith("")) {	// line contains a page break only or a page break with 1-2 digit page number will be removed
+					System.out.println(r_date + " has page break change to a very long name: " + r_lines[i]);
+					r_lines[i] = "------------------------------------this is a page break this is a page break this is a page break this is a page break -------------------------------------------------";
+				}
 				r_lines[i] = r_lines[i].replaceAll("\\s{2,}", " ").trim(); // 2 or more spaces will be replaced by one space, then leading and ending spaces will be removed
 			}
-			r_date = String.join("-", r_file.getName().substring(0, 4), r_file.getName().substring(4, 6), r_file.getName().substring(6, 8));	// use this data format yyyy-mm-dd to join easily with Ross data
 			
-			date = s_date;
 			get_national_data(s_lines);
 			get_area_data(s_lines);
 			get_reource_summary_data(s_lines);
@@ -1452,7 +1457,7 @@ public class ISMR_Process {
 			fs_list.add(fs);
 		}
 		
-		// check if fire_name starts with or contains "origin_ownership" of previous fire and fix it
+		// check if fire_name starts with or contains "origin_ownership" of previous fire and fix it (not print out because this is part of data processing, not cleaning/formatting)
 		for (int i = 0; i < final_fires.size(); i++) {
 			String[] previous_fs = null;
 			if (i > 0) previous_fs = fs_list.get(i - 1);
@@ -1462,15 +1467,15 @@ public class ISMR_Process {
 				if (this_fire_name[0].equals(previous_fs[18]) && !previous_fs[18].equals("ST")) {		// Avoid Problem: 2010509 ST JOHNS
 					this_fire_name[0] = "";
 					fs[4] = String.join(" ", this_fire_name).replaceAll("\\s+", " ").trim();
-					System.out.println(String.join("\t", fs[0], fs[1], fs[4], "fire name contains origin_ownership: fixed"));
+					// System.out.println(String.join("\t", fs[0], fs[1], fs[4], "fire name contains origin_ownership: fixed"));
 				} else if (this_fire_name.length >=2 && this_fire_name[1].equals(previous_fs[18]) && !previous_fs[18].equals("ST")) {
 					this_fire_name[0] = "";
 					this_fire_name[1] = "";
 					fs[4] = String.join(" ", this_fire_name).replaceAll("\\s+", " ").trim();
-					System.out.println(String.join("\t", fs[0], fs[1], fs[4], "fire name contains origin_ownership: fixed"));
+					// System.out.println(String.join("\t", fs[0], fs[1], fs[4], "fire name contains origin_ownership: fixed"));
 				} else if (fs[4].startsWith("HEL I ")) {	// only 3 cases in 2018 such as 2018-05-13 to 15
 					fs[4] = fs[4].substring(5);
-					System.out.println(String.join("\t", fs[0], fs[1], fs[4], "fire name contains table header Hel i: fixed"));
+					// System.out.println(String.join("\t", fs[0], fs[1], fs[4], "fire name contains table header Hel i: fixed"));
 				}
 			}
 		}
