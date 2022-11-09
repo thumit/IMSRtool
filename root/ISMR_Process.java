@@ -1439,8 +1439,9 @@ public class ISMR_Process {
 			cleaned_resource_summary.add(st);
 		}
 		resource_summary = cleaned_resource_summary;
-				
-		// clean fires 
+		
+		// clean fires
+		List<String[]> fs_list = new ArrayList<String[]>();
 		for (int i = 0; i < final_fires.size(); i++) {
 			String st = final_fires.get(i).toUpperCase().replaceAll(",", "").replaceAll("NULL", "").replaceAll("N/A", "NA").replaceAll("N/R", "NR")
 														.replaceAll("\\$", "").replaceAll("\\`", "").replaceAll("\\=", "")
@@ -1448,12 +1449,37 @@ public class ISMR_Process {
 														.replaceAll("\\-\\-\\-", "--").replaceAll("\\-\\-", "---")	// a work around to replace double hyphen --
 														.replaceAll(" /", "/").replaceAll("/ ", "/").replaceAll(" -", "-").replaceAll("- ", "-");
 			String[] fs = st.split("\t");
-			
+			fs_list.add(fs);
+		}
+		
+		// check if fire_name starts with or contains "origin_ownership" of previous fire and fix it
+		for (int i = 0; i < final_fires.size(); i++) {
+			String[] previous_fs = null;
+			if (i > 0) previous_fs = fs_list.get(i - 1);
+			String[] fs = fs_list.get(i);
+			if (i > 0 && !fs[4].startsWith("*")) {	// check from the second fire only, if fire name not start with *
+				String[] this_fire_name = fs[4].split(" ");
+				if (this_fire_name[0].equals(previous_fs[18]) && !previous_fs[18].equals("ST")) {		// Avoid Problem: 2010509 ST JOHNS
+					this_fire_name[0] = "";
+					fs[4] = String.join(" ", this_fire_name).replaceAll("\\s+", " ").trim();
+					System.out.println(String.join("\t", fs[0], fs[1], fs[4], "fire name contains origin_ownership: fixed"));
+				} else if (this_fire_name.length >=2 && this_fire_name[1].equals(previous_fs[18]) && !previous_fs[18].equals("ST")) {
+					this_fire_name[0] = "";
+					this_fire_name[1] = "";
+					fs[4] = String.join(" ", this_fire_name).replaceAll("\\s+", " ").trim();
+					System.out.println(String.join("\t", fs[0], fs[1], fs[4], "fire name contains origin_ownership: fixed"));
+				}
+			}
+		}
+		
+		// clean fires 
+		for (int i = 0; i < final_fires.size(); i++) {
+			String[] fs = fs_list.get(i);
 			// move * i "fire_name" to another column "new_large_fire_mark"
 			if (fs[4].contains("*")) {
-				fs[4] = "*" + "\t" + fs[4].replaceAll("\\*", "").trim(); 
+				fs[4] = "*" + "\t" + fs[4].replaceAll("\\*", "").replaceAll("\\s+", " ").trim(); 
 			} else {
-				fs[4] = "" + "\t" + fs[4].replaceAll("\\*", "").trim(); 
+				fs[4] = "" + "\t" + fs[4].replaceAll("\\*", "").replaceAll("\\s+", " ").trim(); 
 			}
 			
 			// fix "contained_completed"
