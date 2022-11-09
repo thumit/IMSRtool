@@ -1415,8 +1415,6 @@ public class ISMR_Process {
 		
 		manual_fire_adjustment_list.put("2021-10-08	NRCC	NA	NA	STATELINE	Complex	ID-IPF	13,199	0	50	Ctn	11/1	46	0	0	0	0	22.5M	FS",
 				  "2021-10-08	NRCC	NA	NA	STATELINE COMPLEX	ID-IPF	13,199	0	50	Ctn	11/1	46	---	0	0	0	0	22.5M	FS");
-		
-		// WFU AGUA SI is incorrect and should be changes to AGUA SI. This is not spotted by this program.
 	}
 	
 	private void data_cleaning() {
