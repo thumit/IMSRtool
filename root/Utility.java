@@ -152,32 +152,42 @@ public class Utility {
 				}
 			}
 			final String cmd = batch_command;
-			// JOptionPane.showMessageDialog(null, cmd);
-			Thread t = new Thread(new Runnable(){
-			    @Override
-			    public void run() {
-					ProcessBuilder builder = new ProcessBuilder("cmd.exe", "/c", cmd);
-					builder = builder.directory(directory);
-					builder.redirectErrorStream(true);
-						try {
-							Process p = builder.start();
-							int exitVal = p.waitFor();		// very important to keep the initial process open until the batch file finished: https://stackoverflow.com/questions/6444812/executing-a-command-from-java-and-waiting-for-the-command-to-finish
-						} catch (IOException | InterruptedException e) {
-							e.printStackTrace();
-						}
-				}
-			});
-			threads.add(t);
-		}
-		for (Thread t : threads) {
-			t.start();
-		}
-		for (Thread t : threads) {
+			ProcessBuilder builder = new ProcessBuilder("cmd.exe", "/c", cmd);
+			builder = builder.directory(directory);
+			builder.redirectErrorStream(true);
+			builder = builder.directory(directory);
+			builder.redirectErrorStream(true);
 			try {
-				t.join();	// Wait till all threads completes
-			} catch (InterruptedException e) {
+				Process p = builder.start();
+				int exitVal = p.waitFor();		// very important to keep the initial process open until the batch file finished: https://stackoverflow.com/questions/6444812/executing-a-command-from-java-and-waiting-for-the-command-to-finish
+			} catch (IOException | InterruptedException e) {
 				e.printStackTrace();
-			}	
+			}
+//			Thread t = new Thread(new Runnable(){
+//			    @Override
+//			    public void run() {
+//					ProcessBuilder builder = new ProcessBuilder("cmd.exe", "/c", cmd);
+//					builder = builder.directory(directory);
+//					builder.redirectErrorStream(true);
+//						try {
+//							Process p = builder.start();
+//							int exitVal = p.waitFor();		// very important to keep the initial process open until the batch file finished: https://stackoverflow.com/questions/6444812/executing-a-command-from-java-and-waiting-for-the-command-to-finish
+//						} catch (IOException | InterruptedException e) {
+//							e.printStackTrace();
+//						}
+//				}
+//			});
+//			threads.add(t);
 		}
+//		for (Thread t : threads) {
+//			t.start();
+//		}
+//		for (Thread t : threads) {
+//			try {
+//				t.join();	// Wait till all threads completes
+//			} catch (InterruptedException e) {
+//				e.printStackTrace();
+//			}	
+//		}
 	}
 }
