@@ -1205,9 +1205,9 @@ public class ISMR_Process {
 		// recalculate priority for gacc and fire
 		// we will first get gacc priority from simple2 because raw gacc position is a mess 
 		// we will then apply gacc priority from simple2 to raw
-		List<Integer>[] fire_priority_with_this_gacc_priority = new ArrayList[50]; // 12 is enough but I make it 50 in case in the future we have more GACCs
+		List<String>[] fires_in_this_gacc_priority = new ArrayList[50]; // 12 is enough but I make it 50 in case in the future we have more GACCs
 		for (int gi = 0 ; gi < 50; gi ++) {
-			fire_priority_with_this_gacc_priority[gi] = new ArrayList<Integer>();
+			fires_in_this_gacc_priority[gi] = new ArrayList<String>();
 		}
 		int gacc_priority = 0;
 		int fire_priority = 0;
@@ -1219,14 +1219,21 @@ public class ISMR_Process {
 				System.out.println(final_fire_info[0] + " " + final_fire_info[1] + " : gacc not found in simple2, gacc priority is set to 0, you need to mannually fix this. You are expected to not have a change to see this message");
 				gacc_priority = 0;
 			} else {
-				if (gacc_priority > map_gacc_to_priority.get(current_gacc)) System.out.println(final_fire_info[0] + " " + final_fire_info[1] + " : fires positions are messed up between gaccs in raw extraction. Fixed");
+				if (gacc_priority > map_gacc_to_priority.get(current_gacc)) System.out.println(final_fire_info[0] + " " + final_fire_info[1] + " : fires positions are messed up between gaccs in raw extraction. Fixed by using simple2 gacc positions");
 				gacc_priority = map_gacc_to_priority.get(current_gacc);
 			}
-			fire_priority = fire_priority_with_this_gacc_priority[gacc_priority].size() + 1;
-			fire_priority_with_this_gacc_priority[gacc_priority].add(fire_priority);
+			fire_priority = fires_in_this_gacc_priority[gacc_priority].size() + 1;
 			final_fire_info[2] = String.valueOf(gacc_priority);
 			final_fire_info[3] = String.valueOf(fire_priority);
-			final_fires.set(i, String.join("\t", final_fire_info));
+			fires_in_this_gacc_priority[gacc_priority].add(String.join("\t", final_fire_info));
+			//final_fires.set(i, String.join("\t", final_fire_info));
+		}
+		// Remake the final_fires list with sorted gacc priority and fire priority
+		final_fires = new ArrayList<String>();
+		for (int gi = 0 ; gi < 50; gi ++) {
+			if (!fires_in_this_gacc_priority[gi].isEmpty()) {
+				final_fires.addAll(fires_in_this_gacc_priority[gi]);
+			}
 		}
 		
 		int final_fire_size = final_fires.size();	// no duplication, only unique records
