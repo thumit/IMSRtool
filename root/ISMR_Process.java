@@ -79,7 +79,7 @@ public class ISMR_Process {
 			for (int i = 0; i < r_lines.length; i++) {
 				// this is a very important change because fire name may contain the page number so we need to remove it here
 				if (r_lines[i].length() <= 3 && r_lines[i].startsWith("")) {	// line contains a page break only or a page break with 1-2 digit page number will be removed
-					System.out.println(r_date + " has page break change to a very long name: " + r_lines[i]);
+//					System.out.println(r_date + " has page break change to a very long name: " + r_lines[i]);
 					r_lines[i] = "------------------------------------this is a page break this is a page break this is a page break this is a page break -------------------------------------------------";
 				}
 				r_lines[i] = r_lines[i].replaceAll("\\s{2,}", " ").trim(); // 2 or more spaces will be replaced by one space, then leading and ending spaces will be removed
@@ -249,8 +249,9 @@ public class ISMR_Process {
 		return null; // should never happen
 	}
 	
+	LinkedHashMap<String, Integer> map_gacc_to_priority = new LinkedHashMap<String, Integer>();
 	private void get_area_data(String[] s_lines) {
-		LinkedHashMap<String, Integer> map_gacc_to_priority = new LinkedHashMap<String, Integer>();
+		// LinkedHashMap<String, Integer> map_gacc_to_priority = new LinkedHashMap<String, Integer>();
 		String current_area = "";
 		int gacc_priority = 0;
 		// Loop all lines, whenever found a gacc area, stop and process data
@@ -266,12 +267,12 @@ public class ISMR_Process {
 					gacc_priority = gacc_priority + 1;
 					if (map_gacc_to_priority.get(current_area) == null) map_gacc_to_priority.put(current_area, gacc_priority);
 					if (gacc_priority == map_gacc_to_priority.get(current_area)) process_area_data(s_lines, i, current_area, gacc_priority);
-				} else if (s_lines[i].startsWith("Eastern Great Basin")) {	// before 2015
+				} else if (s_lines[i].startsWith("Eastern Great Basin") || s_lines[i].contains("East Great Basin")) {	// before 2015
 					current_area = "EBCC";
 					gacc_priority = gacc_priority + 1;
 					if (map_gacc_to_priority.get(current_area) == null) map_gacc_to_priority.put(current_area, gacc_priority);
 					if (gacc_priority == map_gacc_to_priority.get(current_area)) process_area_data(s_lines, i, current_area, gacc_priority);
-				}  else if (s_lines[i].startsWith("Western Great Basin")) {	// before 2015
+				}  else if (s_lines[i].startsWith("Western Great Basin") || s_lines[i].contains("West Great Basin")) {	// before 2015
 					current_area = "WBCC";
 					gacc_priority = gacc_priority + 1;
 					if (map_gacc_to_priority.get(current_area) == null) map_gacc_to_priority.put(current_area, gacc_priority);
@@ -512,10 +513,10 @@ public class ISMR_Process {
 				} else if (s_lines[i].startsWith("Eastern Area")) {
 					current_area = "EACC";
 					gacc_priority = gacc_priority + 1;
-				} else if (s_lines[i].contains("Eastern Great Basin")) {		// before 2015
+				} else if (s_lines[i].contains("Eastern Great Basin") || s_lines[i].contains("East Great Basin")) {		// before 2015
 					current_area = "EBCC";
 					gacc_priority = gacc_priority + 1;
-				} else if (s_lines[i].contains("Western Great Basin")) {		// before 2015
+				} else if (s_lines[i].contains("Western Great Basin") || s_lines[i].contains("West Great Basin")) {		// before 2015	West Great Basin such as 20110625
 					current_area = "WBCC";
 					gacc_priority = gacc_priority + 1;
 				} else if (s_lines[i].contains("Great Basin")) {		// 2015 and after. Special case in 20170708: The gacc is "Great Basin", does not have "Area"
@@ -693,9 +694,9 @@ public class ISMR_Process {
 					current_area = "AICC";
 				} else if (r_lines[i].startsWith("Eastern Area")) {
 					current_area = "EACC";
-				} else if (r_lines[i].contains("Eastern Great Basin")) {		// before 2015
+				} else if (r_lines[i].contains("Eastern Great Basin") || r_lines[i].contains("East Great Basin")) {		// before 2015
 					current_area = "EBCC";
-				} else if (r_lines[i].contains("Western Great Basin")) {		// before 2015
+				} else if (r_lines[i].contains("Western Great Basin") || r_lines[i].contains("West Great Basin")) {		// before 2015. 	West Great Basin such as 20110625
 					current_area = "WBCC";
 				} else if (r_lines[i].contains("Great Basin")) {		// 2015 and after. Special case in 20170708: The gacc is "Great Basin", does not have "Area"
 					current_area = "GBCC";
@@ -1180,7 +1181,7 @@ public class ISMR_Process {
 		//-------------------------------NOW GENERATE FINAL FIRE RESULTS--------------------------------------------
 		//-------------------------------NOW GENERATE FINAL FIRE RESULTS--------------------------------------------
 		//-------------------------------NOW GENERATE FINAL FIRE RESULTS--------------------------------------------
-		// Because GACC positions are messed up in raw, we will substitute by GACC positions from raw when possible
+		// Because GACC positions are messed up in raw, we will substitute by GACC positions from simple2 when possible (i.e., 20120701 NRCC vs SWCC)
 		for (int r_id = 0; r_id < r_fires.size(); r_id++) {
 			int s_id = s_id_to_r_id.indexOf(r_id);
 			String[] r_fire_info = r_fire_list.get(r_id);
@@ -1202,19 +1203,27 @@ public class ISMR_Process {
 		final_fires = new ArrayList<>(unique_fires_set);
 		
 		// recalculate priority for gacc and fire
-		LinkedHashMap<String, Integer> map_gacc_to_priority = new LinkedHashMap<String, Integer>();
+		// we will first get gacc priority from simple2 because raw gacc position is a mess 
+		// we will then apply gacc priority from simple2 to raw
+		List<Integer>[] fire_priority_with_this_gacc_priority = new ArrayList[50]; // 12 is enough but I make it 50 in case in the future we have more GACCs
+		for (int gi = 0 ; gi < 50; gi ++) {
+			fire_priority_with_this_gacc_priority[gi] = new ArrayList<Integer>();
+		}
 		int gacc_priority = 0;
 		int fire_priority = 0;
 		for (int i = 0; i < final_fires.size(); i++) {
 			String[] final_fire_info = final_fires.get(i).split("\t");
 			String current_gacc = final_fire_info[1];
-			if (map_gacc_to_priority.get(current_gacc) == null) {	// new gacc
-				gacc_priority = gacc_priority + 1;
-				map_gacc_to_priority.put(current_gacc, gacc_priority);
-				fire_priority = 1;	// reset fire priority
+			
+			if (map_gacc_to_priority.get(current_gacc) == null) {
+				System.out.println(final_fire_info[0] + " " + final_fire_info[1] + " : gacc not found in simple2, gacc priority is set to 0, you need to mannually fix this. You are expected to not have a change to see this message");
+				gacc_priority = 0;
 			} else {
-				fire_priority = fire_priority + 1;
+				if (gacc_priority > map_gacc_to_priority.get(current_gacc)) System.out.println(final_fire_info[0] + " " + final_fire_info[1] + " : fires positions are messed up between gaccs in raw extraction. Fixed");
+				gacc_priority = map_gacc_to_priority.get(current_gacc);
 			}
+			fire_priority = fire_priority_with_this_gacc_priority[gacc_priority].size() + 1;
+			fire_priority_with_this_gacc_priority[gacc_priority].add(fire_priority);
 			final_fire_info[2] = String.valueOf(gacc_priority);
 			final_fire_info[3] = String.valueOf(fire_priority);
 			final_fires.set(i, String.join("\t", final_fire_info));
@@ -1237,7 +1246,7 @@ public class ISMR_Process {
 				} else if (st.equals("2020-09-14	ONCC	1	3	- AUGUST COMPLEX	CA-MNF	706,594	140,218	30	Ctn	11/15	1,436	-473	21	105	8	35	30.4M	FS")) {
 					// no need to do anything. This fire is in raw with correct information
 				} else {
-					System.out.println("fires in simple2 but may not be in raw  or may be in raw with different info:");
+					System.out.println("fires in simple2 but may not be in raw or may be in raw with different info:");
 					System.out.println(st);
 				}
 			}
@@ -1291,7 +1300,7 @@ public class ISMR_Process {
 				"2010-08-27	WBCC	NA	NA	WOLF CREEK	NV-HTF	1,000	---	N/A	null	N/A	15	---	0	0	1	0	1.6M	FS");
 		
 		manual_fire_adjustment_list.put("2012-06-17	OSCC	NA	NA	Ophir Creek UT NWS 1,574 374 100 --- 3 -57 0 0 0 40K ST",
-				"2012-06-17	OSCC	NA	NA	OPHIR CREEK	UT-NWS	1,574	374	100	null	---	3	-57	0	0	---	0	40K	ST");
+				"2012-06-17	EBCC	NA	NA	OPHIR CREEK	UT-NWS	1,574	374	100	null	---	3	-57	0	0	---	0	40K	ST");
 
 		manual_fire_adjustment_list.put("2012-11-08	RMCC	NA	NA	* Coal Creek SJF 127 127 --- N/A N/A 9 --- 0 0 1 0 24K FS",
 				"2012-11-08	RMCC	NA	NA	* COAL CREEK	CO-SJF	127	---	N/A	null	N/A	9	---	0	0	1	0	24K	FS");
