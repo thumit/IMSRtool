@@ -998,7 +998,6 @@ public class ISMR_Process {
 					}
 					if (this_fire.split("\t").length == 19 && this_fire.split("\t")[5].contains("-")) {
 						r_fires.add(this_fire);
-						System.out.println(this_fire);
 					} else if (manual_fire_adjustment_list.get(this_fire) != null) {
 						this_fire = manual_fire_adjustment_list.get(this_fire);
 						r_fires.add(this_fire);
