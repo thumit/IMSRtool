@@ -939,16 +939,16 @@ public class ISMR_Process {
 					// loop back previous lines to join
 					boolean continue_loop = true;
 					int l = i;
-					if (combine_st.startsWith("---0")) {	// special case such as 20180913 in AICC ---0 is shown in the raw txt as 2 lines but actually they are in a single line after reading.
+					if (combine_st.startsWith("---0")) {	// special case such as 20180913 in AICC --- and 0 are shown in the raw txt as 2 lines but actually ---0 is in a single line and the other line is empty
 						combine_st = combine_st.replaceAll("---0", "---" + "\t" + "0");	// this is because line i-1 shown as --- but it is actually not after reading
 						combine_st = String.join("\t", r_lines[i - 2].replaceAll(" ", "\t"), combine_st);
 						fire_name = r_lines[i - 3];
-						l = i - 2;
+						l = i - 3;
 					} else 
 					if (combine_st.startsWith("Ctn") && r_lines[i - 1].matches("^-?\\d{1,3}([ ,]?\\d{3})*([.,]\\d+)?$") && r_lines[i - 2].contains("-")) {	// special case such as Spokane Complex 20180824
 						combine_st = String.join("\t", r_lines[i - 2].replaceAll(" ", "\t"), r_lines[i - 1], combine_st);
 						fire_name = r_lines[i - 3];
-						l = i - 2;
+						l = i - 3;
 					}
 					do {
 						l = l - 1;
@@ -998,6 +998,7 @@ public class ISMR_Process {
 					}
 					if (this_fire.split("\t").length == 19 && this_fire.split("\t")[5].contains("-")) {
 						r_fires.add(this_fire);
+						System.out.println(this_fire);
 					} else if (manual_fire_adjustment_list.get(this_fire) != null) {
 						this_fire = manual_fire_adjustment_list.get(this_fire);
 						r_fires.add(this_fire);
