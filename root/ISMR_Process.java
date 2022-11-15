@@ -1466,7 +1466,8 @@ public class ISMR_Process {
 														.replaceAll("\\$", "").replaceAll("\\`", "").replaceAll("\\=", "")
 														.replaceAll("\\-\\-\\-\\-", "---").replaceAll("\\.\\.\\.", "---").replaceAll("\\_\\_\\_", "---").replaceAll("\\_\\_", "---")
 														.replaceAll("\\-\\-\\-", "--").replaceAll("\\-\\-", "---")	// a work around to replace double hyphen --
-														.replaceAll(" /", "/").replaceAll("/ ", "/").replaceAll(" -", "-").replaceAll("- ", "-");
+														.replaceAll(" /", "/").replaceAll("/ ", "/").replaceAll(" -", "-").replaceAll("- ", "-")
+														.replaceAll(" \\&", "&").replaceAll("\\& ", "&").replaceAll("\\# ", "#");
 			String[] fs = st.split("\t");
 			fs_list.add(fs);
 		}
