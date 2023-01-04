@@ -56,7 +56,11 @@ public class Calculate_B2 {
 	List<String> year = new ArrayList<String>();
 	List<String> INC209R = new ArrayList<String>();
 	List<String> INC = new ArrayList<String>();
+	List<String> box38_12h_data = new ArrayList<String>();
+	List<String> box38_24h_data = new ArrayList<String>();
 	List<String> box38_48h_data = new ArrayList<String>();
+	List<Integer> box38_12h_point = new ArrayList<Integer>();
+	List<Integer> box38_24h_point = new ArrayList<Integer>();
 	List<Integer> box38_48h_point = new ArrayList<Integer>();
 	List<Integer> final_point = new ArrayList<Integer>();
 	boolean print_message = true;
@@ -71,7 +75,7 @@ public class Calculate_B2 {
 			// Create and execute a SELECT SQL statement.
 			String sql_2015 = 
 					"""
-					SELECT 2015, [INC209R_IDENTIFIER], [INC_IDENTIFIER], [CURRENT_THREAT_48] FROM [SIT2015].[dbo].[SIT209_HISTORY_INCIDENT_209_REPORTS]
+					SELECT 2015, [INC209R_IDENTIFIER], [INC_IDENTIFIER], [CURRENT_THREAT_12], [CURRENT_THREAT_24], [CURRENT_THREAT_48] FROM [SIT2015].[dbo].[SIT209_HISTORY_INCIDENT_209_REPORTS]
 					""";
 			String[] sql = new String[selected_years.size()];
 			for (int i = 0; i < selected_years.size(); i++) {
@@ -83,8 +87,12 @@ public class Calculate_B2 {
 				year.add(resultSet.getString(1));
 				INC209R.add(resultSet.getString(2));
 				INC.add(resultSet.getString(3));
-				String st = resultSet.getString(4);
-				box38_48h_data.add(st);
+				String st_12 = resultSet.getString(4);
+				String st_24 = resultSet.getString(5);
+				String st_48 = resultSet.getString(6);
+				box38_12h_data.add(st_12);
+				box38_24h_data.add(st_24);
+				box38_48h_data.add(st_48);
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -100,8 +108,15 @@ public class Calculate_B2 {
 			String searh_word = "communit* AND (threat* OR impact* OR risk*) AND NOT(\"no threat*\"~4 OR \"no risk\"~4 OR \"no impact\"~4)";
 			int total_rows = box38_48h_data.size();
 			for (int row = 0; row < total_rows; row++) {
-				String st = box38_48h_data.get(row);
+				String st = "";
+				int end_point = 0;
 				int this_caterory_point = 0;
+				
+				
+				//---------------------------------------------------------------------------------------------------------------
+				// 12h points
+				st = box38_12h_data.get(row);
+				this_caterory_point = 0;
 				if (st != null) {
 					try {
 						// Reference:
@@ -197,8 +212,220 @@ public class Calculate_B2 {
 						e.printStackTrace();
 					}
 				}
+				if (end_point < this_caterory_point) end_point = this_caterory_point;
+				box38_12h_point.add(this_caterory_point);
+				
+				
+				
+				//---------------------------------------------------------------------------------------------------------------
+				// 24h points
+				st = box38_24h_data.get(row);
+				this_caterory_point = 0;
+				if (st != null) {
+					try {
+						// Reference:
+						// https://stackoverflow.com/questions/49066168/search-a-text-string-with-a-lucene-query-in-java
+						// https://www.baeldung.com/lucene-analyzers
+						// https://www.baeldung.com/lucene
+
+						// 0. Specify the analyzer for tokenizing text. The same analyzer should be used for indexing and searching
+						Analyzer analyzer = new WhitespaceAnalyzer();
+						TokenStream tokenStream = utilities.customizeTokenStream(analyzer, st);
+						CharTermAttribute token = tokenStream.getAttribute(CharTermAttribute.class);
+						tokenStream.reset();
+						st = "";
+						while (tokenStream.incrementToken()) {
+							String token_st = token.toString();
+							if (token_st != null) st = st.concat(" ").concat(token.toString());		// https://stackoverflow.com/questions/5076740/whats-the-fastest-way-to-concatenate-two-strings-in-java
+						}
+						if (tokenStream != null) {
+							tokenStream.close();
+						}
+
+						// 1. create the index
+						Directory index = new ByteBuffersDirectory();
+						IndexWriterConfig config = new IndexWriterConfig(analyzer);
+						IndexWriter w = new IndexWriter(index, config);
+						String[] line = st.split("\\.");
+						for (int l = 0; l < line.length; l++) {
+							Document doc = new Document();
+							String content = line[l];
+							String title = String.valueOf(row + 1) + "." + year.get(row) + "." + INC209R.get(row) + ".Line " + String.valueOf(l + 1);
+							doc.add(new StringField("title", title, Field.Store.YES)); // adding title field
+							doc.add(new TextField("content", content, Field.Store.YES)); // adding content field
+							w.addDocument(doc);
+						}
+						w.close();
+
+						// 2. query
+//						Query query = new QueryParser("content", analyzer).parse(searh_word);
+						ComplexPhraseQueryParser queryParser = new ComplexPhraseQueryParser("content", analyzer);
+						queryParser.setAllowLeadingWildcard(true);
+						Query query = queryParser.parse(searh_word);
+
+						// 3. search
+						int hitsPerPage = 10;
+						IndexReader reader = DirectoryReader.open(index);
+						IndexSearcher searcher = new IndexSearcher(reader);
+						TopDocs docs = searcher.search(query, hitsPerPage);
+						ScoreDoc[] hits = docs.scoreDocs;
+
+						// 4. display results
+						int number_of_hits = hits.length;
+						if (number_of_hits > 0) {
+//							if (print_message) System.out.println(number_of_hits + " hits.");
+//							for (int i = 0; i < hits.length; i++) {		// this is actually sentence hit, this will loop all the hit sentences
+//								int docId = hits[i].doc;
+//								Document d = searcher.doc(docId);
+//								if (print_message) System.out.println(d.get("title") + "\t" + d.get("content"));
+//							}
+							records_hit_count++;
+						}
+						
+						// 5. calculate points
+						if (number_of_hits > 0) {
+							int max_point = 0;
+							for (int i = 0; i < hits.length; i++) {		// this is actually sentence hit, this will loop all the hit sentences
+								int docId = hits[i].doc;
+								Document d = searcher.doc(docId);
+								String c = d.get("content");
+								if (max_point < 5) {
+									boolean one_point_sentence = (utilities.find_term(new String[] {
+											"potential*threat", "potential*risk", "potential*impact",
+											"possible*threat", "possible*risk", "possible*impact",
+											"could be*threat", "could be*risk", "could be*impact",
+											"minimal*threat", "minimal*risk", "minimal*impact",
+											"low*threat", "low*risk", "low*impact",
+											"limited*threat", "limited*risk", "limited*impact",
+											"slight*threat", "slight*risk", "slight*impact",
+											"threat*decrease" 
+											}, c)) ? true : false;
+									boolean three_point_sentence = (utilities.find_term(new String[] {  "moderate*threat", "moderate*risk" }, c)) ? true : false;
+									boolean five_point_sentence = false;
+									max_point = 5;
+									if (one_point_sentence) max_point = 1;
+									if (three_point_sentence) max_point = 3;
+								}
+							}
+							this_caterory_point = max_point;
+						}
+
+						// 5. reader can only be closed when there is no need to access the documents any more.
+						reader.close();
+					} catch (ParseException e) {
+						e.printStackTrace();
+					}
+				}
+				if (end_point < this_caterory_point) end_point = this_caterory_point;
+				box38_24h_point.add(this_caterory_point);
+				
+				
+				
+				//---------------------------------------------------------------------------------------------------------------
+				// 48h points
+				st = box38_48h_data.get(row);
+				this_caterory_point = 0;
+				if (st != null) {
+					try {
+						// Reference:
+						// https://stackoverflow.com/questions/49066168/search-a-text-string-with-a-lucene-query-in-java
+						// https://www.baeldung.com/lucene-analyzers
+						// https://www.baeldung.com/lucene
+
+						// 0. Specify the analyzer for tokenizing text. The same analyzer should be used for indexing and searching
+						Analyzer analyzer = new WhitespaceAnalyzer();
+						TokenStream tokenStream = utilities.customizeTokenStream(analyzer, st);
+						CharTermAttribute token = tokenStream.getAttribute(CharTermAttribute.class);
+						tokenStream.reset();
+						st = "";
+						while (tokenStream.incrementToken()) {
+							String token_st = token.toString();
+							if (token_st != null) st = st.concat(" ").concat(token.toString());		// https://stackoverflow.com/questions/5076740/whats-the-fastest-way-to-concatenate-two-strings-in-java
+						}
+						if (tokenStream != null) {
+							tokenStream.close();
+						}
+
+						// 1. create the index
+						Directory index = new ByteBuffersDirectory();
+						IndexWriterConfig config = new IndexWriterConfig(analyzer);
+						IndexWriter w = new IndexWriter(index, config);
+						String[] line = st.split("\\.");
+						for (int l = 0; l < line.length; l++) {
+							Document doc = new Document();
+							String content = line[l];
+							String title = String.valueOf(row + 1) + "." + year.get(row) + "." + INC209R.get(row) + ".Line " + String.valueOf(l + 1);
+							doc.add(new StringField("title", title, Field.Store.YES)); // adding title field
+							doc.add(new TextField("content", content, Field.Store.YES)); // adding content field
+							w.addDocument(doc);
+						}
+						w.close();
+
+						// 2. query
+//						Query query = new QueryParser("content", analyzer).parse(searh_word);
+						ComplexPhraseQueryParser queryParser = new ComplexPhraseQueryParser("content", analyzer);
+						queryParser.setAllowLeadingWildcard(true);
+						Query query = queryParser.parse(searh_word);
+
+						// 3. search
+						int hitsPerPage = 10;
+						IndexReader reader = DirectoryReader.open(index);
+						IndexSearcher searcher = new IndexSearcher(reader);
+						TopDocs docs = searcher.search(query, hitsPerPage);
+						ScoreDoc[] hits = docs.scoreDocs;
+
+						// 4. display results
+						int number_of_hits = hits.length;
+						if (number_of_hits > 0) {
+//							if (print_message) System.out.println(number_of_hits + " hits.");
+//							for (int i = 0; i < hits.length; i++) {		// this is actually sentence hit, this will loop all the hit sentences
+//								int docId = hits[i].doc;
+//								Document d = searcher.doc(docId);
+//								if (print_message) System.out.println(d.get("title") + "\t" + d.get("content"));
+//							}
+							records_hit_count++;
+						}
+						
+						// 5. calculate points
+						if (number_of_hits > 0) {
+							int max_point = 0;
+							for (int i = 0; i < hits.length; i++) {		// this is actually sentence hit, this will loop all the hit sentences
+								int docId = hits[i].doc;
+								Document d = searcher.doc(docId);
+								String c = d.get("content");
+								if (max_point < 5) {
+									boolean one_point_sentence = (utilities.find_term(new String[] {
+											"potential*threat", "potential*risk", "potential*impact",
+											"possible*threat", "possible*risk", "possible*impact",
+											"could be*threat", "could be*risk", "could be*impact",
+											"minimal*threat", "minimal*risk", "minimal*impact",
+											"low*threat", "low*risk", "low*impact",
+											"limited*threat", "limited*risk", "limited*impact",
+											"slight*threat", "slight*risk", "slight*impact",
+											"threat*decrease" 
+											}, c)) ? true : false;
+									boolean three_point_sentence = (utilities.find_term(new String[] {  "moderate*threat", "moderate*risk" }, c)) ? true : false;
+									boolean five_point_sentence = false;
+									max_point = 5;
+									if (one_point_sentence) max_point = 1;
+									if (three_point_sentence) max_point = 3;
+								}
+							}
+							this_caterory_point = max_point;
+						}
+
+						// 5. reader can only be closed when there is no need to access the documents any more.
+						reader.close();
+					} catch (ParseException e) {
+						e.printStackTrace();
+					}
+				}
+				if (end_point < this_caterory_point) end_point = this_caterory_point;
 				box38_48h_point.add(this_caterory_point);
-				final_point.add(Math.max(this_caterory_point, 0));
+				
+				
+				
+				final_point.add(end_point);
 			}
 			System.out.println(records_hit_count + " records found by the query using '" + searh_word + "'");
 		} catch (IOException e) {
