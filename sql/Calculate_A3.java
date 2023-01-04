@@ -71,7 +71,6 @@ public class Calculate_A3 {
 	
 	public Calculate_A3(List<String> selected_years) {
 		// Connect to a database. Single connection can work the same as multiple connections (code for multiple connections is deleted)
-		String combine_st = "";
 		ResultSet resultSet = null;
 		String conn_SIT2015 = "jdbc:sqlserver://localhost:1433;databaseName=SIT2015;integratedSecurity=true";
 		try (Connection connection = DriverManager.getConnection(conn_SIT2015);
@@ -97,11 +96,6 @@ public class Calculate_A3 {
 				String st_48 = resultSet.getString(6);
 				String st_72 = resultSet.getString(7);
 				String st_GT72 = resultSet.getString(8);
-				if (st_12 != null) combine_st = combine_st.concat(".").concat(st_12);
-				if (st_24 != null) combine_st = combine_st.concat(".").concat(st_24);
-				if (st_48 != null) combine_st = combine_st.concat(".").concat(st_48);
-				if (st_72 != null) combine_st = combine_st.concat(".").concat(st_72);
-				if (st_GT72 != null) combine_st = combine_st.concat(".").concat(st_GT72);
 				box36_12h_data.add(st_12);
 				box36_24h_data.add(st_24);
 				box36_48h_data.add(st_48);

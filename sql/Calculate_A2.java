@@ -67,7 +67,6 @@ public class Calculate_A2 {
 	
 	public Calculate_A2(List<String> selected_years) {
 		// Connect to a database. Single connection can work the same as multiple connections (code for multiple connections is deleted)
-		String combine_st = "";
 		ResultSet resultSet = null;
 		String conn_SIT2015 = "jdbc:sqlserver://localhost:1433;databaseName=SIT2015;integratedSecurity=true";
 		try (Connection connection = DriverManager.getConnection(conn_SIT2015);
@@ -89,7 +88,6 @@ public class Calculate_A2 {
 				INC209R.add(resultSet.getString(2));
 				INC.add(resultSet.getString(3));
 				String st = resultSet.getString(4);
-				if (st != null) combine_st = combine_st.concat(".").concat(st);		// https://stackoverflow.com/questions/5076740/whats-the-fastest-way-to-concatenate-two-strings-in-java
 				box33_data.add(st);
 				road_flag_data.add(resultSet.getString(5));
 				area_flag_data.add(resultSet.getString(6));
