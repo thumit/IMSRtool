@@ -51,7 +51,7 @@ public class IMSRmain extends JFrame {
 	private static IMSRDesktopPane 		desktopPane;
 	private static IMSRContentPane 		contentPane;
 	private static IMSRmain 			main;
-	private static String 				version = "IMRS-TOOL-1.05";
+	private static String 				version = "IMSR-TOOL-1.05";
 	
 	public static void main(String[] args) {
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {
