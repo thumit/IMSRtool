@@ -17,6 +17,7 @@ along with IMSR-TOOL. If not, see <http://www.gnu.org/licenses/>.
 package root;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
@@ -27,6 +28,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.io.IOException;
 
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -38,13 +40,14 @@ import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import convenience_classes.FilesChooser;
+import convenience_classes.FilesHandle;
 
 public class IMSRmain extends JFrame {
 	// Define variables------------------------------------------------------------------------
 	private static IMSRMenuBar 			menuBar;
 	private JMenu 						menuUtility, menuHelp;
-	private JMenuItem					pdftotext, explore_extract, data_support; 			// For menuUtility
-	private JMenuItem 					content, update, about; 	// For menuHelp
+	private JMenuItem					pdftotext, explore_extract; // For menuUtility
+	private JMenuItem 					user_manual, about; 	// For menuHelp
 	private static IMSRDesktopPane 		desktopPane;
 	private static IMSRContentPane 		contentPane;
 	private static IMSRmain 			main;
@@ -85,17 +88,13 @@ public class IMSRmain extends JFrame {
 				
 				pdftotext = new JMenuItem("IMSR Pdf to Text ");
 				explore_extract = new JMenuItem("IMSR Explore & Extract");
-				data_support = new JMenuItem("Data Support Functions");
-				content = new JMenuItem("Content");
-				update = new JMenuItem("Update");
+				user_manual = new JMenuItem("User Manual");
 				about = new JMenuItem("About");
 				
 				// Add components: Menubar, Menus, MenuItems----------------------------------
 				menuUtility.add(pdftotext);
 				menuUtility.add(explore_extract);
-				menuUtility.add(data_support);	
-				menuHelp.add(content);
-				menuHelp.add(update);
+				menuHelp.add(user_manual);
 				menuHelp.add(about);
 
 				menuBar.add(menuUtility);
@@ -131,13 +130,18 @@ public class IMSRmain extends JFrame {
 					}
 				});	
 				
-				data_support.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_3, Toolkit.getDefaultToolkit ().getMenuShortcutKeyMask()));	// CTRL on Windows, *** on MAC-OS
-				data_support.setMnemonic(KeyEvent.VK_D);
-				data_support.addActionListener(new ActionListener() {
+				user_manual.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_3, Toolkit.getDefaultToolkit ().getMenuShortcutKeyMask()));	// CTRL on Windows, *** on MAC-OS
+				user_manual.setMnemonic(KeyEvent.VK_U);
+				user_manual.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent event) {
+						File user_manual_pdf = FilesHandle.get_file_from_resource(version + "-USER-MANUAL.pdf");
+						try {
+							Desktop.getDesktop().open(user_manual_pdf);
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
 					}
-				});	
-				
+				});					
 			}
 		});
 	}

@@ -40,7 +40,7 @@ public class Utility {
 				""";
 		// popup panel
 		String ExitOption[] = { "Update", "Replace", "Cancel" };
-		int response = JOptionPane.showOptionDialog(IMSRmain.get_DesktopPane(), dialog_title, "Select PDF files for extraction",
+		int response = JOptionPane.showOptionDialog(IMSRmain.get_DesktopPane(), dialog_title, "Select PDF files for exploration and extraction",
 				JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, ExitOption, ExitOption[0]);
 		if (response <= 1) {
 			File[] selected_pdf_files = FilesChooser.chosenPdfFiles("Select pdf files"); // Open File chooser
