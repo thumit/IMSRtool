@@ -33,7 +33,7 @@ IMSR-TOOL is licensed under the terms of the GNU General Public License version 
 
 IMSR-TOOL integrates the following open-sources:
 	XPDF 4.0.4 (xpdfreader.com), licensed under the terms of the GNU General Public License version 3 or later. A copy of this license (license-GPL.txt) could be found in the distribution of PRISM.
-	LUCENE 8.9.0 (lucene.apache.org), licensed under the terms of the Apache License version 2.0. A copy of this license (license-AL.txt) could be found in the distribution of PRISM.
+
 
 IMSR-TOOL text-based logos are designed at http://www.picturetopeople.org, licensed: Free (not limited by any kind of license)
 	
