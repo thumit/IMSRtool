@@ -32,15 +32,15 @@ public class Utility {
 	public void explore_and_extract_files() {
 		String dialog_title = 
 				"""
-					Before exploration and extraction, selected pdf files have to be converted to text files.
-					Text files will be stored in two folders (raw and simple2) in the same directory of the selected pdf files.
-					Choose one of below options before selecting pdf files:
-					1. Update: convert selected pdf files that do not have associated text files.
-					2. Replace: convert your selected pdf files and replace existing associated text files.
+					Selected PDFs will be converted to text files (TXTs).
+					TXTs will be saved in two folders (raw and simple2) in the same directory of the PDFs.
+					Choose one of the below options (option 1 is recommended):
+					1. Update: convert PDFs to TXTs for only cases when PDFs do not have existing TXTs (Faster run time)
+					2. Replace: convert PDFs to TXTs for all cases and replace all existing TXTs (Slower run time)
 				""";
 		// popup panel
 		String ExitOption[] = { "Update", "Replace", "Cancel" };
-		int response = JOptionPane.showOptionDialog(IMSRmain.get_DesktopPane(), dialog_title, "Select pdf files",
+		int response = JOptionPane.showOptionDialog(IMSRmain.get_DesktopPane(), dialog_title, "Select PDF files for extraction",
 				JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, ExitOption, ExitOption[0]);
 		if (response <= 1) {
 			File[] selected_pdf_files = FilesChooser.chosenPdfFiles("Select pdf files"); // Open File chooser
@@ -102,7 +102,7 @@ public class Utility {
 			if (pdftotext_exe_target_file.exists()) {
 				pdftotext_exe_target_file.delete();
 			}
-			JOptionPane.showMessageDialog(null, files.length + " pdf files have been successfully converted to text files in 2 folders 'simple2' and 'raw'");
+			JOptionPane.showMessageDialog(null, files.length + " PDFs have been successfully converted to TXTs and saved in 2 folders 'simple2' and 'raw'");
 		}
 	}
 	
