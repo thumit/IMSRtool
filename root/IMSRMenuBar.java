@@ -1,23 +1,20 @@
-package root;
 /*
-Copyright (C) 2016-2020 PRISM Development Team
+Copyright (C) 2022-2023 IMSR-TOOL DEVELOPER
 
-PRISM is free software: you can redistribute it and/or modify
+IMSR-TOOL is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
-PRISM is distributed in the hope that it will be useful,
+IMSR-TOOL is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with PRISM. If not, see <http://www.gnu.org/licenses/>.
+along with IMSR-TOOL. If not, see <http://www.gnu.org/licenses/>.
 */
-
-
-
+package root;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
