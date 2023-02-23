@@ -1446,6 +1446,105 @@ public class ISMR_Process {
 		
 		manual_fire_adjustment_list.put("2021-10-08	NRCC	NA	NA	STATELINE	Complex	ID-IPF	13,199	0	50	Ctn	11/1	46	0	0	0	0	22.5M	FS",
 				  "2021-10-08	NRCC	NA	NA	STATELINE COMPLEX	ID-IPF	13,199	0	50	Ctn	11/1	46	---	0	0	0	0	22.5M	FS");
+		
+		manual_fire_adjustment_list.put("2022-03-11	SACC	NA	NA	* JACKSON	Road	NC-NCS	1,060	---	100	Ctn	---	21	---	0	3	0	35K	ST",
+				  "2022-03-11	SACC	NA	NA	* JACKSON ROAD	NC-NCS	1,060	---	100	CTN	---	21	---	0	3	0	0	35K	ST");
+		
+		manual_fire_adjustment_list.put("2022-05-05	SACC	NA	NA	125	Mile	Marker	FL-FLS	1,117	75	Comp	UNK	8	0	1	0	0	NR	ST",
+				  "2022-05-05	SACC	NA	NA	125 MILE MARKER	FL-FLS	1,117	---	75	COMP	UNK	8	---	0	1	0	0	NR	ST");
+		
+		manual_fire_adjustment_list.put("2022-05-06	SACC	NA	NA	125	Mile	Marker	FL-FLS	1,117	75	Comp	UNK	8	0	1	0	0	NR	ST",
+				  "2022-05-06	SACC	NA	NA	125	MILE MARKER	FL-FLS	1,117	---	75	COMP	UNK	8	---	0	1	0	0	NR	ST");
+		
+		manual_fire_adjustment_list.put("2022-06-13	AICC	NA	NA	--- 0 0 0 0 5K ST",
+				  "2022-06-13	AICC	NA	NA	FOURTH OF JULY CREEK	AK-SWS	24,018	---	0	COMP	10/31	0	---	0	0	0	0	5K	ST");
+		
+		manual_fire_adjustment_list.put("2022-06-14	AICC	NA	NA	--- 0 0 0 0 5K ST",
+				  "2022-06-14	AICC	NA	NA	FOURTH OF JULY CREEK	AK-SWS	24,018	---	0	COMP	10/31	0	---	0	0	0	0	5K	ST");
+		
+		manual_fire_adjustment_list.put("2022-06-15	AICC	NA	NA	--- 0 0 0 0 5K ST",
+				  "2022-06-15	AICC	NA	NA	FOURTH OF JULY CREEK	AK-SWS	24,018	---	0	COMP	10/31	0	---	0	0	0	0	5K	ST");
+		
+		manual_fire_adjustment_list.put("2022-07-02	AICC	NA	NA	--- 0 0 1 0 NR BLM",
+				  "2022-07-02	AICC	NA	NA	POORMAN COMPLEX	AK-GAD	23,064	---	0	COMP	7/20	26	---	0	0	1	0	NR	BLM");
+		
+		manual_fire_adjustment_list.put("2022-07-09	AICC	NA	NA	--- 0 0 0 0 NR ST",
+				  "2022-07-09	AICC	NA	NA	SOUTH FORK KUSKOKWIM	AK-SWS	120	---	0	COMP	10/31	0	---	0	0	0	0	NR	ST");
+		
+		manual_fire_adjustment_list.put("2022-07-10	AICC	NA	NA	--- 0 0 0 0 NR ST",
+				  "2022-07-10	AICC	NA	NA	SOUTH FORK KUSKOKWIM	AK-SWS	120	---	0	COMP	10/31	0	---	0	0	0	0	NR	ST");
+		
+		manual_fire_adjustment_list.put("2022-07-11	AICC	NA	NA	--- 0 0 0 0 NR ST",
+				  "2022-07-11	AICC	NA	NA	SOUTH FORK KUSKOKWIM	AK-SWS	120	---	0	COMP	10/31	0	---	0	0	0	0	NR	ST");
+		
+		manual_fire_adjustment_list.put("2022-07-12	AICC	NA	NA	--- 0 0 0 0 NR ST",
+				  "2022-07-12	AICC	NA	NA	SOUTH FORK KUSKOKWIM	AK-SWS	120	---	0	COMP	10/31	0	---	0	0	0	0	NR	ST");
+		
+		manual_fire_adjustment_list.put("2022-07-13	AICC	NA	NA	--- 0 0 0 0 NR ST",
+				  "2022-07-13	AICC	NA	NA	SOUTH FORK KUSKOKWIM	AK-SWS	120	---	0	COMP	10/31	0	---	0	0	0	0	NR	ST");
+		
+		manual_fire_adjustment_list.put("2022-07-14	AICC	NA	NA	--- 0 0 0 0 NR ST",
+				  "2022-07-14	AICC	NA	NA	SOUTH FORK KUSKOKWIM	AK-SWS	120	---	0	COMP	10/31	0	---	0	0	0	0	NR	ST");
+		
+		manual_fire_adjustment_list.put("2022-07-15	AICC	NA	NA	0 0 0 0 0 6K ST",
+				  "2022-07-15	AICC	NA	NA	SOUTH FORK KUSKOKWIM	AK-SWS	1,947	1,827	0	COMP	10/31	0	0	0	0	0	0	6K	ST");
+		
+		manual_fire_adjustment_list.put("2022-07-16	AICC	NA	NA	--- 0 0 0 0 6K ST",
+				  "2022-07-16	AICC	NA	NA	SOUTH FORK KUSKOKWIM	AK-SWS	1,947	---	0	COMP	10/31	0	---	0	0	0	0	6K	ST");
+		
+		manual_fire_adjustment_list.put("2022-07-17	AICC	NA	NA	--- 0 0 0 0 6K ST",
+				  "2022-07-17	AICC	NA	NA	SOUTH FORK KUSKOKWIM	AK-SWS	1,947	---	0	COMP	10/31	0	---	0	0	0	0	6K	ST");
+		
+		manual_fire_adjustment_list.put("2022-07-18	AICC	NA	NA	--- 0 0 0 0 6K ST",
+				  "2022-07-18	AICC	NA	NA	SOUTH FORK KUSKOKWIM	AK-SWS	1,947	---	0	COMP	10/31	0	---	0	0	0	0	6K	ST");
+		
+		manual_fire_adjustment_list.put("2022-07-19	AICC	NA	NA	--- 0 0 0 0 6K ST",
+				  "2022-07-19	AICC	NA	NA	SOUTH FORK KUSKOKWIM	AK-SWS	1,947	---	0	COMP	10/31	0	---	0	0	0	0	6K	ST");
+		
+		manual_fire_adjustment_list.put("2022-07-20	AICC	NA	NA	--- 0 0 0 0 6K ST",
+				  "2022-07-20	AICC	NA	NA	SOUTH FORK KUSKOKWIM	AK-SWS	1,947	---	0	COMP	10/31	0	---	0	0	0	0	6K	ST");
+		
+		manual_fire_adjustment_list.put("2022-07-21	AICC	NA	NA	--- 0 0 0 0 6K ST",
+				  "2022-07-21	AICC	NA	NA	SOUTH FORK KUSKOKWIM	AK-SWS	1,947	---	0	COMP	10/31	0	---	0	0	0	0	6K	ST");
+		
+		manual_fire_adjustment_list.put("2022-07-22	AICC	NA	NA	0 0 0 0 0 17K ST",
+				  "2022-07-22	AICC	NA	NA	SOUTH FORK KUSKOKWIM	AK-SWS	2,866	919	0	COMP	10/31	0	0	0	0	0	0	17K	ST");
+		
+		manual_fire_adjustment_list.put("2022-07-23	AICC	NA	NA	--- 0 0 0 0 17K ST",
+				  "2022-07-23	AICC	NA	NA	SOUTH FORK KUSKOKWIM	AK-SWS	2,866	---	0	COMP	10/31	0	---	0	0	0	0	17K	ST");
+		
+		manual_fire_adjustment_list.put("2022-07-23	AICC	NA	NA	--- 0 0 0 0 2K ST",
+				  "2022-07-23	AICC	NA	NA	HARDSCRABBLE CREEK	AK-SWS	2,514	---	0	COMP	10/31	0	---	0	0	0	0	2K	ST");
+		
+		manual_fire_adjustment_list.put("2022-07-23	AICC	NA	NA	--- 0 0 0 0 68K ST",
+				  "2022-07-23	AICC	NA	NA	FOURTH OF JULY CREEK	AK-SWS	51,146	---	2	COMP	10/31	0	---	0	0	0	0	68K	ST");
+		
+		manual_fire_adjustment_list.put("2022-07-24	AICC	NA	NA	--- 0 0 0 0 17K ST",
+				  "2022-07-24	AICC	NA	NA	SOUTH FORK KUSKOKWIM	AK-SWS	2,866	---	0	COMP	10/31	0	---	0	0	0	0	17K	ST");
+		
+		manual_fire_adjustment_list.put("2022-07-24	AICC	NA	NA	--- 0 0 0 0 2K ST",
+				  "2022-07-24	AICC	NA	NA	HARDSCRABBLE CREEK	AK-SWS	2,514	---	0	COMP	10/31	0	---	0	0	0	0	2K	ST");
+		
+		manual_fire_adjustment_list.put("2022-07-24	AICC	NA	NA	--- 0 0 0 0 68K ST",
+				  "2022-07-24	AICC	NA	NA	FOURTH OF JULY CREEK	AK-SWS	51,146	---	2	COMP	10/31	0	---	0	0	0	0	68K	ST");
+		
+		manual_fire_adjustment_list.put("2022-07-25	AICC	NA	NA	--- 0 0 0 0 17K ST",
+				  "2022-07-25	AICC	NA	NA	SOUTH FORK KUSKOKWIM	AK-SWS	2,866	---	0	COMP	10/31	0	---	0	0	0	0	17K	ST");
+		
+		manual_fire_adjustment_list.put("2022-07-25	AICC	NA	NA	--- 0 0 0 0 2K ST",
+				  "2022-07-25	AICC	NA	NA	HARDSCRABBLE CREEK	AK-SWS	2,514	---	0	COMP	10/31	0	---	0	0	0	0	2K	ST");
+		
+		manual_fire_adjustment_list.put("2022-07-25	AICC	NA	NA	--- 0 0 0 0 68K ST",
+				  "2022-07-25	AICC	NA	NA	FOURTH OF JULY CREEK	AK-SWS	51,146	---	2	COMP	10/31	0	---	0	0	0	0	68K	ST");
+		
+		manual_fire_adjustment_list.put("2022-07-27	RMCC	NA	NA	SAND	Springs	WY-COX	3,193	---	100	Comp	---	0	-5	0	0	0	NR	CNTY",
+				  "2022-07-27	RMCC	NA	NA	SAND SPRINGS	WY-COX	3,193	---	100	COMP	---	0	-5	0	0	0	0	NR	CNTY");
+		
+		manual_fire_adjustment_list.put("2022-10-21	NRCC	NA	NA	BULL	Gin	Complex	MT-KNF	4,281	60	Comp	10/31	7	0	1	0	0	14M	FS",
+				  "2022-10-21	NRCC	NA	NA	BULL GIN COMPLEX	MT-KNF	4,281	---	60	COMP	10/31	7	---	0	1	0	0	14M	FS");
+		
+		manual_fire_adjustment_list.put("2022-10-24	NRCC	NA	NA	BULL	Gin	Complex	MT-KNF	4,281	60	Comp	10/31	7	0	1	0	0	14M	FS",
+				  "2022-10-21	NRCC	NA	NA	BULL GIN COMPLEX	MT-KNF	4,281	---	60	COMP	10/31	7	---	0	1	0	0	14M	FS");
 	}
 	
 	private void data_cleaning() {
