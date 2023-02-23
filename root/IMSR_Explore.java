@@ -99,7 +99,7 @@ class Aggregate {
 		
 		ColorTextArea[] textarea = new ColorTextArea[5];
 		for (int i = 0; i < 5; i++) {
-			textarea[i] = new ColorTextArea("icon_tree.png", 75, 75);
+			textarea[i] = new ColorTextArea("IMSR.png", 1, 1);
 			textarea[i].setSelectionStart(0);	// scroll to top
 			textarea[i].setSelectionEnd(0);
 			textarea[i].setEditable(false);
@@ -471,7 +471,7 @@ class ScrollPane_View_File extends JScrollPane {
 	ColorTextArea textarea;
 	public ScrollPane_View_File(File file, String title) {	
 		// Print to text area------------------	
-		textarea = new ColorTextArea("icon_tree.png", 75, 75);
+		textarea = new ColorTextArea("IMSR.png", 1, 1);
 		textarea.setSelectionStart(0);	// scroll to top
 		textarea.setSelectionEnd(0);
 		textarea.setEditable(false);
@@ -507,7 +507,7 @@ class ScrollPane_View_Trim_File extends JScrollPane {
 	ColorTextArea textarea;
 	public ScrollPane_View_Trim_File(File file, String title) {	
 		// Print to text area--------------------	
-		textarea = new ColorTextArea("icon_tree.png", 75, 75);
+		textarea = new ColorTextArea("IMSR.png", 1, 1);
 		textarea.setSelectionStart(0);	// scroll to top
 		textarea.setSelectionEnd(0);
 		textarea.setEditable(false);
@@ -547,7 +547,7 @@ class ScrollPane_Extraction_Preview extends JScrollPane {
 				"engines", "helicopters", "structures_lost", "cost_to_date", "origin_ownership" };
 		String[] header4 = new String[] { "imsr_date", "gacc", "incidents", "cumulative_size", "crews", "engines", "helicopters", "personnel", "personnel_change" };
 		
-		textarea = new ColorTextArea("icon_tree.png", 75, 75);	// Print to text area
+		textarea = new ColorTextArea("IMSR.png", 1, 1);	// Print to text area
 		ISMR_Process ismr = new ISMR_Process(s_file, r_file);
 		textarea.append(header1[0] + "\t" + "\t" + ismr.date + "\n");
 		textarea.append(header1[1] + "\t" + ismr.national_prepareness_level + "\n");
