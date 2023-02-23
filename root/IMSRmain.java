@@ -23,17 +23,18 @@ import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
-import javax.swing.KeyStroke;
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
@@ -134,7 +135,15 @@ public class IMSRmain extends JFrame {
 				user_manual.setMnemonic(KeyEvent.VK_U);
 				user_manual.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent event) {
-						File user_manual_pdf = FilesHandle.get_file_from_resource(version + "-USER-MANUAL.pdf");
+						File user_manual_pdf = null;
+						if (FilesHandle.executed_by_jar()) {
+							Path targetDirectory = Paths.get(FilesHandle.get_workingLocation() + "/" + version + "-USER-MANUAL.pdf");
+							user_manual_pdf = FilesHandle.getResourceFile(version + "-USER-MANUAL.pdf", targetDirectory);
+							if (!user_manual_pdf.exists()) JOptionPane.showMessageDialog(null, version + "-USER-MANUAL.pdf has been copied to " + user_manual_pdf.getAbsolutePath());
+						} else {
+							user_manual_pdf = FilesHandle.get_file_from_resource(version + "-USER-MANUAL.pdf");
+						}
+						
 						try {
 							Desktop.getDesktop().open(user_manual_pdf);
 						} catch (IOException e) {
@@ -146,9 +155,17 @@ public class IMSRmain extends JFrame {
 				about.setMnemonic(KeyEvent.VK_U);
 				about.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent event) {
-						File user_manual_pdf = FilesHandle.get_file_from_resource("license-GPL.txt");
+						File license_file = null;
+						if (FilesHandle.executed_by_jar()) {
+							Path targetDirectory = Paths.get(FilesHandle.get_workingLocation() + "/license-GPL.txt");
+							license_file = FilesHandle.getResourceFile("license-GPL.txt", targetDirectory);
+							if (!license_file.exists()) JOptionPane.showMessageDialog(null, "license-GPL.txt has been copied to " + license_file.getAbsolutePath());
+						} else {
+							license_file = FilesHandle.get_file_from_resource("license-GPL.txt");
+						}
+						
 						try {
-							Desktop.getDesktop().open(user_manual_pdf);
+							Desktop.getDesktop().open(license_file);
 						} catch (IOException e) {
 							e.printStackTrace();
 						}

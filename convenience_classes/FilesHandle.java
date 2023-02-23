@@ -35,6 +35,20 @@ public class FilesHandle {
 	public FilesHandle() {
 	}
 	
+	// https://stackoverflow.com/questions/37902711/getting-the-path-of-a-running-jar-file-returns-rsrc
+	public static Boolean executed_by_jar() {
+		Boolean withinJar = null;
+		try {
+			String location = FilesHandle.class.getProtectionDomain().getCodeSource().getLocation().toString();
+			if (location.startsWith("rsrc:") || location.endsWith(".jar")
+					&& !new File(location.substring(location.indexOf(':') + 1)).isDirectory())
+				withinJar = Boolean.TRUE;
+			else
+				withinJar = Boolean.FALSE;
+		} catch (Exception ex) {
+			/* value is still null */}
+		return withinJar;
+	}
 	
 	public static String get_workingLocation() {
 		// Get working location of spectrumLite
