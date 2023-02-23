@@ -86,10 +86,10 @@ public class IMSRmain extends JFrame {
 				menuUtility = new JMenu("Utility");
 				menuHelp = new JMenu("Help");
 				
-				pdftotext = new JMenuItem("IMSR Pdf to Text ");
+				pdftotext = new JMenuItem("IMSR Pdf to Text ");	pdftotext.setVisible(false);
 				explore_extract = new JMenuItem("IMSR Explore & Extract");
 				user_manual = new JMenuItem("User Manual");
-				about = new JMenuItem("About");
+				about = new JMenuItem("License");
 				
 				// Add components: Menubar, Menus, MenuItems----------------------------------
 				menuUtility.add(pdftotext);
@@ -110,8 +110,8 @@ public class IMSRmain extends JFrame {
 				setLocationRelativeTo(null);
 				setVisible(true);
 				
-				// Add listeners "New"------------------------------------------------
-				pdftotext.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, Toolkit.getDefaultToolkit ().getMenuShortcutKeyMask()));	// CTRL on Windows, *** on MAC-OS
+				// Add listeners------------------------------------------------
+//				pdftotext.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, Toolkit.getDefaultToolkit ().getMenuShortcutKeyMask()));	// CTRL on Windows, *** on MAC-OS
 				pdftotext.setMnemonic(KeyEvent.VK_P);
 				pdftotext.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent event) {
@@ -121,7 +121,7 @@ public class IMSRmain extends JFrame {
 					}
 				});	
 				
-				explore_extract.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_2, Toolkit.getDefaultToolkit ().getMenuShortcutKeyMask()));	// CTRL on Windows, *** on MAC-OS
+//				explore_extract.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_2, Toolkit.getDefaultToolkit ().getMenuShortcutKeyMask()));	// CTRL on Windows, *** on MAC-OS
 				explore_extract.setMnemonic(KeyEvent.VK_E);
 				explore_extract.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent event) {
@@ -130,7 +130,7 @@ public class IMSRmain extends JFrame {
 					}
 				});	
 				
-				user_manual.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_3, Toolkit.getDefaultToolkit ().getMenuShortcutKeyMask()));	// CTRL on Windows, *** on MAC-OS
+//				user_manual.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_3, Toolkit.getDefaultToolkit ().getMenuShortcutKeyMask()));	// CTRL on Windows, *** on MAC-OS
 				user_manual.setMnemonic(KeyEvent.VK_U);
 				user_manual.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent event) {
@@ -141,7 +141,19 @@ public class IMSRmain extends JFrame {
 							e.printStackTrace();
 						}
 					}
-				});					
+				});			
+				
+				about.setMnemonic(KeyEvent.VK_U);
+				about.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent event) {
+						File user_manual_pdf = FilesHandle.get_file_from_resource("license-GPL.txt");
+						try {
+							Desktop.getDesktop().open(user_manual_pdf);
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+					}
+				});		
 			}
 		});
 	}
