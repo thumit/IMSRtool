@@ -31,4 +31,4 @@ IMSR-TOOL integrates XPDF 4.0.4 (xpdfreader.com), an open-source library license
 IMSR-TOOL logos are designed at http://www.picturetopeople.org, licensed: Free (not limited by any kind of license)
 	
 
-HOW TO CITE THIS TOOL: WILL BE UPDATEED SOON.
+HOW TO CITE THIS TOOL: WILL BE UPDATED SOON.
