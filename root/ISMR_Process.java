@@ -349,8 +349,12 @@ public class ISMR_Process {
 		String gacc_fire_use_teams_committed = null;
 		
 		if (s_lines[start_line].indexOf(")") == -1) {
-			System.out.println(date + " missing gacc preparedness information");
-			gacc_prepareness_level = "null";	 // Example missing information: 20211105IMSR
+			if (date.equals("2022-05-30")) {
+				gacc_prepareness_level = "2";	// Fix the case RMRS lacks the ) at the end
+			} else {
+				System.out.println(date + " missing gacc preparedness information");
+				gacc_prepareness_level = "null";	 // Example missing information: 20211105IMSR
+			}
 		} else {
 			gacc_prepareness_level = s_lines[start_line].substring(s_lines[start_line].indexOf("(PL") + 3, s_lines[start_line].indexOf(")"));
 		}
@@ -1454,7 +1458,7 @@ public class ISMR_Process {
 				  "2022-05-05	SACC	NA	NA	125 MILE MARKER	FL-FLS	1,117	---	75	COMP	UNK	8	---	0	1	0	0	NR	ST");
 		
 		manual_fire_adjustment_list.put("2022-05-06	SACC	NA	NA	125	Mile	Marker	FL-FLS	1,117	75	Comp	UNK	8	0	1	0	0	NR	ST",
-				  "2022-05-06	SACC	NA	NA	125	MILE MARKER	FL-FLS	1,117	---	75	COMP	UNK	8	---	0	1	0	0	NR	ST");
+				  "2022-05-06	SACC	NA	NA	125 MILE MARKER	FL-FLS	1,117	---	75	COMP	UNK	8	---	0	1	0	0	NR	ST");
 		
 		manual_fire_adjustment_list.put("2022-06-13	AICC	NA	NA	--- 0 0 0 0 5K ST",
 				  "2022-06-13	AICC	NA	NA	FOURTH OF JULY CREEK	AK-SWS	24,018	---	0	COMP	10/31	0	---	0	0	0	0	5K	ST");
@@ -1613,7 +1617,7 @@ public class ISMR_Process {
 		// clean fires 
 		for (int i = 0; i < final_fires.size(); i++) {
 			String[] fs = fs_list.get(i);
-			// move * i "fire_name" to another column "new_large_fire_mark"
+			// move * in "fire_name" to another column "new_large_fire_mark"
 			if (fs[4].contains("*")) {
 				fs[4] = "*" + "\t" + fs[4].replaceAll("\\*", "").replaceAll("\\s+", " ").trim(); 
 			} else {
