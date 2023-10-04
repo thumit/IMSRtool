@@ -376,8 +376,8 @@ public class ISMR_Process {
 		if (mstr.contains("uncontained large fires")) term.add("uncontained large fires");
 		if (mstr.contains("area command teams committed") || mstr.contains("area command")) term.add("area command teams committed");	// i.e. 20201021 uses Area Command
 		if (mstr.contains("nimos committed")) term.add("nimos committed");
-		if (mstr.contains("type 1 imts committed") || mstr.contains("type 1 imt committed") || mstr.contains("type 1 teams committed")) term.add("type 1 imts committed");		// i.e. 20180704 uses "type 1 teams committed"
-		if (mstr.contains("type 2 imts committed") || mstr.contains("type 2 imt committed") || mstr.contains("type 2 teams committed")) term.add("type 2 imts committed");		// i.e. 20180704 uses "type 2 teams committed"
+		if (mstr.contains("type 1 imts committed") || mstr.contains("type 1 imt committed") || mstr.contains("type 1 imt's committed") || mstr.contains("type 1 teams committed")) term.add("type 1 imts committed");		// i.e. 20180704 uses "type 1 teams committed"
+		if (mstr.contains("type 2 imts committed") || mstr.contains("type 2 imt committed") || mstr.contains("type 2 imt's committed") || mstr.contains("type 2 teams committed")) term.add("type 2 imts committed");		// i.e. 20180704 uses "type 2 teams committed"
 		if (mstr.contains("fire use teams committed") || mstr.contains("fire use teams")) term.add("fire use teams committed");	
 		List<String> value = new ArrayList<String>();
 		String[] split_value = (mstr.replaceAll("type 1", "").replaceAll("type 2", "")).split(" ");	// remove the number 1 and 2
