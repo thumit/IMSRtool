@@ -42,19 +42,10 @@ public class ISMR_Process {
 	String type_1_imts_committed;
 	String type_2_imts_committed;
 	String fire_use_teams_committed;
+	String complex_imts_committed;
+	
 	List<String> national_activity = new ArrayList<String>();	// store all the above information
-	
-//	String gacc_prepareness_level;
-//	String gacc_new_fires;
-//	String gacc_new_large_incidents;
-//	String gacc_uncontained_large_fires;
-//	String gacc_area_command_teams_committed;
-//	String gacc_NIMOs_committed;
-//	String gacc_type_1_IMTs_committed;
-//	String gacc_type_2_IMTs_committed;
-//	String gacc_fire_use_teams_committed;
 	List<String> gacc_activity = new ArrayList<String>();	// almost the same information structure as national activity, but the level is gacc area
-	
 	List<String> resource_summary = new ArrayList<String>();	// store all active incident resource summary information
 	
 	LinkedHashMap<String, String> manual_fire_adjustment_list = new LinkedHashMap<String, String>();
@@ -134,7 +125,7 @@ public class ISMR_Process {
 		l = mergeCount;
 		do {
 			l = l + 1;
-			if (s_lines[l].contains("Fire Use Teams")) {
+			if (s_lines[l].contains("Fire Use Teams") || s_lines[l].contains("Complex IMTs")) {
 				mergeCount = l;
 				continue_loop = false;
 			} else {
@@ -208,7 +199,7 @@ public class ISMR_Process {
 			temp = (mstr.substring(mstr.indexOf(st) + 22)).trim();		// Note: different from above, not use sub string between
 			if (temp != null) type_2_imts_committed = temp.split(" ")[0];
 		}
-		if (l < s_lines.length - 1) {	// if fire use teams committed exists, we also need to read type 2 team in a different way
+		if (l < s_lines.length - 1) {	// if fire use teams committed exists or complex teams exists, we also need to read type 2 team in a different way
 			st = "type 2 imts committed";
 			temp = sb.substringBetween(mstr, st, get_national_next_term(mstr, st)); 
 			if (temp != null) type_2_imts_committed = (temp.substring(temp.indexOf(" ") + 1)).trim();
@@ -216,6 +207,11 @@ public class ISMR_Process {
 			if (mstr.indexOf(st) != - 1) {
 				temp = (mstr.substring(mstr.indexOf(st) + 25)).trim();		// Note: different from above, not use sub string between
 				if (temp != null) fire_use_teams_committed = temp.split(" ")[0];
+			}
+			st = "complex imts committed";		// started from 20220414 we have complex imts. We will never have fire use team (very old in the past) and complex team (very new) at the same time
+			if (mstr.indexOf(st) != - 1) {
+				temp = (mstr.substring(mstr.indexOf(st) + 23)).trim();		// Note: different from above, not use sub string between
+				if (temp != null) complex_imts_committed = temp.split(" ")[0];
 			}
 		}
 		
@@ -232,6 +228,7 @@ public class ISMR_Process {
 		if (type_1_imts_committed == null || type_1_imts_committed.isBlank()) type_1_imts_committed = "null";
 		if (type_2_imts_committed == null || type_2_imts_committed.isBlank()) type_2_imts_committed = "null";
 		if (fire_use_teams_committed == null || fire_use_teams_committed.isBlank()) fire_use_teams_committed = "null";
+		if (complex_imts_committed == null || complex_imts_committed.isBlank()) complex_imts_committed = "null";
 		
 		national_activity.add(date);
 		national_activity.add(national_prepareness_level);
@@ -245,13 +242,14 @@ public class ISMR_Process {
 		national_activity.add(type_1_imts_committed);
 		national_activity.add(type_2_imts_committed);
 		national_activity.add(fire_use_teams_committed);
+		national_activity.add(complex_imts_committed);
 	}
 	
 	private String get_national_next_term(String mstr, String st) {
 		String temp = (mstr.substring(mstr.indexOf(st) + 1)).trim(); // remove 1 leading character then use it to find next term
 		String[] term = new String[] { "national prepareness level", "national fire activity",
 				"initial attack activity", "new large incidents", "new large fires", "large fires contained", "uncontained large fires",			// "new large fires" is a special case used for 2014 data instead of "new large incidents"
-				"area command teams committed", "nimos committed", "type 1 imts committed", "type 2 imts committed", "fire use teams committed" };
+				"area command teams committed", "nimos committed", "type 1 imts committed", "type 2 imts committed", "fire use teams committed", "complex imts committed" };
 		int start_id = 0;
 		for (int i = 0; i < term.length; i++) {
 			if (term[i].contains(st)) {
@@ -347,6 +345,7 @@ public class ISMR_Process {
 		String gacc_type_1_imts_committed = null;
 		String gacc_type_2_imts_committed = null;
 		String gacc_fire_use_teams_committed = null;
+		String gacc_complex_imts_committed = null;
 		
 		if (s_lines[start_line].indexOf(")") == -1) {
 			if (date.equals("2022-05-30")) {
@@ -379,6 +378,7 @@ public class ISMR_Process {
 		if (mstr.contains("type 1 imts committed") || mstr.contains("type 1 imt committed") || mstr.contains("type 1 imt's committed") || mstr.contains("type 1 teams committed")) term.add("type 1 imts committed");		// i.e. 20180704 uses "type 1 teams committed"
 		if (mstr.contains("type 2 imts committed") || mstr.contains("type 2 imt committed") || mstr.contains("type 2 imt's committed") || mstr.contains("type 2 teams committed")) term.add("type 2 imts committed");		// i.e. 20180704 uses "type 2 teams committed"
 		if (mstr.contains("fire use teams committed") || mstr.contains("fire use teams")) term.add("fire use teams committed");	
+		if (mstr.contains("complex imts committed") || mstr.contains("complex imt committed") || mstr.contains("complex imt's committed") || mstr.contains("complex teams committed") || mstr.contains("complex imts")) term.add("complex imts committed");
 		List<String> value = new ArrayList<String>();
 		String[] split_value = (mstr.replaceAll("type 1", "").replaceAll("type 2", "")).split(" ");	// remove the number 1 and 2
 		for (String st : split_value) {
@@ -396,12 +396,13 @@ public class ISMR_Process {
 			if (term.get(j).equals("type 1 imts committed")) gacc_type_1_imts_committed = value.get(j);	
 			if (term.get(j).equals("type 2 imts committed")) gacc_type_2_imts_committed = value.get(j);
 			if (term.get(j).equals("fire use teams committed")) gacc_fire_use_teams_committed = value.get(j);
+			if (term.get(j).equals("complex imts committed")) gacc_complex_imts_committed = value.get(j);
 		}
 		
 		info = String.join("\t", date, current_area, String.valueOf(gacc_priority), 
 				gacc_prepareness_level, gacc_new_fires, gacc_new_large_incidents, gacc_uncontained_large_fires,
 				gacc_area_command_teams_committed, gacc_nimos_committed, gacc_type_1_imts_committed,
-				gacc_type_2_imts_committed, gacc_fire_use_teams_committed);
+				gacc_type_2_imts_committed, gacc_fire_use_teams_committed, gacc_complex_imts_committed);
 		gacc_activity.add(info);
 		// IMPORTANT NOTE NOTE NOTE: 20180619: Rocky Mountain Area has uncontained large files but do not printed in pdf file (Erin's excel file got the right number of 4 uncontained)
 	}

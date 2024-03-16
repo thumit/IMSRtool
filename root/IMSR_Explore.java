@@ -88,10 +88,9 @@ class Aggregate {
 	private boolean solvingstatus;
 	public Aggregate(File[] s_files, File[] r_files) {	
 		String[] header1 = new String[] { "imsr_date", "preparedness_level", "initial_attack_activity",
-				"new_fires", "new_large_fires", "contained_large_fires", "uncontained_large_fires", "area_command_teams", "nimos", "type_1_teams",
-				"type_2_teams", "fire_use_teams" };
+				"new_fires", "new_large_fires", "contained_large_fires", "uncontained_large_fires", "area_command_teams", "nimos", "type_1_teams", "type_2_teams", "fire_use_teams", "complex_teams" };
 		String[] header2 = new String[] { "imsr_date", "gacc", "gacc_priority", "preparedness_level", "new_fires",
-				"new_large_fires", "uncontained_large_fires", "area_command_teams", "nimos", "type_1_teams", "type_2_teams", "fire_use_teams" };
+				"new_large_fires", "uncontained_large_fires", "area_command_teams", "nimos", "type_1_teams", "type_2_teams", "fire_use_teams", "complex_teams" };
 		String[] header3 = new String[] { "imsr_date", "gacc", "gacc_priority", "fire_priority", "new_large_fire_mark", "fire_name", "unit", "fire_size",
 				"fire_size_change", "percent_containment", "contained_completed", "estimated_containment_date", "personnel", "personnel_change", "crews",
 				"engines", "helicopters", "structures_lost", "cost_to_date", "origin_ownership" };
@@ -538,10 +537,9 @@ class ScrollPane_Extraction_Preview extends JScrollPane {
 	ColorTextArea textarea;
 	public ScrollPane_Extraction_Preview(File s_file, File r_file, String title) {
 		String[] header1 = new String[] { "imsr_date", "preparedness_level", "initial_attack_activity",
-				"new_fires", "new_large_fires", "contained_large_fires", "uncontained_large_fires", "area_command_teams", "nimos", "type_1_teams",
-				"type_2_teams", "fire_use_teams" };
+				"new_fires", "new_large_fires", "contained_large_fires", "uncontained_large_fires", "area_command_teams", "nimos", "type_1_teams", "type_2_teams", "fire_use_teams", "complex_teams" };
 		String[] header2 = new String[] { "imsr_date", "gacc", "gacc_priority", "preparedness_level", "new_fires",
-				"new_large_fires", "uncontained_large_fires", "area_command_teams", "nimos", "type_1_teams", "type_2_teams", "fire_use_teams" };
+				"new_large_fires", "uncontained_large_fires", "area_command_teams", "nimos", "type_1_teams", "type_2_teams", "fire_use_teams", "complex_teams" };
 		String[] header3 = new String[] { "imsr_date", "gacc", "gacc_priority", "fire_priority", "new_large_fire_mark", "fire_name", "unit", "fire_size",
 				"fire_size_change", "percent_containment", "contained_completed", "estimated_containment_date", "personnel", "personnel_change", "crews",
 				"engines", "helicopters", "structures_lost", "cost_to_date", "origin_ownership" };
@@ -561,6 +559,7 @@ class ScrollPane_Extraction_Preview extends JScrollPane {
 		textarea.append(header1[9] + "\t" + "\t" + ismr.type_1_imts_committed + "\n");
 		textarea.append(header1[10] + "\t" + "\t" + ismr.type_2_imts_committed + "\n");
 		textarea.append(header1[11] + "\t" + "\t" + ismr.fire_use_teams_committed + "\n");
+		textarea.append(header1[12] + "\t" + "\t" + ismr.complex_imts_committed + "\n");
 		textarea.append("--------------------------------------------------------------------" + "\n");
 		textarea.append(String.join("\t", header2)  + "\n");
 		for (String st : ismr.gacc_activity) {
