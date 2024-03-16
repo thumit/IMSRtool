@@ -1023,28 +1023,6 @@ public class ISMR_Process {
 						this_fire = manual_fire_adjustment_list.get(this_fire);
 						r_fires.add(this_fire);
 					} else {
-//						// problem need to fix manually: i.e. CA-KNF-006098 Complex 20170929
-//						if (this_fire.equals("2017-09-29	ONCC	NA	NA	CA-KNF- 006098 COMPLEX CA-KNF 78,698 .4	0	51	Comp	10/10	318	1	5	11	2	0	44.5M	FS")) {
-//							System.out.println("this fire is fixed and added manually");
-//							System.out.println("old info:     " + this_fire);
-//							this_fire =  "2017-09-29	ONCC	NA	NA	CA-KNF-006098 COMPLEX	CA-KNF	78,698	0	51	Comp	10/10	318	1	5	11	2	0	44.5M	FS";
-//							System.out.println("new info:     " + this_fire);
-//							r_fires.add(this_fire);
-//						} else if (this_fire.equals("2015-06-01	SACC	NA	NA	MUD LAKE COMPLEX	FL-BCP	35,321	0	70	Comp	260	-32	4	7	6	0	7.6M	NPS")) {
-//							System.out.println("this fire is fixed and added manually");
-//							System.out.println("old info:     " + this_fire);
-//							this_fire =  "2015-06-01	SACC	NA	NA	MUD LAKE COMPLEX	FL-BCP	35,321	0	70	Comp	---	260	-32	4	7	6	0	7.6M	NPS";
-//							System.out.println("new info:     " + this_fire);
-//							r_fires.add(this_fire);
-//						}  else if (this_fire.equals("2015-06-01	SACC	NA	NA	BOLIN SLIME PIT	FL-FLS	300	---	95	Ctn	2	---	0	0	0	0	1K	ST")) {
-//							System.out.println("this fire is fixed and added manually");
-//							System.out.println("old info:     " + this_fire);
-//							this_fire =  "2015-06-01	SACC	NA	NA	BOLIN SLIME PIT	FL-FLS	300	---	95	Ctn	---	2	---	0	0	0	0	1K	ST";
-//							System.out.println("new info:     " + this_fire);
-//							r_fires.add(this_fire);
-//						} else {
-//							System.out.println( date + ": " +"Is this a fire we did not add (length not 19) when processing raw?   " + this_fire);
-//						} 
 						
 						String adjust_fire = "";
 						String[] this_fire_split = this_fire.split("\t");
@@ -1551,6 +1529,12 @@ public class ISMR_Process {
 		
 		manual_fire_adjustment_list.put("2022-10-24	NRCC	NA	NA	BULL	Gin	Complex	MT-KNF	4,281	60	Comp	10/31	7	0	1	0	0	14M	FS",
 				  "2022-10-21	NRCC	NA	NA	BULL GIN COMPLEX	MT-KNF	4,281	---	60	COMP	10/31	7	---	0	1	0	0	14M	FS");
+		manual_fire_adjustment_list.put("2023-03-24	RMCC	NA	NA	*	Manvel	CO-PWX	1,897	---	100	Ctn	---	23	---	0	9	0	5K	CNTY",
+				  "2023-03-24	RMCC	NA	NA	* Manvel	CO-PWX	1,897	---	100	Ctn	---	23	---	0	9	0	---	5K	CNTY");
+		manual_fire_adjustment_list.put("2023-08-29	ONCC	NA	NA	2023 SRF LIGHTNING COMPLEX CA-SRF	12,	673	1,704	20	Ctn	9/30	2,652	-29	51	363	0	0	21.7M	FS",
+				  "2023-08-29	ONCC	NA	NA	2023 SRF LIGHTNING COMPLEX	CA-SRF	12,673	1,704	20	Ctn	9/30	2,652	-29	51	363	0	0	21.7M	FS");
+		manual_fire_adjustment_list.put("2023-09-15	NWCC	NA	NA	ANVIL OR-RSF	1,	433	620	0	Ctn	10/31	353	2	9	13	4	0	8.2M	FS",
+				  "2023-09-15	NWCC	NA	NA	ANVIL	OR-RSF	1,433	620	0	Ctn	10/31	353	2	9	13	4	0	8.2M	FS");
 	}
 	
 	private void data_cleaning() {
