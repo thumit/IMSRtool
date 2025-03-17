@@ -280,27 +280,32 @@ class Aggregate {
 			String[] fs = final_fires.get(i).split("\t");
 			if (fs[18].endsWith("KI")) fs[18] = fs[18].substring(0, fs[18].length() - 1); // version 1.08 fix where there are records with typo of cost ends with KI
 			// these are records with ctd problem. ctd that does not end with K or M can be fixed by checking the same fire in most recent previous date.
-			if (!(fs[18].equals("NA") || fs[18].equals("NR") || fs[18].equals("---") || fs[18].endsWith("K") || fs[18].endsWith("M"))) {
-				boolean continue_loop = true;
-				int l = i;
-				do {
-					l = l - 1;
-					String[] previous_fs = final_fires.get(l).split("\t");
-					if (previous_fs[5].equals(fs[5]) && (previous_fs[18].endsWith("K") || previous_fs[18].endsWith("M"))) {		// found this fire in the previous date, now add K or M
-						double previous_ctd = Double.valueOf(previous_fs[18].substring(0, previous_fs[18].length() - 1));
-						double ctd = Double.valueOf(fs[18]);
-						if (previous_ctd <= ctd) {
-							fs[18] = fs[18] + previous_fs[18].substring(previous_fs[18].length() - 1);		// add the K or M of the previous ctd to this ctd
-						} else {
-							fs[18] = fs[18] + "M";	// definitely ad M in this case
+			try {
+				if (!(fs[18].equals("NA") || fs[18].equals("NR") || fs[18].equals("---") || fs[18].endsWith("K") || fs[18].endsWith("M"))) {
+					boolean continue_loop = true;
+					int l = i;
+					do {
+						l = l - 1;
+						String[] previous_fs = final_fires.get(l).split("\t");
+						if (previous_fs[5].equals(fs[5]) && (previous_fs[18].endsWith("K") || previous_fs[18].endsWith("M"))) {		// found this fire in the previous date, now add K or M
+							double previous_ctd = Double.valueOf(previous_fs[18].substring(0, previous_fs[18].length() - 1));
+							double ctd = Double.valueOf(fs[18]);
+							if (previous_ctd <= ctd) {
+								fs[18] = fs[18] + previous_fs[18].substring(previous_fs[18].length() - 1);		// add the K or M of the previous ctd to this ctd
+							} else {
+								fs[18] = fs[18] + "M";	// definitely ad M in this case
+							}
+							// Now we use set function to replace this fire in the final_fires list
+							String adjusted_fire = String.join("\t", fs);
+							final_fires.set(i, adjusted_fire);
+							System.out.println(String.join("\t", fs[0], fs[1], fs[4], fs[5], "cost _to_date: K or M added"));
+							continue_loop = false;
 						}
-						// Now we use set function to replace this fire in the final_fires list
-						String adjusted_fire = String.join("\t", fs);
-						final_fires.set(i, adjusted_fire);
-						System.out.println(String.join("\t", fs[0], fs[1], fs[4], fs[5], "cost _to_date: K or M added"));
-						continue_loop = false;
-					}
-				} while (continue_loop && l > 0);
+					} while (continue_loop && l > 0);
+				}
+			} catch (NumberFormatException e) {
+				System.out.println("Problem when trying to fix the cost " + final_fires.get(i));
+				e.printStackTrace();
 			}
 		}
 		// Loop backward and fix using next fire, because previous fire does not exist
@@ -308,32 +313,37 @@ class Aggregate {
 			String[] fs = final_fires.get(i).split("\t");
 			if (fs[18].endsWith("KI")) fs[18] = fs[18].substring(0, fs[18].length() - 1); // version 1.08 fix where there are records with typo of cost ends with KI
 			// these are records with ctd problem. ctd that does not end with K or M can be fixed by checking the same fire in most recent next date.
-			if (!(fs[18].equals("NA") || fs[18].equals("NR") || fs[18].equals("---") || fs[18].endsWith("K") || fs[18].endsWith("M"))) {
-				boolean continue_loop = true;
-				int l = i;
-				do {
-					l = l + 1;
-					String[] next_fs = final_fires.get(l).split("\t");
-					if (next_fs[5].equals(fs[5]) && (next_fs[18].endsWith("K") || next_fs[18].endsWith("M"))) {		// found this fire in the next date, now add K or M
-						double next_ctd = Double.valueOf(next_fs[18].substring(0, next_fs[18].length() - 1));
-						double ctd = Double.valueOf(fs[18]);
-						if (next_ctd >= ctd) {
-							fs[18] = fs[18] + next_fs[18].substring(next_fs[18].length() - 1);		// add the K or M of the next ctd to this ctd
-						} else {
-							fs[18] = fs[18] + "K";	// definitely ad K in this case
+			try {
+				if (!(fs[18].equals("NA") || fs[18].equals("NR") || fs[18].equals("---") || fs[18].endsWith("K") || fs[18].endsWith("M"))) {
+					boolean continue_loop = true;
+					int l = i;
+					do {
+						l = l + 1;
+						String[] next_fs = final_fires.get(l).split("\t");
+						if (next_fs[5].equals(fs[5]) && (next_fs[18].endsWith("K") || next_fs[18].endsWith("M"))) {		// found this fire in the next date, now add K or M
+							double next_ctd = Double.valueOf(next_fs[18].substring(0, next_fs[18].length() - 1));
+							double ctd = Double.valueOf(fs[18]);
+							if (next_ctd >= ctd) {
+								fs[18] = fs[18] + next_fs[18].substring(next_fs[18].length() - 1);		// add the K or M of the next ctd to this ctd
+							} else {
+								fs[18] = fs[18] + "K";	// definitely ad K in this case
+							}
+							// Now we use set function to replace this fire in the final_fires list
+							String adjusted_fire = String.join("\t", fs);
+							final_fires.set(i, adjusted_fire);
+							System.out.println(String.join("\t", fs[0], fs[1], fs[4], fs[5], "cost _to_date: K or M added"));
+							continue_loop = false;
 						}
-						// Now we use set function to replace this fire in the final_fires list
-						String adjusted_fire = String.join("\t", fs);
-						final_fires.set(i, adjusted_fire);
-						System.out.println(String.join("\t", fs[0], fs[1], fs[4], fs[5], "cost _to_date: K or M added"));
-						continue_loop = false;
+					} while (continue_loop && l < final_fires.size() - 1);
+					if (continue_loop) {
+						String raw_number_record = String.join("\t", fs[0], fs[1], fs[4], fs[5], "cost _to_date: unchanged because cannot identify K or M");
+						raw_number_record_list = String.join("\n", raw_number_record_list, raw_number_record);
+						raw_number_record_list = raw_number_record_list.substring(raw_number_record_list.indexOf("\t") + 1);	// remove first tab
 					}
-				} while (continue_loop && l < final_fires.size() - 1);
-				if (continue_loop) {
-					String raw_number_record = String.join("\t", fs[0], fs[1], fs[4], fs[5], "cost _to_date: unchanged because cannot identify K or M");
-					raw_number_record_list = String.join("\n", raw_number_record_list, raw_number_record);
-					raw_number_record_list = raw_number_record_list.substring(raw_number_record_list.indexOf("\t") + 1);	// remove first tab
 				}
+			} catch (NumberFormatException e) {
+				System.out.println("Problem when trying to fix the cost " + final_fires.get(i));
+				e.printStackTrace();
 			}
 		}
 		System.out.println(raw_number_record_list);
