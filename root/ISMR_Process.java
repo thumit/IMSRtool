@@ -31,6 +31,7 @@ import convenience_classes.SubstringBetween;
 
 public class ISMR_Process {
 	String date, s_date, r_date;
+	int date_int;
 	String national_prepareness_level;
 	String initial_attack_activity;
 	String initial_attack_new_fires;
@@ -72,6 +73,7 @@ public class ISMR_Process {
 			s_date = String.join("-", s_file.getName().substring(0, 4), s_file.getName().substring(4, 6), s_file.getName().substring(6, 8));	// use this data format yyyy-mm-dd to join easily with Ross data
 			r_date = String.join("-", r_file.getName().substring(0, 4), r_file.getName().substring(4, 6), r_file.getName().substring(6, 8));	// use this data format yyyy-mm-dd to join easily with Ross data
 			date = s_date;
+			date_int = Integer.valueOf(s_file.getName().substring(0, 4));
 			
 //			List<String> lines_list = Files.readAllLines(Paths.get(file.getAbsolutePath()), StandardCharsets.UTF_8);		// Not sure why this UTF_8 fail
 			List<String> s_lines_list = Files.readAllLines(Paths.get(s_file.getAbsolutePath()), Charset.defaultCharset());		// Therefore I use default
@@ -91,7 +93,11 @@ public class ISMR_Process {
 				r_lines[i] = r_lines[i].replaceAll("\\s{2,}", " ").trim(); // 2 or more spaces will be replaced by one space, then leading and ending spaces will be removed
 			}
 			
-			get_national_data(s_lines);
+			if (date_int < 2024) {
+				get_national_data(s_lines);
+			} else {
+				get_2024_national_data(s_lines);
+			}
 			get_area_data(s_lines);
 			get_reource_summary_data(s_lines);
 			get_fire_data_simple2_method(s_lines);
@@ -214,6 +220,102 @@ public class ISMR_Process {
 				if (temp != null) complex_imts_committed = temp.split(" ")[0];
 			}
 		}
+		
+		// If no data then make it null
+		if (date == null || date.isBlank()) date = "null";
+		if (national_prepareness_level == null || national_prepareness_level.isBlank()) national_prepareness_level = "null";
+		if (initial_attack_activity == null || initial_attack_activity.isBlank()) initial_attack_activity = "null";
+		if (initial_attack_new_fires == null || initial_attack_new_fires.isBlank()) initial_attack_new_fires = "null";
+		if (new_large_incidents == null || new_large_incidents.isBlank()) new_large_incidents = "null";
+		if (large_fires_contained == null || large_fires_contained.isBlank()) large_fires_contained = "null";
+		if (uncontained_large_fires == null || uncontained_large_fires.isBlank()) uncontained_large_fires = "null";
+		if (area_command_teams_committed == null || area_command_teams_committed.isBlank()) area_command_teams_committed = "null";
+		if (nimos_committed == null || nimos_committed.isBlank()) nimos_committed = "null";
+		if (type_1_imts_committed == null || type_1_imts_committed.isBlank()) type_1_imts_committed = "null";
+		if (type_2_imts_committed == null || type_2_imts_committed.isBlank()) type_2_imts_committed = "null";
+		if (fire_use_teams_committed == null || fire_use_teams_committed.isBlank()) fire_use_teams_committed = "null";
+		if (complex_imts_committed == null || complex_imts_committed.isBlank()) complex_imts_committed = "null";
+		
+		national_activity.add(date);
+		national_activity.add(national_prepareness_level);
+		national_activity.add(initial_attack_activity);
+		national_activity.add(initial_attack_new_fires);
+		national_activity.add(new_large_incidents);
+		national_activity.add(large_fires_contained);
+		national_activity.add(uncontained_large_fires);
+		national_activity.add(area_command_teams_committed);
+		national_activity.add(nimos_committed);
+		national_activity.add(type_1_imts_committed);
+		national_activity.add(type_2_imts_committed);
+		national_activity.add(fire_use_teams_committed);
+		national_activity.add(complex_imts_committed);
+	}
+	
+	private void get_2024_national_data(String[] s_lines) {
+		boolean continue_loop = true;
+		national_prepareness_level = null;
+		initial_attack_activity = null;
+		initial_attack_new_fires = null;
+		new_large_incidents = null;
+		large_fires_contained = null;
+		uncontained_large_fires = null;
+		area_command_teams_committed = null;
+		nimos_committed = null;
+		type_1_imts_committed = null;
+		type_2_imts_committed = null;
+		fire_use_teams_committed = null;
+		complex_imts_committed = null;
+		
+		int l = -1;
+		do {
+			l = l + 1;
+			String st = s_lines[l].toLowerCase();
+			if (st.contains("understanding the imsr")) {
+				continue_loop = false;
+			} else {
+				if (national_prepareness_level == null && st.contains("national preparedness level")) {
+					st = st.replaceAll("[^0-9]", "");
+					national_prepareness_level = st;
+				} else if (initial_attack_activity == null && initial_attack_new_fires == null && st.contains("initial attack activity")) {
+					st = (st.substring(st.indexOf(" ") + 1)).trim();	// remove all characters (such as :) before the first space and then trim
+					if (st.matches("-?(0|[1-9]\\d*)")) {		// this special case happens in several instance. use Regex to check if this is just a number
+						initial_attack_new_fires = st;
+						initial_attack_activity = null;
+					} else {
+						initial_attack_activity = st.split(" ")[0].toUpperCase();
+						if (initial_attack_activity.contains("(")) initial_attack_activity = initial_attack_activity.substring(0, initial_attack_activity.indexOf("(")); // special case: 20170620
+						if (st.split(" ").length > 1) {
+							initial_attack_new_fires = (st.substring(st.indexOf("(") + 1, st.indexOf(")")).replaceAll("new", "").replaceAll("fire", "").replaceAll("s", "")).trim();
+						}
+						initial_attack_new_fires = st.replaceAll("[^0-9.]", "");	// final adjustment for correct number of new fires
+					}
+				} else if (new_large_incidents == null && st.contains("new large incidents")) {
+					st = st.replaceAll("[^0-9]", "");
+					new_large_incidents = st;
+				} else if (large_fires_contained == null && st.contains("large fires contained")) {
+					st = st.replaceAll("[^0-9]", "");
+					large_fires_contained = st;
+				} else if (uncontained_large_fires == null && st.contains("uncontained large fires")) {
+					st = st.replaceAll("[^0-9]", "");
+					uncontained_large_fires = st;
+				} else if (area_command_teams_committed == null && st.contains("area command teams committed")) {
+					st = st.replaceAll("[^0-9]", "");
+					area_command_teams_committed = st;
+				} else if (complex_imts_committed == null && (st.contains("complex imts committed") || st.contains("cimts committed") )) {
+					st = st.replaceAll("[^0-9]", "");
+					complex_imts_committed = st;
+				} else if (type_1_imts_committed == null && st.contains("type 1 imts committed")) {
+					st = st.replaceAll("type 1", "").replaceAll("[^0-9]", "");
+					type_1_imts_committed = st;
+				} else if (type_2_imts_committed == null && st.contains("type 2 imts committed")) {
+					st = st.replaceAll("type 2", "").replaceAll("[^0-9]", "");
+					type_2_imts_committed = st;
+				} else if (nimos_committed == null && st.contains("nimos committed")) {
+					st = st.replaceAll("[^0-9]", "");
+					nimos_committed = st;
+				}
+			}
+		} while (continue_loop && l < s_lines.length - 1);
 		
 		// If no data then make it null
 		if (date == null || date.isBlank()) date = "null";
