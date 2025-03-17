@@ -278,12 +278,29 @@ class Aggregate {
 		// Loop forward and fix using previous fire
 		for (int i = 0; i < final_fires.size(); i++) {
 			String[] fs = final_fires.get(i).split("\t");
-			if (fs[18].endsWith("KI")) fs[18] = fs[18].substring(0, fs[18].length() - 1); // version 1.08 fix where there are records with typo of cost ends with KI
-			if (fs[18].equals("7/18")) {
-				fs[18] = "NR"; // Fix the case 2024-06-28 SWCC BOULDER VIEW
+			if (fs[18].endsWith("KI")) {
+				fs[18] = fs[18].substring(0, fs[18].length() - 1); // version 1.08 fix where records with typo of cost ends with KI
 				String adjusted_fire = String.join("\t", fs);
 				final_fires.set(i, adjusted_fire);
 			}
+			if (fs[18].equals("7/18")) {
+				fs[18] = "NR";	// version 1.08 fix the case 2024-06-28 SWCC BOULDER VIEW
+				String adjusted_fire = String.join("\t", fs);
+				final_fires.set(i, adjusted_fire);
+			}
+			
+			if (fs[18].equals("7/18")) {
+				fs[18] = "NR";	// version 1.08 fix the case 2024-06-28 SWCC BOULDER VIEW
+				String adjusted_fire = String.join("\t", fs);
+				final_fires.set(i, adjusted_fire);
+			}
+			
+			if (fs[19].equals("3.8M")) {
+				fs[19] = "FS";	// version 1.08 fix the case 2024-05-30 SWCC INDIOS where origin is a typo
+				String adjusted_fire = String.join("\t", fs);
+				final_fires.set(i, adjusted_fire);
+			}
+			
 			// these are records with ctd problem. ctd that does not end with K or M can be fixed by checking the same fire in most recent previous date.
 			try {
 				if (!(fs[18].equals("NA") || fs[18].equals("NR") || fs[18].equals("---") || fs[18].endsWith("K") || fs[18].endsWith("M"))) {
@@ -316,12 +333,6 @@ class Aggregate {
 		// Loop backward and fix using next fire, because previous fire does not exist
 		for (int i = final_fires.size() - 1; i >= 0; i--) {
 			String[] fs = final_fires.get(i).split("\t");
-			if (fs[18].endsWith("KI")) fs[18] = fs[18].substring(0, fs[18].length() - 1); // version 1.08 fix where there are records with typo of cost ends with KI
-			if (fs[18].equals("7/18")) {
-				fs[18] = "NR"; // Fix the case 2024-06-28 SWCC BOULDER VIEW
-				String adjusted_fire = String.join("\t", fs);
-				final_fires.set(i, adjusted_fire);
-			}
 			// these are records with ctd problem. ctd that does not end with K or M can be fixed by checking the same fire in most recent next date.
 			try {
 				if (!(fs[18].equals("NA") || fs[18].equals("NR") || fs[18].equals("---") || fs[18].endsWith("K") || fs[18].endsWith("M"))) {

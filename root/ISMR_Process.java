@@ -1654,6 +1654,8 @@ public class ISMR_Process {
 				  "2023-08-29	ONCC	NA	NA	2023 SRF LIGHTNING COMPLEX	CA-SRF	12,673	1,704	20	Ctn	9/30	2,652	-29	51	363	0	0	21.7M	FS");
 		manual_fire_adjustment_list.put("2023-09-15	NWCC	NA	NA	ANVIL OR-RSF	1,	433	620	0	Ctn	10/31	353	2	9	13	4	0	8.2M	FS",
 				  "2023-09-15	NWCC	NA	NA	ANVIL	OR-RSF	1,433	620	0	Ctn	10/31	353	2	9	13	4	0	8.2M	FS");
+		manual_fire_adjustment_list.put("2024-05-30	SWCC	1	2		INDIOS	NM-SNF	5644	800	25	COMP	6/18	623	70	16	8	6	0	3M	3.8M",
+				  "2024-05-30	SWCC	1	2		INDIOS	NM-SNF	5644	800	25	COMP	6/18	623	70	16	8	6	0	3M	FS");
 	}
 	
 	private void data_cleaning() {
