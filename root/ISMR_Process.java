@@ -1381,61 +1381,47 @@ public class ISMR_Process {
 	private void generate_manual_fire_adjustment_list() {
 		manual_fire_adjustment_list.put("2007-03-02	SACC	NA	NA	* Coal Bank Mtn. KY KYS 527 100 -- 0 0 0 0 NR ST",
 				"2007-03-02	SACC	NA	NA	* COAL BANK MTN.	KY-KYS	527	null	100	null	---	---	null	0	0	0	0	NR	ST");
-		
 		manual_fire_adjustment_list.put("2007-10-04	NA	NA	NA	* Phillips Branch KY KYS 125 --- 50 UNK 20 --- 2 1 -0 NR PRI",
 				"2007-10-04	SACC	NA	NA	* PHILLIPS BRANCH	KY-KYS	125	---	50	null	UNK	20	---	2	1	---	0	NR	PRI");
-		
 		manual_fire_adjustment_list.put("2007-10-22	OSCC	NA	NA	* Witch CA MVU 10,000 --- 0 UNK 369 --- 22 33 -0 NR ST",
 				"2007-10-22	OSCC	NA	NA	* WITCH	CA-MVU	10,000	---	0	null	UNK	369	---	22	33	---	0	NR	ST");
 		
 		manual_fire_adjustment_list.put("2008-04-21	SWCC	NA	NA	Burn Out OK OMA 519 -90 UNK 2 -12 0 1 0 0 0.8K BIA",
 				"2008-04-21	SWCC	NA	NA	BURN OUT	OK-OMA	519	---	90	null	UNK	2	-12	0	1	0	0	0.8K	BIA");
-		
 		manual_fire_adjustment_list.put("2008-05-20	SACC	NA	NA	* Juno TX TXS 600 --- 0 UNK 25 --- 4 1 0 NR ST",
 				"2008-05-20	SACC	NA	NA	* JUNO	TX-TXS	600	---	0	null	UNK	25	---	---	4	1	0	NR	ST");
-		
 		manual_fire_adjustment_list.put("2008-06-21	SWCC	NA	NA	* Stone Coal -VA VAF 650 --- N/A N/A 45 --- 1 1 1 0 28K FS",	// Note next fire name is incorrect, need to remove WFU; Also CLOVER -WFU is a problem
 				"2008-06-21	SWCC	NA	NA	* STONE COAL - WFU	VA-VAF	650	---	N/A	null	N/A	45	---	1	1	1	0	28K	FS");
 		
 		manual_fire_adjustment_list.put("2009-04-23	SACC	NA	NA	* Highway 31 SC SCS 15,000 --- 10 4/25 130 --- 10 0 40 NR ST",
 				"2009-04-23	SACC	NA	NA	* HIGHWAY 31	SC-SCS	15,000	---	10	null	4/25	130	---	---	10	0	40	NR	ST");
-
 		manual_fire_adjustment_list.put("2009-07-04	NWCC	NA	NA	* Panther Creek WA NCP 123 --- NR 9/30 15 --- 0 0 0 NR NPS",
 				"2009-07-04	NWCC	NA	NA	* PANTHER CREEK	WA-NCP	123	---	NR	null	9/30	15	---	---	0	0	0	NR	NPS");
-		
 		manual_fire_adjustment_list.put("2009-08-15	AICC	NA	NA	Rock Slough AK UYD 61,467 --- N/A N/A 0 --- 0 0 0 0 5.1M",
 				"2009-08-15	AICC	NA	NA	ROCK SLOUGH	AK-UYD	61,467	---	N/A	null	N/A	0	---	0	0	0	0	5.1M	FWS");
-		
 		manual_fire_adjustment_list.put("2009-09-19	NWCC	NA	NA	Lobert OR WNF 115 2 100 --- 67 -72 6 0 0 64K FS",
 				"2009-09-19	NWCC	NA	NA	LOBERT	OR-WNF	115	2	100	null	---	67	-72	---	6	0	0	64K	FS");
 		
 		manual_fire_adjustment_list.put("2010-04-16	SACC	NA	NA	Taylor OK OKS 260 0 100 --- 6 -0 2 0 0 NR ST",
 				"2010-04-16	SACC	NA	NA	TAYLOR	OK-OKS	260	0	100	null	---	6	---	0	2	0	0	NR	ST");
-		
 		manual_fire_adjustment_list.put("2010-05-29	AICC	NA	NA	--- N/A N/A 0 --- 0 0 0 0 NR FWS",
 				"2010-05-29	AICC	NA	NA	* SHEENJEK 2	AK-UYD	200	---	N/A	null	N/A	0	---	0	0	0	0	NR	FWS");
-		
 		manual_fire_adjustment_list.put("2010-08-25	RMCC	NA	NA	North Fork 330 SHF 330 0 98 8/25 151 -45 5 0 2 0 850K FS",
 				"2010-08-25	RMCC	NA	NA	NORTH FORK	WY-SHF	330	0	98	null	8/25	151	-45	5	0	2	0	850K	FS");
-		
 		manual_fire_adjustment_list.put("2010-08-26	RMCC	NA	NA	North Fork 330 SHF 330 --- 98 UNK 151 --- 5 0 2 0 850K FS",
 				"2010-08-26	RMCC	NA	NA	NORTH FORK	WY-SHF	330	---	98	null	UNK	151	---	5	0	2	0	850K	FS");
-		
 		manual_fire_adjustment_list.put("2010-08-27	WBCC	NA	NA	Wolf Creek 1,000 HTF 1,000 --- N/A N/A 15 --- 0 0 1 0 1.6M FS",
 				"2010-08-27	WBCC	NA	NA	WOLF CREEK	NV-HTF	1,000	---	N/A	null	N/A	15	---	0	0	1	0	1.6M	FS");
 		
 		manual_fire_adjustment_list.put("2012-06-17	OSCC	NA	NA	Ophir Creek UT NWS 1,574 374 100 --- 3 -57 0 0 0 40K ST",
 				"2012-06-17	EBCC	NA	NA	OPHIR CREEK	UT-NWS	1,574	374	100	null	---	3	-57	0	0	---	0	40K	ST");
-
 		manual_fire_adjustment_list.put("2012-11-08	RMCC	NA	NA	* Coal Creek SJF 127 127 --- N/A N/A 9 --- 0 0 1 0 24K FS",
 				"2012-11-08	RMCC	NA	NA	* COAL CREEK	CO-SJF	127	---	N/A	null	N/A	9	---	0	0	1	0	24K	FS");
 		
 		manual_fire_adjustment_list.put("2013-03-08	SACC	NA	NA	* Middle Mountain OK OKS 600 --- 65 3/10 9 0 5 0 0 3K ST",
 				"2013-03-08	SACC	NA	NA	* MIDDLE MOUNTAIN	OK-OKS	600	---	65	null	3/10	9	---	0	5	0	0	3K	ST");
-		
 		manual_fire_adjustment_list.put("2013-03-08	SACC	NA	NA	* Volunteer AL ALS 300 --- 100 --- 0 -0 0 0 0 3K ST",
 				"2013-03-08	SACC	NA	NA	* VOLUNTEER	AL-ALS	300	---	100	null	---	0	---	0	0	0	0	3K	ST");
-		
 		manual_fire_adjustment_list.put("2013-04-12	SACC	NA	NA	KY KYS 125 --- 100 --- 11 0 2 0 0 1K PRI",
 				"2013-04-12	SACC	NA	NA	* LEFT FORK ABBOTT CREEK	KY-KYS	125	---	100	null	---	11	---	0	2	0	0	1K	PRI");
 
@@ -1444,13 +1430,10 @@ public class ISMR_Process {
 		
 		manual_fire_adjustment_list.put("2015-06-01	SACC	NA	NA	MUD LAKE COMPLEX	FL-BCP	35,321	0	70	Comp	260	-32	4	7	6	0	7.6M	NPS",
 				"2015-06-01	SACC	NA	NA	MUD LAKE COMPLEX	FL-BCP	35,321	0	70	Comp	---	260	-32	4	7	6	0	7.6M	NPS");
-		
 		manual_fire_adjustment_list.put("2015-06-01	SACC	NA	NA	* BOLIN SLIME PIT	FL-FLS	300	---	95	Ctn	2	---	0	0	0	0	1K	ST",
 				"2015-06-01	SACC	NA	NA	* BOLIN SLIME PIT	FL-FLS	300	---	95	Ctn	---	2	---	0	0	0	0	1K	ST");
-		
 		manual_fire_adjustment_list.put("2015-07-05	AICC	NA	NA		Munsatli	AK-TAD	18,847	1,963	Comp	NR	0	-1	0	0	0	0	1K	ST",
 				"2015-07-05	AICC	NA	NA	MUNSATLI	AK-TAD	18,847	1,963	---	Comp	NR	0	-1	0	0	0	0	1K	ST");
-		
 		manual_fire_adjustment_list.put("2015-08-02	GBCC	NA	NA		Solitude	UT-FIF	1,000	622	25	Comp	133	23	4	4	1	0	324K	FS",
 				"2015-08-02	GBCC	NA	NA	SOLITUDE	UT-FIF	1,000	622	25	Comp	null	133	23	4	4	1	0	324K	FS");
 		
@@ -1459,203 +1442,213 @@ public class ISMR_Process {
 		
 		manual_fire_adjustment_list.put("2017-09-29	ONCC	NA	NA	CA-KNF- 006098 COMPLEX CA-KNF 78,698 .4	0	51	Comp	10/10	318	1	5	11	2	0	44.5M	FS",
 				"2017-09-29	ONCC	NA	NA	CA-KNF-006098 COMPLEX	CA-KNF	78,698	0	51	Comp	10/10	318	1	5	11	2	0	44.5M	FS");
-
 		manual_fire_adjustment_list.put("2017-10-31	ONCC	NA	NA	CENTRAL LNU COMPLEX CA-LNU	110,720	0	99	Ctn	10/31	150	-88	4	5	0	7,010	101	M	ST",
 				"2017-10-31	ONCC	NA	NA	CENTRAL LNU COMPLEX	CA-LNU	110,720	0	99	Ctn	10/31	150	-88	4	5	0	7,010	101M	ST");
 		
 		manual_fire_adjustment_list.put("2018-07-18	NWCC	NA	NA	* GARNER COMPLEX	OR-712S	539	---	2	7/31	542	---	18	9	8	0	750K	ST",
 				"2018-07-18	NWCC	NA	NA	* GARNER COMPLEX	OR-712S	539	---	2	---	7/31	542	---	18	9	8	0	750K	ST");
-
 		manual_fire_adjustment_list.put("2018-09-01	NRCC	NA	NA	GOLD HILL MT-KNF	3,512	0	1	Ctn	10/1	5	316	-21	8	10	0	0	7M	FS",
 				"2018-09-01	NRCC	NA	NA	GOLD HILL	MT-KNF	3,512	0	1	Ctn	10/15	316	-21	8	10	0	0	7M	FS");
-		
 		manual_fire_adjustment_list.put("2018-09-01	NRCC	NA	NA	BEAVER CREEK MT-BDF	2,074	0	35	Ctn	10/1	5	16	16	0	0	0	0	467K	FS",
 				"2018-09-01	NRCC	NA	NA	BEAVER CREEK	MT-BDF	2,074	0	35	Ctn	10/15	16	16	0	0	0	0	467K	FS");
-		
 		manual_fire_adjustment_list.put("2018-09-01	NRCC	NA	NA	COPPER MOUNTAIN ID-IPF	480	---	24	Comp	10/3	1	2	---	0	0	0	0	1.9M	FS",
 				"2018-09-01	NRCC	NA	NA	COPPER MOUNTAIN	ID-IPF	480	---	24	Comp	10/31	2	---	0	0	0	0	1.9M	FS");
-		
 		manual_fire_adjustment_list.put("2018-09-01	NRCC	NA	NA	RAMPIKE ID-IPF	2,810	---	0	Comp	11/3	0	34	---	0	1	0	0	900K	FS",
 				"2018-09-01	NRCC	NA	NA	RAMPIKE	ID-IPF	2,810	---	0	Comp	11/30	34	---	0	1	0	0	900K	FS");
-		
 		manual_fire_adjustment_list.put("2018-09-01	NRCC	NA	NA	MOOSE CREEK MT-HLF	268	---	0	Comp	10/3	1	11	---	0	0	1	0	10K	FS",
 				"2018-09-01	NRCC	NA	NA	MOOSE CREEK	MT-HLF	268	---	0	Comp	10/31	11	---	0	0	1	0	10K	FS");
-		
 		manual_fire_adjustment_list.put("2018-09-01	NRCC	NA	NA	SMITH CREEK ID-IPF	971	---	0	Comp	10/3	1	7	---	0	1	0	0	193K	FS",
 				"2018-09-01	NRCC	NA	NA	SMITH CREEK	ID-IPF	971	---	0	Comp	10/31	7	---	0	1	0	0	193K	FS");
 		
 		manual_fire_adjustment_list.put("2019-09-08	ONCC	NA	NA	* LIME	CA.KNF	200	---	0	Ctn	10/18	168	---	6	0	2	0	2.1M	FS",
 				"2019-09-08	ONCC	NA	NA	* LIME	CA-KNF	200	---	0	Ctn	10/18	168	---	6	0	2	0	2.1M	FS");
-		
 		manual_fire_adjustment_list.put("2019-09-12	ONCC	NA	NA	WALKER CA-PNF	48,	507	1,167	28	Ctn	9/28	1,891	607	39	150	6	0	12.1M	FS",
 				"2019-09-12	ONCC	NA	NA	WALKER	CA-PNF	48,507	1,167	28	Ctn	9/28	1,891	607	39	150	6	0	12.1M	FS");
-		
 		manual_fire_adjustment_list.put("2019-09-13	NRCC	NA	NA	SNOW	Peak	ID-IPF	100	---	0	Comp	10/31	0	0	0	0	0	5K	FS",
 				"2019-09-13	NRCC	NA	NA	SNOW PEAK	ID-IPF	100	---	0	Comp	10/31	0	---	0	0	0	0	5K	FS");
-		
 		manual_fire_adjustment_list.put("2019-10-19	GBCC	NA	NA	SKULL FLAT 2	0710	450	---	0	Comp	11/7	5	---	0	0	0	0	3K	FS",
 				"2019-10-19	GBCC	NA	NA	SKULL FLAT 2	UT-FIF	450	---	0	Comp	11/7	5	---	0	0	0	0	3K	FS");	// unit is 0710 and should be UT-FIF as in other dates.
 		
 		manual_fire_adjustment_list.put("2020-07-30	RMCC	NA	NA	* BUFFALO	Creek	WY-SHX	326	---	100	Ctn	---	17	---	0	5	0	15K	CNTY",
 				"2020-07-30	RMCC	NA	NA	* BUFFALO CREEK	WY-SHX	326	---	100	Ctn	---	17	---	0	5	0	null	15K	CNTY");
-		
 		manual_fire_adjustment_list.put("2020-09-14	ONCC	NA	NA	AUGUST COMPLEX CA-MNF 706,594 - 140,218	30	Ctn	11/15	1,436	-473	21	105	8	35	30.4M	FS",
 				"2020-09-14	ONCC	NA	NA	AUGUST COMPLEX	CA-MNF	706,594	-140,218	30	Ctn	11/15	1,436	-473	21	105	8	35	30.4M	FS");
 
 		manual_fire_adjustment_list.put("2020-09-25	RMCC	NA	NA	CAMERON PEAK	CO-ARF 104,79 1	0	27	Ctn	10/31	819	-12	9	52	10	57	49.6M	FS",
 				"2020-09-25	RMCC	NA	NA	CAMERON PEAK	CO-ARF	104,791	0	27	Ctn	10/31	819	-12	9	52	10	57	49.6M	FS");
-
 		manual_fire_adjustment_list.put("2021-04-07	SACC	NA	NA	BLACK	Calf	OK-OMA	1,600	0	80	Ctn	4/15	22	1	6	0	0	40K	BIA",
 				"2021-04-07	SACC	NA	NA	BLACK CALF	OK-OMA	1,600	0	80	Ctn	4/15	22	---	1	6	0	0	40K	BIA");
-
 		manual_fire_adjustment_list.put("2021-07-17	NWCC	NA	NA	BOOTLEG OR-FWF 273,582 46,34 8	22	Ctn	10/1	1,921	185	44	195	14	75	15.8M	FS",
 				"2021-07-17	NWCC	NA	NA	BOOTLEG	OR-FWF	273,582	46,348	22	Ctn	10/1	1,921	185	44	195	14	75	15.8M	FS");
-		
 		manual_fire_adjustment_list.put("2021-07-17	SWCC	NA	NA	Ocotillo AZ-TNF 980 35 Comp 7/30 25 0 1 1 0 50K FS",
 				"2021-07-17	SWCC	NA	NA	OCOTILLO	AZ-TNF	980	---	35	Comp	7/30	25	---	0	1	1	0	50K	FS");
-		
 		manual_fire_adjustment_list.put("2021-07-17	SWCC	NA	NA	Bear AZ-TNF 1,948 50 Comp 7/20 25 0 1 1 0 50K FS",
 				"2021-07-17	SWCC	NA	NA	BEAR	AZ-TNF	1,948	---	50	Comp	7/20	25	---	0	1	1	0	50K	FS");
-		
 		manual_fire_adjustment_list.put("2021-07-17	SWCC	NA	NA	Johnson NM-GNF 88,918 95 Comp 7/23 1 0 0 0 0 10.5M FS",
 				"2021-07-17	SWCC	NA	NA	JOHNSON	NM-GNF	88,918	---	95	Comp	7/23	1	---	0	0	0	0	10.5M	FS");
-		
 		manual_fire_adjustment_list.put("2021-07-17	SWCC	NA	NA	Firebox AZ-ASF 1,065 0 Comp 8/9 49 1 2 1 0 80K FS",
 				"2021-07-17	SWCC	NA	NA	FIREBOX	AZ-ASF	1,065	---	0	Comp	8/9	49	---	1	2	1	0	80K	FS");
-
 		manual_fire_adjustment_list.put("2021-08-02	NWCC	NA	NA	BOOTLEG	OR-FWF 413,76 2	28	84	Ctn	10/1	1,780	-98	44	83	10	408	75.6M	FS",
 				"2021-08-02	NWCC	NA	NA	BOOTLEG	OR-FWF	413,762	28	84	Ctn	10/1	1,780	-98	44	83	10	408	75.6M	FS");
-		
 		manual_fire_adjustment_list.put("2021-08-03	NWCC	NA	NA	BOOTLEG	OR-FWF 413,76 2	0	84	Ctn	10/1	1,617	-163	42	66	11	408	78.4M	FS",
 				"2021-08-03	NWCC	NA	NA	BOOTLEG	OR-FWF	413,762	0	84	Ctn	10/1	1,617	-163	42	66	11	408	78.4M	FS");
-
 		manual_fire_adjustment_list.put("2021-08-04	NWCC	NA	NA	BOOTLEG	OR-FWF 413,76 5	3	84	Ctn	10/1	1,493	-124	37	65	11	408	81.5M	FS",
 				"2021-08-04	NWCC	NA	NA	BOOTLEG	OR-FWF	413,765	3	84	Ctn	10/1	1,493	-124	37	65	11	408	81.5M	FS");
-		
 		manual_fire_adjustment_list.put("2021-08-12	NWCC	NA	NA	Bear Creek WA-NCP 998 5 Comp 10/1 12 1 0 1 0 30K NPS",
 				"2021-08-12	NWCC	NA	NA	BEAR CREEK	WA-NCP	998	---	5	Comp	10/1	12	---	1	0	1	0	30K	NPS");
-
 		manual_fire_adjustment_list.put("2021-08-12	NRCC	NA	NA	Robertson Draw MT-CGF 29,885 90 Ctn 10/1 13 0 2 0 30 13.2M FS",
 				"2021-08-12	NRCC	NA	NA	ROBERTSON DRAW	MT-CGF	29,885	---	90	Ctn	10/1	13	---	0	2	0	30	13.2M	FS");
-
 		manual_fire_adjustment_list.put("2021-09-05	NRCC	NA	NA	STORM THEATRE COMPLEX ID-NCF	22,320	---	10	8	Comp	10/15	29	---	0	3	0	0	4.8M	FS",
 				"2021-09-05	NRCC	NA	NA	STORM THEATRE COMPLEX	ID-NCF	22,320	---	10	Comp	10/15	29	---	0	3	0	0	4.8M	FS");
-
 		manual_fire_adjustment_list.put("2021-09-11	GBCC	NA	NA	MUD LICK ID-S, USFSCF	20,856	---	70	Comp	9/19	1	---	0	0	0	0	25M	FS",
 				"2021-09-11	GBCC	NA	NA	MUD LICK	ID-SCF	20,856	---	70	Comp	9/19	1	---	0	0	0	0	25M	FS");	// unit is S,USFSCF but should be ID-SCF as in other dates
-		
 		manual_fire_adjustment_list.put("2021-09-29	EACC	NA	NA		Greenwood	MN-SUF	26,797	80	Ctn	10/14	85	-20	0	4	0	71	21.8M	FS",
 				  "2021-09-29	EACC	NA	NA	GREENWOOD	MN-SUF	26,797	null	80	Ctn	10/14	85	-20	0	4	0	71	21.8M	FS");
-		
 		manual_fire_adjustment_list.put("2021-10-08	NRCC	NA	NA	STATELINE	Complex	ID-IPF	13,199	0	50	Ctn	11/1	46	0	0	0	0	22.5M	FS",
 				  "2021-10-08	NRCC	NA	NA	STATELINE COMPLEX	ID-IPF	13,199	0	50	Ctn	11/1	46	---	0	0	0	0	22.5M	FS");
 		
 		manual_fire_adjustment_list.put("2022-03-11	SACC	NA	NA	* JACKSON	Road	NC-NCS	1,060	---	100	Ctn	---	21	---	0	3	0	35K	ST",
 				  "2022-03-11	SACC	NA	NA	* JACKSON ROAD	NC-NCS	1,060	---	100	CTN	---	21	---	0	3	0	0	35K	ST");
-		
 		manual_fire_adjustment_list.put("2022-05-05	SACC	NA	NA	125	Mile	Marker	FL-FLS	1,117	75	Comp	UNK	8	0	1	0	0	NR	ST",
 				  "2022-05-05	SACC	NA	NA	125 MILE MARKER	FL-FLS	1,117	---	75	COMP	UNK	8	---	0	1	0	0	NR	ST");
-		
 		manual_fire_adjustment_list.put("2022-05-06	SACC	NA	NA	125	Mile	Marker	FL-FLS	1,117	75	Comp	UNK	8	0	1	0	0	NR	ST",
 				  "2022-05-06	SACC	NA	NA	125 MILE MARKER	FL-FLS	1,117	---	75	COMP	UNK	8	---	0	1	0	0	NR	ST");
-		
 		manual_fire_adjustment_list.put("2022-06-13	AICC	NA	NA	--- 0 0 0 0 5K ST",
 				  "2022-06-13	AICC	NA	NA	FOURTH OF JULY CREEK	AK-SWS	24,018	---	0	COMP	10/31	0	---	0	0	0	0	5K	ST");
-		
 		manual_fire_adjustment_list.put("2022-06-14	AICC	NA	NA	--- 0 0 0 0 5K ST",
 				  "2022-06-14	AICC	NA	NA	FOURTH OF JULY CREEK	AK-SWS	24,018	---	0	COMP	10/31	0	---	0	0	0	0	5K	ST");
-		
 		manual_fire_adjustment_list.put("2022-06-15	AICC	NA	NA	--- 0 0 0 0 5K ST",
 				  "2022-06-15	AICC	NA	NA	FOURTH OF JULY CREEK	AK-SWS	24,018	---	0	COMP	10/31	0	---	0	0	0	0	5K	ST");
-		
 		manual_fire_adjustment_list.put("2022-07-02	AICC	NA	NA	--- 0 0 1 0 NR BLM",
 				  "2022-07-02	AICC	NA	NA	POORMAN COMPLEX	AK-GAD	23,064	---	0	COMP	7/20	26	---	0	0	1	0	NR	BLM");
-		
 		manual_fire_adjustment_list.put("2022-07-09	AICC	NA	NA	--- 0 0 0 0 NR ST",
 				  "2022-07-09	AICC	NA	NA	SOUTH FORK KUSKOKWIM	AK-SWS	120	---	0	COMP	10/31	0	---	0	0	0	0	NR	ST");
-		
 		manual_fire_adjustment_list.put("2022-07-10	AICC	NA	NA	--- 0 0 0 0 NR ST",
 				  "2022-07-10	AICC	NA	NA	SOUTH FORK KUSKOKWIM	AK-SWS	120	---	0	COMP	10/31	0	---	0	0	0	0	NR	ST");
-		
 		manual_fire_adjustment_list.put("2022-07-11	AICC	NA	NA	--- 0 0 0 0 NR ST",
 				  "2022-07-11	AICC	NA	NA	SOUTH FORK KUSKOKWIM	AK-SWS	120	---	0	COMP	10/31	0	---	0	0	0	0	NR	ST");
-		
 		manual_fire_adjustment_list.put("2022-07-12	AICC	NA	NA	--- 0 0 0 0 NR ST",
 				  "2022-07-12	AICC	NA	NA	SOUTH FORK KUSKOKWIM	AK-SWS	120	---	0	COMP	10/31	0	---	0	0	0	0	NR	ST");
-		
 		manual_fire_adjustment_list.put("2022-07-13	AICC	NA	NA	--- 0 0 0 0 NR ST",
 				  "2022-07-13	AICC	NA	NA	SOUTH FORK KUSKOKWIM	AK-SWS	120	---	0	COMP	10/31	0	---	0	0	0	0	NR	ST");
-		
 		manual_fire_adjustment_list.put("2022-07-14	AICC	NA	NA	--- 0 0 0 0 NR ST",
 				  "2022-07-14	AICC	NA	NA	SOUTH FORK KUSKOKWIM	AK-SWS	120	---	0	COMP	10/31	0	---	0	0	0	0	NR	ST");
-		
 		manual_fire_adjustment_list.put("2022-07-15	AICC	NA	NA	0 0 0 0 0 6K ST",
 				  "2022-07-15	AICC	NA	NA	SOUTH FORK KUSKOKWIM	AK-SWS	1,947	1,827	0	COMP	10/31	0	0	0	0	0	0	6K	ST");
-		
 		manual_fire_adjustment_list.put("2022-07-16	AICC	NA	NA	--- 0 0 0 0 6K ST",
 				  "2022-07-16	AICC	NA	NA	SOUTH FORK KUSKOKWIM	AK-SWS	1,947	---	0	COMP	10/31	0	---	0	0	0	0	6K	ST");
-		
 		manual_fire_adjustment_list.put("2022-07-17	AICC	NA	NA	--- 0 0 0 0 6K ST",
 				  "2022-07-17	AICC	NA	NA	SOUTH FORK KUSKOKWIM	AK-SWS	1,947	---	0	COMP	10/31	0	---	0	0	0	0	6K	ST");
-		
 		manual_fire_adjustment_list.put("2022-07-18	AICC	NA	NA	--- 0 0 0 0 6K ST",
 				  "2022-07-18	AICC	NA	NA	SOUTH FORK KUSKOKWIM	AK-SWS	1,947	---	0	COMP	10/31	0	---	0	0	0	0	6K	ST");
-		
 		manual_fire_adjustment_list.put("2022-07-19	AICC	NA	NA	--- 0 0 0 0 6K ST",
 				  "2022-07-19	AICC	NA	NA	SOUTH FORK KUSKOKWIM	AK-SWS	1,947	---	0	COMP	10/31	0	---	0	0	0	0	6K	ST");
-		
 		manual_fire_adjustment_list.put("2022-07-20	AICC	NA	NA	--- 0 0 0 0 6K ST",
 				  "2022-07-20	AICC	NA	NA	SOUTH FORK KUSKOKWIM	AK-SWS	1,947	---	0	COMP	10/31	0	---	0	0	0	0	6K	ST");
-		
 		manual_fire_adjustment_list.put("2022-07-21	AICC	NA	NA	--- 0 0 0 0 6K ST",
 				  "2022-07-21	AICC	NA	NA	SOUTH FORK KUSKOKWIM	AK-SWS	1,947	---	0	COMP	10/31	0	---	0	0	0	0	6K	ST");
-		
 		manual_fire_adjustment_list.put("2022-07-22	AICC	NA	NA	0 0 0 0 0 17K ST",
 				  "2022-07-22	AICC	NA	NA	SOUTH FORK KUSKOKWIM	AK-SWS	2,866	919	0	COMP	10/31	0	0	0	0	0	0	17K	ST");
-		
 		manual_fire_adjustment_list.put("2022-07-23	AICC	NA	NA	--- 0 0 0 0 17K ST",
 				  "2022-07-23	AICC	NA	NA	SOUTH FORK KUSKOKWIM	AK-SWS	2,866	---	0	COMP	10/31	0	---	0	0	0	0	17K	ST");
-		
 		manual_fire_adjustment_list.put("2022-07-23	AICC	NA	NA	--- 0 0 0 0 2K ST",
 				  "2022-07-23	AICC	NA	NA	HARDSCRABBLE CREEK	AK-SWS	2,514	---	0	COMP	10/31	0	---	0	0	0	0	2K	ST");
-		
 		manual_fire_adjustment_list.put("2022-07-23	AICC	NA	NA	--- 0 0 0 0 68K ST",
 				  "2022-07-23	AICC	NA	NA	FOURTH OF JULY CREEK	AK-SWS	51,146	---	2	COMP	10/31	0	---	0	0	0	0	68K	ST");
-		
 		manual_fire_adjustment_list.put("2022-07-24	AICC	NA	NA	--- 0 0 0 0 17K ST",
 				  "2022-07-24	AICC	NA	NA	SOUTH FORK KUSKOKWIM	AK-SWS	2,866	---	0	COMP	10/31	0	---	0	0	0	0	17K	ST");
-		
 		manual_fire_adjustment_list.put("2022-07-24	AICC	NA	NA	--- 0 0 0 0 2K ST",
 				  "2022-07-24	AICC	NA	NA	HARDSCRABBLE CREEK	AK-SWS	2,514	---	0	COMP	10/31	0	---	0	0	0	0	2K	ST");
-		
 		manual_fire_adjustment_list.put("2022-07-24	AICC	NA	NA	--- 0 0 0 0 68K ST",
 				  "2022-07-24	AICC	NA	NA	FOURTH OF JULY CREEK	AK-SWS	51,146	---	2	COMP	10/31	0	---	0	0	0	0	68K	ST");
-		
 		manual_fire_adjustment_list.put("2022-07-25	AICC	NA	NA	--- 0 0 0 0 17K ST",
 				  "2022-07-25	AICC	NA	NA	SOUTH FORK KUSKOKWIM	AK-SWS	2,866	---	0	COMP	10/31	0	---	0	0	0	0	17K	ST");
-		
 		manual_fire_adjustment_list.put("2022-07-25	AICC	NA	NA	--- 0 0 0 0 2K ST",
 				  "2022-07-25	AICC	NA	NA	HARDSCRABBLE CREEK	AK-SWS	2,514	---	0	COMP	10/31	0	---	0	0	0	0	2K	ST");
-		
 		manual_fire_adjustment_list.put("2022-07-25	AICC	NA	NA	--- 0 0 0 0 68K ST",
 				  "2022-07-25	AICC	NA	NA	FOURTH OF JULY CREEK	AK-SWS	51,146	---	2	COMP	10/31	0	---	0	0	0	0	68K	ST");
-		
 		manual_fire_adjustment_list.put("2022-07-27	RMCC	NA	NA	SAND	Springs	WY-COX	3,193	---	100	Comp	---	0	-5	0	0	0	NR	CNTY",
 				  "2022-07-27	RMCC	NA	NA	SAND SPRINGS	WY-COX	3,193	---	100	COMP	---	0	-5	0	0	0	0	NR	CNTY");
-		
 		manual_fire_adjustment_list.put("2022-10-21	NRCC	NA	NA	BULL	Gin	Complex	MT-KNF	4,281	60	Comp	10/31	7	0	1	0	0	14M	FS",
 				  "2022-10-21	NRCC	NA	NA	BULL GIN COMPLEX	MT-KNF	4,281	---	60	COMP	10/31	7	---	0	1	0	0	14M	FS");
-		
 		manual_fire_adjustment_list.put("2022-10-24	NRCC	NA	NA	BULL	Gin	Complex	MT-KNF	4,281	60	Comp	10/31	7	0	1	0	0	14M	FS",
 				  "2022-10-21	NRCC	NA	NA	BULL GIN COMPLEX	MT-KNF	4,281	---	60	COMP	10/31	7	---	0	1	0	0	14M	FS");
+		
 		manual_fire_adjustment_list.put("2023-03-24	RMCC	NA	NA	*	Manvel	CO-PWX	1,897	---	100	Ctn	---	23	---	0	9	0	5K	CNTY",
-				  "2023-03-24	RMCC	NA	NA	* Manvel	CO-PWX	1,897	---	100	Ctn	---	23	---	0	9	0	---	5K	CNTY");
+				  "2023-03-24	RMCC	NA	NA	* MANVEL	CO-PWX	1,897	---	100	CTN	---	23	---	0	9	0	---	5K	CNTY");
 		manual_fire_adjustment_list.put("2023-08-29	ONCC	NA	NA	2023 SRF LIGHTNING COMPLEX CA-SRF	12,	673	1,704	20	Ctn	9/30	2,652	-29	51	363	0	0	21.7M	FS",
-				  "2023-08-29	ONCC	NA	NA	2023 SRF LIGHTNING COMPLEX	CA-SRF	12,673	1,704	20	Ctn	9/30	2,652	-29	51	363	0	0	21.7M	FS");
+				  "2023-08-29	ONCC	NA	NA	2023 SRF LIGHTNING COMPLEX	CA-SRF	12,673	1,704	20	CTN	9/30	2,652	-29	51	363	0	0	21.7M	FS");
 		manual_fire_adjustment_list.put("2023-09-15	NWCC	NA	NA	ANVIL OR-RSF	1,	433	620	0	Ctn	10/31	353	2	9	13	4	0	8.2M	FS",
-				  "2023-09-15	NWCC	NA	NA	ANVIL	OR-RSF	1,433	620	0	Ctn	10/31	353	2	9	13	4	0	8.2M	FS");
-		manual_fire_adjustment_list.put("2024-05-30	SWCC	1	2		INDIOS	NM-SNF	5644	800	25	COMP	6/18	623	70	16	8	6	0	3M	3.8M",
-				  "2024-05-30	SWCC	1	2		INDIOS	NM-SNF	5644	800	25	COMP	6/18	623	70	16	8	6	0	3M	FS");
+				  "2023-09-15	NWCC	NA	NA	ANVIL	OR-RSF	1,433	620	0	CTN	10/31	353	2	9	13	4	0	8.2M	FS");
+		
+		manual_fire_adjustment_list.put("2024-05-22	NWCC	NA	NA	LITTLE	Yamsay	OR-FWF	6,340	0	90	Comp	UNK	16	1	5	0	0	3.3M	FS",
+				  "2024-05-22	NWCC	NA	NA	LITTLE YAMSAY	OR-FWF	6,340	0	90	COMP	UNK	NR	16	1	5	0	0	3.3M	FS");
+		manual_fire_adjustment_list.put("2024-05-23	NWCC	NA	NA	LITTLE	Yamsay	OR-FWF	6,340	0	90	Comp	UNK	16	1	5	0	0	3.4M	FS",
+				  "2024-05-23	NWCC	NA	NA	LITTLE YAMSAY	OR-FWF	6,340	0	90	COMP	UNK	NR	16	1	5	0	0	3.4M	FS");
+		manual_fire_adjustment_list.put("2024-06-05	SACC	NA	NA	OLIVE BRANCH	664	FL-FLS	1,400	0	95	Ctn	6/18	24	12	0	0	0	NR	ST",
+				  "2024-06-05	SACC	NA	NA	OLIVE BRANCH 664	FL-FLS	1,400	0	95	CTN	6/18	24	12	0	NR	0	0	NR	ST");
+		manual_fire_adjustment_list.put("2024-06-07	OSCC	NA	NA	*	Bitterwater	CA-SLU	331	---	100	Ctn	---	0	---	0	0	0	500K	ST",
+				  "2024-06-07	OSCC	NA	NA	* BITTERWATER	CA-SLU	331	---	100	CTN	---	0	---	NR	0	0	0	500K	ST");
+		manual_fire_adjustment_list.put("2024-06-17	SACC	NA	NA		*	Pigeon	Creek	FL-FLS	300	---	100	Ctn	---	34	---	0	NR	ST",
+				  "2024-06-17	SACC	NA	NA	* PIGEON CREEK	FL-FLS	300	---	100	CTN	---	34	---	NR	NR	NR	0	NR	ST");
+		manual_fire_adjustment_list.put("2024-07-20	SACC	NA	NA	*	Rookery	AL-BOR	399	---	60	Ctn	8/9	23	---	0	3	0	50K	FWS",
+				  "2024-07-20	SACC	NA	NA	* ROOKERY	AL-BOR	399	---	60	CTN	8/9	23	---	0	3	0	NR	50K	FWS");
+		manual_fire_adjustment_list.put("2024-07-30	SWCC	NA	NA	Tanques NM-SNF 5,800 55 Comp 7/31 31 0 4 0 0 80K FS",
+				  "2024-07-30	SWCC	NA	NA	TANQUES	NM-SNF	5,800	---	55	COMP	7/31	31	NR	0	4	0	0	80K	FS");
+		manual_fire_adjustment_list.put("2024-08-29	NWCC	NA	NA	BOULDER	Creek	OR-WWF	115	---	24	Comp	9/2	34	---	0	1	0	150K	FS",
+				  "2024-08-29	NWCC	NA	NA	BOULDER CREEK	OR-WWF	115	---	24	COMP	9/2	34	---	NR	0	1	0	150K	FS");
+		manual_fire_adjustment_list.put("2024-09-07	RMCC	NA	NA	Constitution WY-CMX 24,630 0 95 Ctn 9/16 93 3 7 0 3 2.3M CNTY",
+				  "2024-09-07	RMCC	NA	NA	CONSTITUTION	WY-CMX	24,630	0	95	CTN	9/16	93	NR	3	7	0	3	2.3M	CNTY");
+		manual_fire_adjustment_list.put("2024-09-12	NWCC	NA	NA	WILEY	Flat	OR-OCF	29,904	481	48	Ctn	9/24	545	16	20	0	0	5.5M	FS",
+				  "2024-09-12	NWCC	NA	NA	WILEY FLAT	OR-OCF	29,904	481	48	CTN	9/24	545	NR	16	20	0	0	5.5M	FS");
+		manual_fire_adjustment_list.put("2024-09-13	GBCC	NA	NA	Chimney ID-EIS 6,475 10 Ctn 10/15 457 11 7 1 0 5.3M ST",
+				  "2024-09-13	GBCC	NA	NA	CHIMNEY	ID-EIS	6,475	---	10	CTN	10/15	457	NR	11	7	1	0	5.3M	ST");
+		manual_fire_adjustment_list.put("2024-10-03	SACC	NA	NA	2024 HURRICANE HELENE SUPPORT	NA	NA	---	NA	NA	---	1,449	---	5	5	2	UNK	UNK	ST",
+				  "2024-10-03	SACC	NA	NA	2024 HURRICANE HELENE SUPPORT	NA	NA	---	NA	NA	---	1,449	---	5	5	2	UNK	UNK	ST");
+		manual_fire_adjustment_list.put("2024-10-04	SACC	NA	NA	HURRICANE HELENE SUPPORT	NA	NA	---	NA	NA	---	1,449	0	7	8	2	UNK	UNK	ST",
+				  "2024-10-03	SACC	NA	NA	2024 HURRICANE HELENE SUPPORT	NA	NA	---	NA	NA	---	1,449	0	7	8	2	UNK	UNK	ST");
+		manual_fire_adjustment_list.put("2024-10-07	GBCC	NA	NA	MOWITCH ID-SCF 332	--- 0	Comp	10/31	0	---	0	0	0	0	10K	FS",
+				  "2024-10-07	GBCC	NA	NA	MOWITCH	ID-SCF	332	---	0	COMP	10/31	0	---	0	0	0	0	10K	FS");
+		manual_fire_adjustment_list.put("2024-10-07	GBCC	NA	NA	MOWITCH ID-SCF 332	--- 0	Comp	10/31	0	---	0	0	0	0	10K	FS",
+				  "2024-10-07	GBCC	NA	NA	MOWITCH	ID-SCF	332	---	0	COMP	10/31	0	---	0	0	0	0	10K	FS");
+		manual_fire_adjustment_list.put("2024-10-08	SACC	NA	NA	HURRICANE HELENE SUPPORT - NC	NC-FE4	---	---	---	---	137	1	2	0	0	UNK	867K	FEMA",
+				  "2024-10-08	SACC	NA	NA	HURRICANE HELENE SUPPORT - NC	NC-FE4	---	NR	---	---	---	137	1	2	0	0	UNK	867K	FEMA");
+		manual_fire_adjustment_list.put("2024-10-08	SACC	NA	NA	HURRICANE HELENE SUPPORT - NC	NC-NCF	---	---	---	---	191	51	0	0	0	UNK	1M	FS",
+				  "2024-10-08	SACC	NA	NA	HURRICANE HELENE SUPPORT - NC	NC-NCF	---	NR	---	---	---	191	51	0	0	0	UNK	1M	FS");
+		manual_fire_adjustment_list.put("2024-10-08	SACC	NA	NA	HURRICANE HELENE SUPPORT - FL	FL-FLS	---	---	---	---	102	-22	0	0	0	UNK	1.5M	ST",
+				  "2024-10-08	SACC	NA	NA	HURRICANE HELENE SUPPORT - FL	FL-FLS	---	NR	---	---	---	102	-22	0	0	0	UNK	1.5M	ST");
+		manual_fire_adjustment_list.put("2024-10-10	SACC	NA	NA	HURRICANE HELENE SUPPORT - NC	NC-FE4	---	---	---	---	140	1	2	0	0	UNK	1.2M	FEMA",
+				  "2024-10-10	SACC	NA	NA	HURRICANE HELENE SUPPORT - NC	NC-FE4	---	NR	---	---	---	140	1	2	0	0	UNK	1.2M	FEMA");
+		manual_fire_adjustment_list.put("2024-10-10	SACC	NA	NA	HURRICANE HELENE SUPPORT - NC	NC-NCF	---	---	---	---	265	20	2	0	0	UNK	1.6M	FS",
+				  "2024-10-10	SACC	NA	NA	HURRICANE HELENE SUPPORT - NC	NC-NCF	---	NR	---	---	---	265	20	2	0	0	UNK	1.6M	FS");
+		manual_fire_adjustment_list.put("2024-10-10	SACC	NA	NA	HURRICANE HELENE SUPPORT - TN & VA	TN-CNF	---	---	---	---	185	28	1	1	0	UNK	454K	FS",
+				  "2024-10-10	SACC	NA	NA	HURRICANE HELENE SUPPORT - TN & VA	TN-CNF	---	NR	---	---	---	185	28	1	1	0	UNK	454K	FS");
+		manual_fire_adjustment_list.put("2024-10-10	SACC	NA	NA	HURRICANE MILTON SUPPORT - FL	FL-FLS	---	---	---	---	1,534	696	0	0	0	UNK	560K	ST",
+				  "2024-10-10	SACC	NA	NA	HURRICANE MILTON SUPPORT - FL	FL-FLS	---	NR	---	---	---	1,534	696	0	0	0	UNK	560K	ST");
+		manual_fire_adjustment_list.put("2024-10-12	OSCC	NA	NA	LINE CA-BDF	43,978	0	94	Ctn	10/18	475	-	451	8	10	4	1	135M	PRI",
+				  "2024-10-12	OSCC	NA	NA	LINE	CA-BDF	43,978	0	94	CTN	10/18	475	-451	8	10	4	1	135M	PRI");
+		manual_fire_adjustment_list.put("2024-10-14	SACC	NA	NA	HURRICANE HELENE SUPPORT - NC	NC-FE4	---	---	---	---	105	-38	0	0	0	UNK	2.2M	FEMA",
+				  "2024-10-14	SACC	NA	NA	HURRICANE HELENE SUPPORT - NC	NC-FE4	---	NR	---	---	---	105	-38	0	0	0	UNK	2.2M	FEMA");
+		manual_fire_adjustment_list.put("2024-10-14	SACC	NA	NA	HURRICANE HELENE SUPPORT - NC	NC-NCF	---	---	---	---	326	24	4	0	0	UNK	3.5M	FS",
+				  "2024-10-14	SACC	NA	NA	HURRICANE HELENE SUPPORT - NC	NC-NCF	---	NR	---	---	---	326	24	4	0	0	UNK	3.5M	FS");
+		manual_fire_adjustment_list.put("2024-10-14	SACC	NA	NA	HURRICANE HELENE SUPPORT - NC	NC-NCS	---	---	---	---	334	-19	0	0	17	UNK	342K	FS",
+				  "2024-10-14	SACC	NA	NA	HURRICANE HELENE SUPPORT - NC	NC-NCS	---	NR	---	---	---	334	-19	0	0	17	UNK	342K	FS");
+		manual_fire_adjustment_list.put("2024-10-14	SACC	NA	NA	HURRICANE HELENE SUPPORT - TN & VA	TN-CNF	---	---	---	---	123	-16	0	1	0	UNK	1.2M	FS",
+				  "2024-10-14	SACC	NA	NA	HURRICANE HELENE SUPPORT - TN & VA	TN-CNF	---	NR	---	---	---	123	-16	0	1	0	UNK	1.2M	FS");
+		manual_fire_adjustment_list.put("2024-10-14	SACC	NA	NA	HURRICANE MILTON SUPPORT - FL	FL-FLS	---	---	---	---	1,231	-285	0	10	0	UNK	1.6M	ST",
+				  "2024-10-14	SACC	NA	NA	HURRICANE MILTON SUPPORT - FL	FL-FLS	---	NR	---	---	---	1,231	-285	0	10	0	UNK	1.6M	ST");
+		manual_fire_adjustment_list.put("2024-10-14	SACC	NA	NA	HURRICANE MILTON SUPPORT - FL	FL-FLS	---	---	---	---	106	11	5	0	0	UNK	151K	ST",
+				  "2024-10-14	SACC	NA	NA	HURRICANE MILTON SUPPORT - FL	FL-FLS	---	NR	---	---	---	106	11	5	0	0	UNK	151K	ST");
+		manual_fire_adjustment_list.put("2024-10-18	SACC	NA	NA	HURRICANE HELENE SUPPORT - NC	NC-FE4	---	---	---	---	105	2	0	0	0	UNK	2.7M	FEMA",
+				  "2024-10-18	SACC	NA	NA	HURRICANE HELENE SUPPORT - NC	NC-FE4	---	NR	---	---	---	105	2	0	0	0	UNK	2.7M	FEMA");
+		manual_fire_adjustment_list.put("2024-10-18	SACC	NA	NA	HURRICANE HELENE SUPPORT - NC	NC-NCS	---	---	---	---	371	30	0	0	12	UNK	418K	FS",
+				  "2024-10-18	SACC	NA	NA	HURRICANE HELENE SUPPORT - NC	NC-NCS	---	NR	---	---	---	371	30	0	0	12	UNK	418K	FS");
+		manual_fire_adjustment_list.put("2024-10-19	SACC	NA	NA	HURRICANE HELENE SUPPORT -	NC	NC-FE4	---	---	---	---	100	-5	0	0	0	UNK	2.8M	FEMA",
+				  "2024-10-19	SACC	NA	NA	HURRICANE HELENE SUPPORT - NC	NC-FE4	---	NR	---	---	---	100	-5	0	0	0	UNK	2.8M	FEMA");
+		manual_fire_adjustment_list.put("2024-10-19	SACC	NA	NA	HURRICANE HELENE SUPPORT - NC	NC-NCS	---	---	---	---	344	-27	0	0	9	UNK	425K	FS",
+				  "2024-10-19	SACC	NA	NA	HURRICANE HELENE SUPPORT - NC	NC-NCS	---	NR	---	---	---	344	-27	0	0	9	UNK	425K	FS");
+		manual_fire_adjustment_list.put("2024-10-26	SACC	NA	NA	Rush OK-WMR 4,458 2,958 0 Ctn 10/31 83 0 25 0 0 200K FWS",
+				  "2024-10-26	SACC	NA	NA	RUSH	OK-WMR	4,458	2,958	0	CTN	10/31	83	NR	0	25	0	0	200K	FWS");
 	}
 	
 	private void data_cleaning() {
