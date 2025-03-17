@@ -364,64 +364,37 @@ public class ISMR_Process {
 			if (s_lines[i].contains("(PL")) {
 				if (s_lines[i].startsWith("Alaska")) {
 					current_area = "AICC";
-					gacc_priority = gacc_priority + 1;
-					if (map_gacc_to_priority.get(current_area) == null) map_gacc_to_priority.put(current_area, gacc_priority);
-					if (gacc_priority == map_gacc_to_priority.get(current_area)) process_area_data(s_lines, i, current_area, gacc_priority);
 				} else if (s_lines[i].startsWith("Eastern Area")) {
 					current_area = "EACC";
-					gacc_priority = gacc_priority + 1;
-					if (map_gacc_to_priority.get(current_area) == null) map_gacc_to_priority.put(current_area, gacc_priority);
-					if (gacc_priority == map_gacc_to_priority.get(current_area)) process_area_data(s_lines, i, current_area, gacc_priority);
 				} else if (s_lines[i].startsWith("Eastern Great Basin") || s_lines[i].contains("East Great Basin")) {	// before 2015
 					current_area = "EBCC";
-					gacc_priority = gacc_priority + 1;
-					if (map_gacc_to_priority.get(current_area) == null) map_gacc_to_priority.put(current_area, gacc_priority);
-					if (gacc_priority == map_gacc_to_priority.get(current_area)) process_area_data(s_lines, i, current_area, gacc_priority);
 				}  else if (s_lines[i].startsWith("Western Great Basin") || s_lines[i].contains("West Great Basin")) {	// before 2015
 					current_area = "WBCC";
-					gacc_priority = gacc_priority + 1;
-					if (map_gacc_to_priority.get(current_area) == null) map_gacc_to_priority.put(current_area, gacc_priority);
-					if (gacc_priority == map_gacc_to_priority.get(current_area)) process_area_data(s_lines, i, current_area, gacc_priority);
 				} else if (s_lines[i].startsWith("Great Basin")) {	// 2015 and after
 					current_area = "GBCC";
-					gacc_priority = gacc_priority + 1;
-					if (map_gacc_to_priority.get(current_area) == null) map_gacc_to_priority.put(current_area, gacc_priority);
-					if (gacc_priority == map_gacc_to_priority.get(current_area)) process_area_data(s_lines, i, current_area, gacc_priority);
 				} else if (s_lines[i].startsWith("Northern California")) {
 					current_area = "ONCC";
-					gacc_priority = gacc_priority + 1;
-					if (map_gacc_to_priority.get(current_area) == null) map_gacc_to_priority.put(current_area, gacc_priority);
-					if (gacc_priority == map_gacc_to_priority.get(current_area)) process_area_data(s_lines, i, current_area, gacc_priority);
 				} else if (s_lines[i].startsWith("Northern Rockies")) {
 					current_area = "NRCC";
-					gacc_priority = gacc_priority + 1;
-					if (map_gacc_to_priority.get(current_area) == null) map_gacc_to_priority.put(current_area, gacc_priority);
-					if (gacc_priority == map_gacc_to_priority.get(current_area)) process_area_data(s_lines, i, current_area, gacc_priority);
 				} else if (s_lines[i].startsWith("Northwest")) {
 					current_area = "NWCC";
-					gacc_priority = gacc_priority + 1;
-					if (map_gacc_to_priority.get(current_area) == null) map_gacc_to_priority.put(current_area, gacc_priority);
-					if (gacc_priority == map_gacc_to_priority.get(current_area)) process_area_data(s_lines, i, current_area, gacc_priority);
 				} else if (s_lines[i].startsWith("Rocky Mountain")) {
 					current_area = "RMCC";
-					gacc_priority = gacc_priority + 1;
-					if (map_gacc_to_priority.get(current_area) == null) map_gacc_to_priority.put(current_area, gacc_priority);
-					if (gacc_priority == map_gacc_to_priority.get(current_area)) process_area_data(s_lines, i, current_area, gacc_priority);
 				} else if (s_lines[i].startsWith("Southern Area")) {
 					current_area = "SACC";
-					gacc_priority = gacc_priority + 1;
-					if (map_gacc_to_priority.get(current_area) == null) map_gacc_to_priority.put(current_area, gacc_priority);
-					if (gacc_priority == map_gacc_to_priority.get(current_area)) process_area_data(s_lines, i, current_area, gacc_priority);
 				} else if (s_lines[i].startsWith("Southern California")) {
 					current_area = "OSCC";
-					gacc_priority = gacc_priority + 1;
-					if (map_gacc_to_priority.get(current_area) == null) map_gacc_to_priority.put(current_area, gacc_priority);
-					if (gacc_priority == map_gacc_to_priority.get(current_area)) process_area_data(s_lines, i, current_area, gacc_priority);
 				} else if (s_lines[i].startsWith("Southwest")) {
 					current_area = "SWCC";
-					gacc_priority = gacc_priority + 1;
-					if (map_gacc_to_priority.get(current_area) == null) map_gacc_to_priority.put(current_area, gacc_priority);
-					if (gacc_priority == map_gacc_to_priority.get(current_area)) process_area_data(s_lines, i, current_area, gacc_priority);
+				}
+				gacc_priority = gacc_priority + 1;
+				if (map_gacc_to_priority.get(current_area) == null) map_gacc_to_priority.put(current_area, gacc_priority);
+				if (gacc_priority == map_gacc_to_priority.get(current_area)) {
+					if (date_int < 2024) {
+						process_area_data(s_lines, i, current_area, gacc_priority);
+					} else {
+						process_2024_area_data(s_lines, i, current_area, gacc_priority);
+					}
 				}
 			}
 		}
@@ -474,6 +447,7 @@ public class ISMR_Process {
 		List<String> value = new ArrayList<String>();
 		String[] split_value = (mstr.replaceAll("type 1", "").replaceAll("type 2", "")).split(" ");	// remove the number 1 and 2
 		for (String st : split_value) {
+			st = st.replaceAll("[^0-9]", "");
 			if (st.matches("-?(0|[1-9]\\d*)")) {	// if this is numeric
 				value.add(st);
 			}
@@ -497,6 +471,59 @@ public class ISMR_Process {
 				gacc_type_2_imts_committed, gacc_fire_use_teams_committed, gacc_complex_imts_committed);
 		gacc_activity.add(info);
 		// IMPORTANT NOTE NOTE NOTE: 20180619: Rocky Mountain Area has uncontained large files but do not printed in pdf file (Erin's excel file got the right number of 4 uncontained)
+	}
+	
+	private void process_2024_area_data(String[] s_lines, int start_line, String current_area, int gacc_priority) {
+		String gacc_prepareness_level = null;
+		String gacc_new_fires = null;
+		String gacc_new_large_incidents = null;
+		String gacc_uncontained_large_fires = null;
+		String gacc_area_command_teams_committed = null;
+		String gacc_nimos_committed = null;
+		String gacc_type_1_imts_committed = null;
+		String gacc_type_2_imts_committed = null;
+		String gacc_fire_use_teams_committed = null;
+		String gacc_complex_imts_committed = null;
+		
+		gacc_prepareness_level = s_lines[start_line].substring(s_lines[start_line].indexOf("(PL") + 3, s_lines[start_line].indexOf(")"));
+		int end_line = start_line + 15;		// only process the next 15 lines
+		for (int i = start_line; i < end_line; i++) {
+			String st = s_lines[i].toLowerCase();
+			if (gacc_new_fires == null && st.contains("new fires")) {
+				st = st.replaceAll("[^0-9]", "");
+				gacc_new_fires = st;
+			} else if (gacc_new_large_incidents == null && (st.contains("new large incidents") || st.contains("new large fires"))) {
+				st = st.replaceAll("[^0-9]", "");
+				gacc_new_large_incidents = st;
+			} else if (gacc_uncontained_large_fires == null && st.contains("uncontained large fires")) {
+				st = st.replaceAll("[^0-9]", "");
+				gacc_uncontained_large_fires = st;
+			} else if (gacc_area_command_teams_committed == null && (st.contains("area command teams committed") || st.contains("area command"))) {
+				st = st.replaceAll("[^0-9]", "");
+				gacc_area_command_teams_committed = st;
+			} else if (gacc_complex_imts_committed == null && (st.contains("complex imts committed") || st.contains("complex imt committed") || st.contains("complex imt's committed") || st.contains("complex teams committed") || st.contains("complex imts") || st.contains("cimts committed"))) {
+				st = st.replaceAll("[^0-9]", "");
+				gacc_complex_imts_committed = st;
+			} else if (gacc_type_1_imts_committed == null && (st.contains("type 1 imts committed") || st.contains("type 1 imt committed") || st.contains("type 1 imt's committed") || st.contains("type 1 teams committed"))) {
+				st = st.replaceAll("type 1", "").replaceAll("[^0-9]", "");
+				gacc_type_1_imts_committed = st;
+			} else if (gacc_type_2_imts_committed == null && (st.contains("type 2 imts committed") || st.contains("type 2 imt committed") || st.contains("type 2 imt's committed") || st.contains("type 2 teams committed"))) {
+				st = st.replaceAll("type 2", "").replaceAll("[^0-9]", "");
+				gacc_type_2_imts_committed = st;
+			} else if (gacc_nimos_committed == null && st.contains("nimos committed")) {
+				st = st.replaceAll("[^0-9]", "");
+				gacc_nimos_committed = st;
+			} else if (gacc_fire_use_teams_committed == null && (st.contains("fire use teams committed") || st.contains("fire use teams"))) {
+				st = st.replaceAll("[^0-9]", "");
+				gacc_fire_use_teams_committed = st;
+			}
+		}
+		
+		String info = String.join("\t", date, current_area, String.valueOf(gacc_priority), 
+				gacc_prepareness_level, gacc_new_fires, gacc_new_large_incidents, gacc_uncontained_large_fires,
+				gacc_area_command_teams_committed, gacc_nimos_committed, gacc_type_1_imts_committed,
+				gacc_type_2_imts_committed, gacc_fire_use_teams_committed, gacc_complex_imts_committed);
+		gacc_activity.add(info);
 	}
 	
 	private void get_reource_summary_data(String[] s_lines) {
