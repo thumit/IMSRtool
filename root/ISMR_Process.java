@@ -390,11 +390,7 @@ public class ISMR_Process {
 				gacc_priority = gacc_priority + 1;
 				if (map_gacc_to_priority.get(current_area) == null) map_gacc_to_priority.put(current_area, gacc_priority);
 				if (gacc_priority == map_gacc_to_priority.get(current_area)) {
-					if (date_int < 2024) {
-						process_area_data(s_lines, i, current_area, gacc_priority);
-					} else {
-						process_2024_area_data(s_lines, i, current_area, gacc_priority);
-					}
+					process_area_data(s_lines, i, current_area, gacc_priority);
 				}
 			}
 		}
@@ -417,75 +413,12 @@ public class ISMR_Process {
 				gacc_prepareness_level = "2";	// Fix the case RMRS lacks the ) at the end
 			} else {
 				System.out.println(date + " missing gacc preparedness information");
-				gacc_prepareness_level = "null";	 // Example missing information: 20211105IMSR
+				gacc_prepareness_level = "";	 // Example missing information: 20211105IMSR
 			}
 		} else {
 			gacc_prepareness_level = s_lines[start_line].substring(s_lines[start_line].indexOf("(PL") + 3, s_lines[start_line].indexOf(")"));
 		}
 		
-		int end_line = start_line;
-		do {
-			end_line = end_line + 1;
-		} while (!s_lines[end_line].contains("(PL") && (end_line < s_lines.length - 1));
-		String[] merge_lines = Arrays.copyOfRange(s_lines, start_line, end_line);
-		String mstr = String.join(" ", merge_lines).toLowerCase();
-		mstr = mstr.substring(mstr.indexOf(")") + 1);	// trim strings before the )
-		
-		String info = null;
-		// Match term and value (a very smart matching) that works for both normal cases and special cases (i.e. 20180620, 20180622, 20180804, ...)
-		// Example of the special case 20180804 text file produced by adobe: 2 types of writing gacc activity: single line (Northern Rockies Area) or multiple lines (Southwest Area)
-		List<String> term = new ArrayList<String>();
-		if (mstr.contains("new fires")) term.add("new fires");
-		if (mstr.contains("new large incidents") || mstr.contains("new large fires")) term.add("new large incidents");	// i.e. 2014 data uses "new large fires"
-		if (mstr.contains("uncontained large fires")) term.add("uncontained large fires");
-		if (mstr.contains("area command teams committed") || mstr.contains("area command")) term.add("area command teams committed");	// i.e. 20201021 uses Area Command
-		if (mstr.contains("nimos committed")) term.add("nimos committed");
-		if (mstr.contains("type 1 imts committed") || mstr.contains("type 1 imt committed") || mstr.contains("type 1 imt's committed") || mstr.contains("type 1 teams committed")) term.add("type 1 imts committed");		// i.e. 20180704 uses "type 1 teams committed"
-		if (mstr.contains("type 2 imts committed") || mstr.contains("type 2 imt committed") || mstr.contains("type 2 imt's committed") || mstr.contains("type 2 teams committed")) term.add("type 2 imts committed");		// i.e. 20180704 uses "type 2 teams committed"
-		if (mstr.contains("fire use teams committed") || mstr.contains("fire use teams")) term.add("fire use teams committed");	
-		if (mstr.contains("complex imts committed") || mstr.contains("complex imt committed") || mstr.contains("complex imt's committed") || mstr.contains("complex teams committed") || mstr.contains("complex imts")) term.add("complex imts committed");
-		List<String> value = new ArrayList<String>();
-		String[] split_value = (mstr.replaceAll("type 1", "").replaceAll("type 2", "")).split(" ");	// remove the number 1 and 2
-		for (String st : split_value) {
-			st = st.replaceAll("[^0-9]", "");
-			if (st.matches("-?(0|[1-9]\\d*)")) {	// if this is numeric
-				value.add(st);
-			}
-		}
-		// get the value associated with the term
-		for (int j = 0; j < term.size(); j++) {
-			if (term.get(j).equals("new fires")) gacc_new_fires = value.get(j);
-			if (term.get(j).equals("new large incidents")) gacc_new_large_incidents = value.get(j);
-			if (term.get(j).equals("uncontained large fires")) gacc_uncontained_large_fires = value.get(j);
-			if (term.get(j).equals("area command teams committed")) gacc_area_command_teams_committed = value.get(j);
-			if (term.get(j).equals("nimos committed")) gacc_nimos_committed = value.get(j);
-			if (term.get(j).equals("type 1 imts committed")) gacc_type_1_imts_committed = value.get(j);	
-			if (term.get(j).equals("type 2 imts committed")) gacc_type_2_imts_committed = value.get(j);
-			if (term.get(j).equals("fire use teams committed")) gacc_fire_use_teams_committed = value.get(j);
-			if (term.get(j).equals("complex imts committed")) gacc_complex_imts_committed = value.get(j);
-		}
-		
-		info = String.join("\t", date, current_area, String.valueOf(gacc_priority), 
-				gacc_prepareness_level, gacc_new_fires, gacc_new_large_incidents, gacc_uncontained_large_fires,
-				gacc_area_command_teams_committed, gacc_nimos_committed, gacc_type_1_imts_committed,
-				gacc_type_2_imts_committed, gacc_fire_use_teams_committed, gacc_complex_imts_committed);
-		gacc_activity.add(info);
-		// IMPORTANT NOTE NOTE NOTE: 20180619: Rocky Mountain Area has uncontained large files but do not printed in pdf file (Erin's excel file got the right number of 4 uncontained)
-	}
-	
-	private void process_2024_area_data(String[] s_lines, int start_line, String current_area, int gacc_priority) {
-		String gacc_prepareness_level = null;
-		String gacc_new_fires = null;
-		String gacc_new_large_incidents = null;
-		String gacc_uncontained_large_fires = null;
-		String gacc_area_command_teams_committed = null;
-		String gacc_nimos_committed = null;
-		String gacc_type_1_imts_committed = null;
-		String gacc_type_2_imts_committed = null;
-		String gacc_fire_use_teams_committed = null;
-		String gacc_complex_imts_committed = null;
-		
-		gacc_prepareness_level = s_lines[start_line].substring(s_lines[start_line].indexOf("(PL") + 3, s_lines[start_line].indexOf(")"));
 		int end_line = start_line + 15;		// only process the next 15 lines
 		for (int i = start_line; i < end_line; i++) {
 			String st = s_lines[i].toLowerCase();
