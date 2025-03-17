@@ -277,18 +277,8 @@ public class ISMR_Process {
 					st = st.replaceAll("[^0-9]", "");
 					national_prepareness_level = st;
 				} else if (initial_attack_activity == null && initial_attack_new_fires == null && st.contains("initial attack activity")) {
-					st = (st.substring(st.indexOf(" ") + 1)).trim();	// remove all characters (such as :) before the first space and then trim
-					if (st.matches("-?(0|[1-9]\\d*)")) {		// this special case happens in several instance. use Regex to check if this is just a number
-						initial_attack_new_fires = st;
-						initial_attack_activity = null;
-					} else {
-						initial_attack_activity = st.split(" ")[0].toUpperCase();
-						if (initial_attack_activity.contains("(")) initial_attack_activity = initial_attack_activity.substring(0, initial_attack_activity.indexOf("(")); // special case: 20170620
-						if (st.split(" ").length > 1) {
-							initial_attack_new_fires = (st.substring(st.indexOf("(") + 1, st.indexOf(")")).replaceAll("new", "").replaceAll("fire", "").replaceAll("s", "")).trim();
-						}
-						initial_attack_new_fires = st.replaceAll("[^0-9.]", "");	// final adjustment for correct number of new fires
-					}
+					initial_attack_activity = st.split(" ")[3];
+					initial_attack_new_fires = st.replaceAll("[^0-9.]", "");	// final adjustment for correct number of new fires
 				} else if (new_large_incidents == null && st.contains("new large incidents")) {
 					st = st.replaceAll("[^0-9]", "");
 					new_large_incidents = st;
