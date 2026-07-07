@@ -15,9 +15,15 @@ You should have received a copy of the GNU General Public License
 along with IMSR-TOOL. If not, see <http://www.gnu.org/licenses/>.
 */
 package root;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.charset.Charset;
+import java.nio.charset.CharsetDecoder;
+import java.nio.charset.CodingErrorAction;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -67,51 +73,58 @@ public class ISMR_Process {
 	List<String> SWCC = new ArrayList<String>();	// Southwest
 
 	public ISMR_Process(File s_file, File r_file) {
+		generate_manual_fire_adjustment_list();
+		
+		s_date = String.join("-", s_file.getName().substring(0, 4), s_file.getName().substring(4, 6), s_file.getName().substring(6, 8));	// use this data format yyyy-mm-dd to join easily with Ross data
+		r_date = String.join("-", r_file.getName().substring(0, 4), r_file.getName().substring(4, 6), r_file.getName().substring(6, 8));	// use this data format yyyy-mm-dd to join easily with Ross data
+		date = s_date;
+		date_int = Integer.valueOf(s_file.getName().substring(0, 4));
+		
+//		List<String> s_lines_list = Files.readAllLines(Paths.get(s_file.getAbsolutePath()), StandardCharsets.UTF_8);		// Not sure why this UTF_8 fail
+		List<String> s_lines_list;
 		try {
-			generate_manual_fire_adjustment_list();
-			
-			s_date = String.join("-", s_file.getName().substring(0, 4), s_file.getName().substring(4, 6), s_file.getName().substring(6, 8));	// use this data format yyyy-mm-dd to join easily with Ross data
-			r_date = String.join("-", r_file.getName().substring(0, 4), r_file.getName().substring(4, 6), r_file.getName().substring(6, 8));	// use this data format yyyy-mm-dd to join easily with Ross data
-			date = s_date;
-			date_int = Integer.valueOf(s_file.getName().substring(0, 4));
-			
-//			List<String> lines_list = Files.readAllLines(Paths.get(file.getAbsolutePath()), StandardCharsets.UTF_8);		// Not sure why this UTF_8 fail
-			List<String> s_lines_list = Files.readAllLines(Paths.get(s_file.getAbsolutePath()), Charset.defaultCharset());		// Therefore I use default
-			String[] s_lines = s_lines_list.stream().toArray(String[] ::new);
-			for (int i = 0; i < s_lines.length; i++) {
-				s_lines[i] = s_lines[i].replaceAll("\\s{2,}", " ").trim(); // 2 or more spaces will be replaced by one space, then leading and ending spaces will be removed
-			}
-			
-			List<String> r_lines_list = Files.readAllLines(Paths.get(r_file.getAbsolutePath()), Charset.defaultCharset());
-			String[] r_lines = r_lines_list.stream().toArray(String[] ::new);
-			for (int i = 0; i < r_lines.length; i++) {
-				// this is a very important change because fire name may contain the page number so we need to remove it here
-				if (r_lines[i].length() <= 3 && r_lines[i].startsWith("")) {	// line contains a page break only or a page break with 1-2 digit page number will be removed
-//					System.out.println(r_date + " has page break change to a very long name: " + r_lines[i]);
-					r_lines[i] = "------------------------------------this is a page break this is a page break this is a page break this is a page break -------------------------------------------------";
-				}
-				r_lines[i] = r_lines[i].replaceAll("\\s{2,}", " ").trim(); // 2 or more spaces will be replaced by one space, then leading and ending spaces will be removed
-			}
-			
-			if (date_int < 2024) {
-				get_national_data(s_lines);
-			} else {
-				get_2024_national_data(s_lines);
-			}
-			get_area_data(s_lines);
-			get_reource_summary_data(s_lines);
-			get_fire_data_simple2_method(s_lines);
-			get_fire_data_raw_method(r_lines);
-			fire_name_validation_and_adjustment();
-			data_cleaning();
-			s_lines_list = null; 	// free memory
-			s_lines = null;			// free memory
-			r_lines_list = null; 	// free memory
-			r_lines = null;			// free memory
-		} catch (IOException e) {
+			s_lines_list = Files.readAllLines(Paths.get(s_file.getAbsolutePath()), Charset.defaultCharset());		// Therefore I use default
+		} catch (Exception e) {
+		s_lines_list = readLinesSafely(s_file);
 			e.printStackTrace();
-			System.err.println(e.getClass().getName() + ": " + e.getMessage());
 		}
+		String[] s_lines = s_lines_list.stream().toArray(String[] ::new);
+		for (int i = 0; i < s_lines.length; i++) {
+			s_lines[i] = s_lines[i].replaceAll("\\s{2,}", " ").trim(); // 2 or more spaces will be replaced by one space, then leading and ending spaces will be removed
+		}
+		
+		List<String> r_lines_list;
+		try {
+			r_lines_list = Files.readAllLines(Paths.get(r_file.getAbsolutePath()), Charset.defaultCharset());		// Therefore I use default
+		} catch (Exception e) {
+			r_lines_list = readLinesSafely(r_file);
+			e.printStackTrace();
+		}
+		String[] r_lines = r_lines_list.stream().toArray(String[] ::new);
+		for (int i = 0; i < r_lines.length; i++) {
+			// this is a very important change because fire name may contain the page number so we need to remove it here
+			if (r_lines[i].length() <= 3 && r_lines[i].startsWith("")) {	// line contains a page break only or a page break with 1-2 digit page number will be removed
+//				System.out.println(r_date + " has page break change to a very long name: " + r_lines[i]);
+				r_lines[i] = "------------------------------------this is a page break this is a page break this is a page break this is a page break -------------------------------------------------";
+			}
+			r_lines[i] = r_lines[i].replaceAll("\\s{2,}", " ").trim(); // 2 or more spaces will be replaced by one space, then leading and ending spaces will be removed
+		}
+		
+		if (date_int < 2024) {
+			get_national_data(s_lines);
+		} else {
+			get_2024_national_data(s_lines);
+		}
+		get_area_data(s_lines);
+		get_reource_summary_data(s_lines);
+		get_fire_data_simple2_method(s_lines);
+		get_fire_data_raw_method(r_lines);
+		fire_name_validation_and_adjustment();
+		data_cleaning();
+		s_lines_list = null; 	// free memory
+		s_lines = null;			// free memory
+		r_lines_list = null; 	// free memory
+		r_lines = null;			// free memory
 	}
 	
 	private void get_national_data(String[] s_lines) {
@@ -1660,7 +1673,7 @@ public class ISMR_Process {
 			// fix "contained_completed"
 			fs[9] = fs[9].replaceAll("CNT", "CTN").replaceAll("\\.", "");
 			// fix "estimated_containment_date" typos
-			fs[10] = fs[10].replaceAll("ÚNK", "UNK").replaceAll("UKN", "UNK");
+			fs[10] = fs[10].replaceAll("ï¿½NK", "UNK").replaceAll("UKN", "UNK");
 			// fix "estimated_containment_date" non-date format
 			if (fs[10].equals("0")) { fs[10] = ""; }
 			else if (fs[10].equals("100")) { fs[10] = ""; System.out.println(String.join("\t", fs[0], fs[1], fs[4], "estimated_containment_date: removed")); }
@@ -1673,7 +1686,7 @@ public class ISMR_Process {
 			if (fs[18].equals("48")) { fs[18] = "ST"; System.out.println(String.join("\t", fs[0], fs[1], fs[4], "origin_ownership: replaced by ST")); }
 			else if (fs[18].equals("157")) { fs[18] = "FS"; System.out.println(String.join("\t", fs[0], fs[1], fs[4], "origin_ownership: replaced by FS")); }
 		
-			// fix non-integer in several fields: “fire_size” (30), “fire_size_change” (2), “percent_containment” (2), “personnel” (4), “personnel_change” (1), and “structures_lost” (11)
+			// fix non-integer in several fields: ï¿½fire_sizeï¿½ (30), ï¿½fire_size_changeï¿½ (2), ï¿½percent_containmentï¿½ (2), ï¿½personnelï¿½ (4), ï¿½personnel_changeï¿½ (1), and ï¿½structures_lostï¿½ (11)
 			if (fs[0].equals("2012-06-07") && fs[6].equals("1.350")) { fs[6] = "1350"; System.out.println(String.join("\t", fs[0], fs[1], fs[4], "fire_size: replaced by 1350")); }
 			else if (fs[0].equals("2008-06-12") && fs[6].equals("10.800")) { fs[6] = "10800"; System.out.println(String.join("\t", fs[0], fs[1], fs[4], "fire_size: replaced by 10800")); }
 			else if (fs[0].equals("2015-07-03") && fs[6].equals("11278.1")) { fs[6] = "11278"; System.out.println(String.join("\t", fs[0], fs[1], fs[4], "fire_size: replaced by 11278")); }
@@ -1751,4 +1764,29 @@ public class ISMR_Process {
 		}
 		
 	}
+	
+	public static List<String> readLinesSafely(File file) {
+	    List<String> lines = new ArrayList<>();
+	    
+	    // Set up a decoder that replaces bad bytes with '' instead of crashing
+	    CharsetDecoder decoder = StandardCharsets.UTF_8.newDecoder()
+	        .onMalformedInput(CodingErrorAction.REPLACE)
+	        .onUnmappableCharacter(CodingErrorAction.REPLACE);
+
+	    try (BufferedReader reader = new BufferedReader(
+	            new InputStreamReader(new FileInputStream(file), decoder))) {
+	        
+	        String line;
+	        while ((line = reader.readLine()) != null) {
+	            lines.add(line);
+	        }
+	    } catch (Exception e) {
+	        System.err.println("Error reading file: " + file.getName());
+	        e.printStackTrace(); 
+	    }
+	    
+	    return lines;
+	}
 }
+
+
