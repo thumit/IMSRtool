@@ -18,7 +18,6 @@ package root;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
@@ -73,58 +72,64 @@ public class ISMR_Process {
 	List<String> SWCC = new ArrayList<String>();	// Southwest
 
 	public ISMR_Process(File s_file, File r_file) {
-		generate_manual_fire_adjustment_list();
-		
-		s_date = String.join("-", s_file.getName().substring(0, 4), s_file.getName().substring(4, 6), s_file.getName().substring(6, 8));	// use this data format yyyy-mm-dd to join easily with Ross data
-		r_date = String.join("-", r_file.getName().substring(0, 4), r_file.getName().substring(4, 6), r_file.getName().substring(6, 8));	// use this data format yyyy-mm-dd to join easily with Ross data
-		date = s_date;
-		date_int = Integer.valueOf(s_file.getName().substring(0, 4));
-		
+		try {
+			generate_manual_fire_adjustment_list();
+			
+			s_date = String.join("-", s_file.getName().substring(0, 4), s_file.getName().substring(4, 6), s_file.getName().substring(6, 8));	// use this data format yyyy-mm-dd to join easily with Ross data
+			r_date = String.join("-", r_file.getName().substring(0, 4), r_file.getName().substring(4, 6), r_file.getName().substring(6, 8));	// use this data format yyyy-mm-dd to join easily with Ross data
+			date = s_date;
+			date_int = Integer.valueOf(s_file.getName().substring(0, 4));
+			
 //		List<String> s_lines_list = Files.readAllLines(Paths.get(s_file.getAbsolutePath()), StandardCharsets.UTF_8);		// Not sure why this UTF_8 fail
-		List<String> s_lines_list;
-		try {
-			s_lines_list = Files.readAllLines(Paths.get(s_file.getAbsolutePath()), Charset.defaultCharset());		// Therefore I use default
-		} catch (Exception e) {
-		s_lines_list = readLinesSafely(s_file);
-			e.printStackTrace();
-		}
-		String[] s_lines = s_lines_list.stream().toArray(String[] ::new);
-		for (int i = 0; i < s_lines.length; i++) {
-			s_lines[i] = s_lines[i].replaceAll("\\s{2,}", " ").trim(); // 2 or more spaces will be replaced by one space, then leading and ending spaces will be removed
-		}
-		
-		List<String> r_lines_list;
-		try {
-			r_lines_list = Files.readAllLines(Paths.get(r_file.getAbsolutePath()), Charset.defaultCharset());		// Therefore I use default
-		} catch (Exception e) {
-			r_lines_list = readLinesSafely(r_file);
-			e.printStackTrace();
-		}
-		String[] r_lines = r_lines_list.stream().toArray(String[] ::new);
-		for (int i = 0; i < r_lines.length; i++) {
-			// this is a very important change because fire name may contain the page number so we need to remove it here
-			if (r_lines[i].length() <= 3 && r_lines[i].startsWith("")) {	// line contains a page break only or a page break with 1-2 digit page number will be removed
-//				System.out.println(r_date + " has page break change to a very long name: " + r_lines[i]);
-				r_lines[i] = "------------------------------------this is a page break this is a page break this is a page break this is a page break -------------------------------------------------";
+			List<String> s_lines_list;
+			try {
+				s_lines_list = Files.readAllLines(Paths.get(s_file.getAbsolutePath()), Charset.defaultCharset());		// Therefore I use default
+			} catch (Exception e) {
+				System.out.println("Error default reading file: " + s_file.getName());
+				s_lines_list = readLinesSafely(s_file);
+				System.out.println("Successfully switch to safely reading: " + s_file.getName());
 			}
-			r_lines[i] = r_lines[i].replaceAll("\\s{2,}", " ").trim(); // 2 or more spaces will be replaced by one space, then leading and ending spaces will be removed
+			String[] s_lines = s_lines_list.stream().toArray(String[] ::new);
+			for (int i = 0; i < s_lines.length; i++) {
+				s_lines[i] = s_lines[i].replaceAll("\\s{2,}", " ").trim(); // 2 or more spaces will be replaced by one space, then leading and ending spaces will be removed
+			}
+			
+			List<String> r_lines_list;
+			try {
+				r_lines_list = Files.readAllLines(Paths.get(r_file.getAbsolutePath()), Charset.defaultCharset());		// Therefore I use default
+			} catch (Exception e) {
+				System.out.println("Error default reading file: " + r_file.getName());
+				r_lines_list = readLinesSafely(r_file);
+				System.out.println("Successfully switch to safely reading: " + r_file.getName());
+			}
+			String[] r_lines = r_lines_list.stream().toArray(String[] ::new);
+			for (int i = 0; i < r_lines.length; i++) {
+				// this is a very important change because fire name may contain the page number so we need to remove it here
+				if (r_lines[i].length() <= 3 && r_lines[i].startsWith("")) {	// line contains a page break only or a page break with 1-2 digit page number will be removed
+//				System.out.println(r_date + " has page break change to a very long name: " + r_lines[i]);
+					r_lines[i] = "------------------------------------this is a page break this is a page break this is a page break this is a page break -------------------------------------------------";
+				}
+				r_lines[i] = r_lines[i].replaceAll("\\s{2,}", " ").trim(); // 2 or more spaces will be replaced by one space, then leading and ending spaces will be removed
+			}
+			
+			if (date_int < 2024) {
+				get_national_data(s_lines);
+			} else {
+				get_2024_national_data(s_lines);
+			}
+			get_area_data(s_lines);
+			get_reource_summary_data(s_lines);
+			get_fire_data_simple2_method(s_lines);
+			get_fire_data_raw_method(r_lines);
+			fire_name_validation_and_adjustment();
+			data_cleaning();
+			s_lines_list = null; 	// free memory
+			s_lines = null;			// free memory
+			r_lines_list = null; 	// free memory
+			r_lines = null;			// free memory
+		} catch (NumberFormatException e) {
+			e.printStackTrace();
 		}
-		
-		if (date_int < 2024) {
-			get_national_data(s_lines);
-		} else {
-			get_2024_national_data(s_lines);
-		}
-		get_area_data(s_lines);
-		get_reource_summary_data(s_lines);
-		get_fire_data_simple2_method(s_lines);
-		get_fire_data_raw_method(r_lines);
-		fire_name_validation_and_adjustment();
-		data_cleaning();
-		s_lines_list = null; 	// free memory
-		s_lines = null;			// free memory
-		r_lines_list = null; 	// free memory
-		r_lines = null;			// free memory
 	}
 	
 	private void get_national_data(String[] s_lines) {
@@ -1781,7 +1786,7 @@ public class ISMR_Process {
 	            lines.add(line);
 	        }
 	    } catch (Exception e) {
-	        System.err.println("Error reading file: " + file.getName());
+	        System.err.println("Error safely reading file: " + file.getName());
 	        e.printStackTrace(); 
 	    }
 	    
