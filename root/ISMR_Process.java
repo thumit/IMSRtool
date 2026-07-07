@@ -85,9 +85,9 @@ public class ISMR_Process {
 			try {
 				s_lines_list = Files.readAllLines(Paths.get(s_file.getAbsolutePath()), Charset.defaultCharset());		// Therefore I use default
 			} catch (Exception e) {
-				System.out.println("Error default reading file: " + s_file.getName());
+				System.out.println("Error default reading raw s file: " + s_file.getName());
 				s_lines_list = readLinesSafely(s_file);
-				System.out.println("Successfully switch to safely reading: " + s_file.getName());
+				System.out.println("Successfully switch to safely reading raw s file: " + s_file.getName());
 			}
 			String[] s_lines = s_lines_list.stream().toArray(String[] ::new);
 			for (int i = 0; i < s_lines.length; i++) {
@@ -98,9 +98,9 @@ public class ISMR_Process {
 			try {
 				r_lines_list = Files.readAllLines(Paths.get(r_file.getAbsolutePath()), Charset.defaultCharset());		// Therefore I use default
 			} catch (Exception e) {
-				System.out.println("Error default reading file: " + r_file.getName());
+				System.out.println("Error default reading raw r file: " + r_file.getName());
 				r_lines_list = readLinesSafely(r_file);
-				System.out.println("Successfully switch to safely reading: " + r_file.getName());
+				System.out.println("Successfully switch to safely reading raw r file: " + r_file.getName());
 			}
 			String[] r_lines = r_lines_list.stream().toArray(String[] ::new);
 			for (int i = 0; i < r_lines.length; i++) {
@@ -1600,6 +1600,48 @@ public class ISMR_Process {
 				  "2024-10-19	SACC	NA	NA	HURRICANE HELENE SUPPORT - NC	NC-NCS	---	NR	---	---	---	344	-27	0	0	9	UNK	425K	FS");
 		manual_fire_adjustment_list.put("2024-10-26	SACC	NA	NA	Rush OK-WMR 4,458 2,958 0 Ctn 10/31 83 0 25 0 0 200K FWS",
 				  "2024-10-26	SACC	NA	NA	RUSH	OK-WMR	4,458	2,958	0	CTN	10/31	83	NR	0	25	0	0	200K	FWS");
+		
+		manual_fire_adjustment_list.put("2025-03-05	SACC	NA	NA	CLEAR	Cut	OK-OKS	128	0	100	Ctn	---	5	0	2	0	0	3.4K	ST",
+				  "2025-03-05	SACC	NA	NA	CLEAR CUT	OK-OKS	128	0	100	CTN	---	5	---	0	2	0	0	3.4K	ST");
+		manual_fire_adjustment_list.put("2025-03-18	SACC	NA	NA	33	Road	OK-OKS	32,990	515	20	Ctn	3/18	17	0	4	0	50	40K	ST",
+				  "2025-03-18	SACC	NA	NA	33 ROAD	OK-OKS	32,990	515	20	CTN	3/18	17	---	0	4	0	50	40K	ST");
+		manual_fire_adjustment_list.put("2025-03-18	SACC	NA	NA	* BLACK	Fox	OK-OKS	106	---	50	Ctn	3/20	3	---	0	0	0	3.8K	ST",
+				  "2025-03-18	SACC	NA	NA	* BLACK FOX	OK-OKS	106	---	50	CTN	3/20	3	---	0	---	0	0	3.8K	ST");
+		manual_fire_adjustment_list.put("2025-03-18	SACC	NA	NA	Persimmon TX-MCR 1,691 0 95 Ctn 3/18 0 0 3 0 0 10K FWS",
+				  "2025-03-18	SACC	NA	NA	PERSIMMON	TX-MCR	1,691	0	95	CTN	3/18	0	---	0	3	0	0	10K	FWS");
+		manual_fire_adjustment_list.put("2025-03-19	SACC	NA	NA	BLACK	Fox	OK-OKS	106	---	50	Ctn	3/20	3	---	0	0	0	4K	ST",
+				  "2025-03-19	SACC	NA	NA	BLACK FOX	OK-OKS	106	---	50	CTN	3/20	3	---	0	---	0	0	4K	ST");
+		manual_fire_adjustment_list.put("2025-03-20	SACC	NA	NA	--- 0 2 0 0 6K ST",
+				  "2025-03-20	SACC	NA	NA	DOUBLEHEAD SOUTH FOX	OK-OKS	647	---	70	CTN	3/21	11	---	0	2	0	0	6K	ST");
+			
+		
+		manual_fire_adjustment_list.put("2025-06-23	AICC	NA	NA	* SEVEN MILE	Lookout	AK-TAS	400	---	0	Ctn	9/30	37	---	1	0	0	105K	ST",
+				  "2025-06-23	AICC	NA	NA	* SEVEN MILE LOOKOUT	AK-TAS	400	---	0	CTN	9/30	37	---	1	0	0	---	105K	ST");
+		manual_fire_adjustment_list.put("2025-06-24	AICC	NA	NA	*	Richards	AK-GAD	794	---	0	Ctn	10/1	8	---	0	0	0	108K	FWS",
+				  "2025-06-24	AICC	NA	NA	* RICHARDS	AK-GAD	794	---	0	CTN	10/1	8	---	0	0	0	---	108K	FWS");
+		manual_fire_adjustment_list.put("2025-06-24	AICC	NA	NA	*	Nakochelik	AK-GAD	143	---	100	Ctn	---	8	---	0	0	0	95K	FWS",
+				  "2025-06-24	AICC	NA	NA	* NAKOCHELIK	AK-GAD	143	---	100	CTN	---	8	---	0	0	0	---	95K	FWS");
+		manual_fire_adjustment_list.put("2025-07-03	GBCC	NA	NA	FORSYTH UT-DIF	13,	419	147	43	Ctn	7/31	671	11	15	24	9	17	15.3M	FS",
+				  "2025-07-03	GBCC	NA	NA	FORSYTH	UT-DIF	13,419	147	43	CTN	7/31	671	11	15	24	9	17	15.3M	FS");
+		manual_fire_adjustment_list.put("2025-07-04	GBCC	NA	NA	FORSYTH UT-DIF	13,	566	147	46	Ctn	7/31	664	-7	15	22	9	17	16.3M	FS",
+				  "2025-07-04	GBCC	NA	NA	FORSYTH	UT-DIF	13,566	147	46	CTN	7/31	664	-7	15	22	9	17	16.3M	FS");
+		manual_fire_adjustment_list.put("2025-07-05	GBCC	NA	NA	FORSYTH UT-DIF	13,	597	31	47	Ctn	7/31	685	21	16	21	9	17	17.2M	FS",
+				  "2025-07-05	GBCC	NA	NA	FORSYTH	UT-DIF	13,597	31	47	CTN	7/31	685	21	16	21	9	17	17.2M	FS");
+		manual_fire_adjustment_list.put("2025-07-06	GBCC	NA	NA	FORSYTH UT-DIF	13,	689	92	47	Ctn	7/31	643	-42	15	14	9	17	18.6M	FS",
+				  "2025-07-06	GBCC	NA	NA	FORSYTH	UT-DIF	13,689	92	47	CTN	7/31	643	-42	15	14	9	17	18.6M	FS");
+		manual_fire_adjustment_list.put("2025-07-13	AICC	NA	NA	--- 0 0 0 0 12K ST",
+				  "2025-07-13	AICC	NA	NA	RIDGELINE	AK-TAS	4,755	---	0	COMP	10/1	0	---	0	0	0	0	6K	ST");
+		manual_fire_adjustment_list.put("2025-08-08	GBCC	NA	NA	BIG	Bear	ID-PAF	14,935	0	70	Comp	10/1	11	0	0	1	0	300K	FS",
+				  "2025-08-08	GBCC	NA	NA	BIG BEAR	ID-PAF	14,935	0	70	COMP	10/1	11	---	0	0	1	0	300K	FS");
+		manual_fire_adjustment_list.put("2025-09-06	NWCC	NA	NA	KATY CREEK WA-COF	2,422	858	0	Ctn	11/1	88	58	2	7	0	0	1.7	M	ST",
+				  "2025-09-06	NWCC	NA	NA	KATY CREEK	WA-COF	2,422	858	0	CTN	11/1	88	58	2	7	0	0	1.7M	ST");
+		manual_fire_adjustment_list.put("2025-09-11	NWCC	NA	NA	LABOR MOUNTAIN WA-OWF	3,208	303	0	Ctn	10/31	247	18	8	12	0	0	2	M	FS",
+				  "2025-09-11	NWCC	NA	NA	LABOR MOUNTAIN	WA-OWF	3,208	303	0	CTN	10/31	247	18	8	12	0	0	2M	FS");
+		manual_fire_adjustment_list.put("2025-09-12	NWCC	NA	NA	LABOR MOUNTAIN WA-OWF	4,001	793	0	Ctn	10/31	295	48	10	10	0	0	2.5	M	FS",
+				  "2025-09-12	NWCC	NA	NA	LABOR MOUNTAIN	WA-OWF	4,001	793	0	CTN	10/31	295	48	10	10	0	0	2.5M	FS");
+		manual_fire_adjustment_list.put("2025-09-13	NWCC	NA	NA	LABOR MOUNTAIN WA-OWF	4,159	148	0	Ctn	10/31	349	54	11	12	0	0	3	M	FS",
+				  "2025-09-13	NWCC	NA	NA	LABOR MOUNTAIN	WA-OWF	4,159	148	0	CTN	10/31	349	54	11	12	0	0	3M	FS");
+		
 	}
 	
 	private void data_cleaning() {
