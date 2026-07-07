@@ -538,6 +538,19 @@ public class ISMR_Process {
 				} else {
 					if (!line_split[0].equals("WB")) join_st = join_st + "\t" + String.join("\t", line_split);		// Add while ignoring WB
 				}
+				
+				// add PL column: beginning from 20260622
+				String[] re_split = join_st.split("\t");
+				int total_summary_column = re_split.length;
+				if (total_summary_column == 10) {
+					StringBuilder rebuilt = new StringBuilder();
+					rebuilt.append(re_split[0]).append("\t").append(re_split[1]);	// Date and GACC name
+					for (int j = 3; j < re_split.length; j++) {
+				        rebuilt.append("\t").append(re_split[j]);
+				    }
+				    rebuilt.append("\t").append(re_split[2]);	// Move the PL value (index 2) to the very end
+				    join_st = rebuilt.toString();
+				}
 			}
 		}
 		// NOTE NOTE NOTE: 2022 have 8 columns

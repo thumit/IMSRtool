@@ -94,7 +94,7 @@ class Aggregate {
 		String[] header3 = new String[] { "imsr_date", "gacc", "gacc_priority", "fire_priority", "new_large_fire_mark", "fire_name", "unit", "fire_size",
 				"fire_size_change", "percent_containment", "contained_completed", "estimated_containment_date", "personnel", "personnel_change", "crews",
 				"engines", "helicopters", "structures_lost", "cost_to_date", "origin_ownership" };
-		String[] header4 = new String[] { "imsr_date", "gacc", "incidents", "cumulative_size", "crews", "engines", "helicopters", "personnel", "personnel_change" };
+		String[] header4 = new String[] { "imsr_date", "gacc", "incidents", "cumulative_size", "crews", "engines", "helicopters", "personnel", "personnel_change", "preparedness_level" };
 		
 		ColorTextArea[] textarea = new ColorTextArea[5];
 		for (int i = 0; i < 5; i++) {
@@ -576,7 +576,7 @@ class ScrollPane_Extraction_Preview extends JScrollPane {
 		String[] header3 = new String[] { "imsr_date", "gacc", "gacc_priority", "fire_priority", "new_large_fire_mark", "fire_name", "unit", "fire_size",
 				"fire_size_change", "percent_containment", "contained_completed", "estimated_containment_date", "personnel", "personnel_change", "crews",
 				"engines", "helicopters", "structures_lost", "cost_to_date", "origin_ownership" };
-		String[] header4 = new String[] { "imsr_date", "gacc", "incidents", "cumulative_size", "crews", "engines", "helicopters", "personnel", "personnel_change" };
+		String[] header4 = new String[] { "imsr_date", "gacc", "incidents", "cumulative_size", "crews", "engines", "helicopters", "personnel", "personnel_change", "preparedness_level"};
 		
 		textarea = new ColorTextArea("IMSR.png", 1, 1);	// Print to text area
 		ISMR_Process ismr = new ISMR_Process(s_file, r_file);
